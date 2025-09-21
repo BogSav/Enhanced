@@ -1,0 +1,14 @@
+FROM node:24-alpine
+WORKDIR /app
+
+# Install the required dependencies
+COPY package*.json ./
+RUN npm ci
+COPY . .
+
+# Install the nodemon module for live reloads
+# - nodemon tracks files and restarts the server each time one file is saved
+RUN npm i -D nodemon
+
+# HMR backend (restart files)
+CMD ["npx", "nodemon", "--watch", "src", "--ext", "js,ts,json", "--exec", "node", "src/server.js"]
