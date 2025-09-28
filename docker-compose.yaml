@@ -4,21 +4,6 @@ name: enhanced
 
 services:
   # -------- DEV PROFILE --------
-  api-dev:
-    profiles: ["dev"]
-    build:
-      context: ./apps/api
-      dockerfile: Dockerfile.dev
-    environment:
-      NODE_ENV: development
-      PORT: 8080
-    env_file:
-      - ./apps/api/.env.local
-    volumes:
-      - ./apps/api/src:/app/src:ro
-    ports:
-      - "8080:8080"
-
   web-dev:
     profiles: ["dev"]
     build:
@@ -37,34 +22,13 @@ services:
       - ./apps/web/index.html:/app/index.html:ro
     ports:
       - "5173:5173"
-    depends_on:
-      - api-dev
 
   # -------- PROD PROFILE --------
-  api:
-    profiles: ["prod"]
-    build:
-      context: ./apps/api
-      dockerfile: Dockerfile
-    environment:
-      NODE_ENV: production
-      PORT: 8080
-    expose:
-      - "8080"           # intern, pentru nginx
-    ports:
-      - "8080:8080"      # (opțional) doar dacă vrei acces direct
-    restart: unless-stopped
-
   web:
     profiles: ["prod"]
     build:
       context: ./apps/web
       dockerfile: Dockerfile
-      # poți seta BASE URL pentru build (opțional)
-      args:
-        VITE_API_BASE_URL: /api
-    depends_on:
-      - api
     ports:
       - "80:80"
     restart: unless-stopped
