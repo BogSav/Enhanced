@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, lazy, Suspense } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import {
   ThemeProvider,
@@ -10,8 +10,9 @@ import {
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
-import ProjectPage from "./pages/ProjectPage";
 import NotFound from "./pages/NotFound";
+
+const ProjectPage = lazy(() => import("./pages/ProjectPage"));
 
 export type PaletteMode = "light" | "dark";
 
@@ -77,11 +78,13 @@ export default function App() {
           onLogoClick={() => navigate("/")}
         />
         <Container sx={{ flexGrow: 1, py: { xs: 4, md: 6 } }}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/projects/:slug" element={<ProjectPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <Suspense fallback={<div>Loading...</div>}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/projects/:slug" element={<ProjectPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
         </Container>
         <Footer />
       </Box>

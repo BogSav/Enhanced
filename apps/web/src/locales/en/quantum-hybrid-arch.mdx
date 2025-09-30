@@ -1,0 +1,46 @@
+---
+title: Hybrid Quantum–Classical Architecture
+description: Research notes, kernels & simulators exploring CPU+QPU orchestration, qRAM, and teleportation channels.
+tags: ["Research", "Quantum", "Systems"]
+image: "/src/assets/reac.svg"
+---
+
+import ProjectLayout, {
+  ProjectImage,
+  ProjectTag,
+} from "../../components/ProjectLayout";
+
+<ProjectTag>Quantum</ProjectTag>
+<ProjectTag>Systems</ProjectTag>
+<ProjectTag>Research</ProjectTag>
+
+## Overview
+
+This project explores the possibility of creating a hybrid system that combines the power of classical computing with the unique advantages of quantum computation.
+
+<ProjectImage
+  src="/src/assets/projects/quantum-hybrid-arch/diagram1.svg"
+  alt="Hybrid architecture diagram"
+/>
+
+## Technical Details
+
+Our architecture is based on the following key components:
+
+- Low-latency communication interface between CPU and QPU
+- Quantum memory for storing and manipulating qubits
+- Specialized scheduler for optimal task allocation
+
+export default ({ children }) => (
+  <ProjectLayout
+    frontmatter={{
+      title: "Hybrid Quantum–Classical Architecture",
+      description:
+        "Research notes, kernels & simulators exploring CPU+QPU orchestration, qRAM, and teleportation channels.",
+      tags: ["Research", "Quantum", "Systems"],
+      image: "/src/assets/reac.svg",
+    }}
+  >
+    {children}
+  </ProjectLayout>
+);

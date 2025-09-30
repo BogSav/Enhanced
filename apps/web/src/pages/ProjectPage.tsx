@@ -1,44 +1,132 @@
-import { useParams, Link as RouterLink } from "react-router-dom";
+import { useState, useEffect } from "react";
+import {
+  useParams,
+  useSearchParams,
+  Link as RouterLink,
+} from "react-router-dom";
 import {
   Box,
   Breadcrumbs,
-  Chip,
+  CircularProgress,
   Container,
   Link,
-  Paper,
   Stack,
   Typography,
+  Alert,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
+import ErrorBoundary from "../components/ErrorBoundary";
 
-const content: Record<string, { title: string; desc: string; tags: string[] }> =
-  {
-    "quantum-hybrid-arch": {
-      title: "Hybrid Quantum–Classical Architecture",
-      desc: "Placeholder page for deep‑dive notes, diagrams, and code samples. You can replace this with your markdown or docs renderer.",
-      tags: ["Quantum", "Systems"],
-    },
-    "enhanced-ai-platform": {
-      title: "Enhanced AI Platform",
-      desc: "Service mesh, model gateways, embeddings, retrieval, and observability. Coming soon.",
-      tags: ["AI", "LLM", "DevOps"],
-    },
-    "cnc-linking": {
-      title: "CNC Linking Algorithms",
-      desc: "Advanced toolpath research — arc trimming, leads, smoothing.",
-      tags: ["C++", "CNC"],
-    },
-    "unconventional-research": {
-      title: "Unconventional Research Blog",
-      desc: "Crazy ideas, careful methods. Drafts and references go here.",
-      tags: ["Writing"],
-    },
-  };
+// Lista de proiecte disponibile cu importurile lor
+const availableProjects = {
+  "quantum-hybrid-arch": {
+    en: () => import("../locales/en/quantum-hybrid-arch.mdx"),
+    ro: () => import("../locales/ro/quantum-hybrid-arch.mdx"),
+  },
+  // Poți adăuga alte proiecte aici
+};
+
+type AvailableProjectKeys = keyof typeof availableProjects;
+
+const MDXProjectPage = ({
+  slug,
+  language,
+}: {
+  slug: string;
+  language: string;
+}) => {
+  const [error, setError] = useState<string | null>(null);
+  const [ProjectContent, setProjectContent] =
+    useState<React.ComponentType | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadProject = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Verifică dacă proiectul există
+        if (!(slug in availableProjects)) {
+          setError(`Project "${slug}" not found`);
+          setLoading(false);
+          return;
+        }
+
+        const project = availableProjects[slug as AvailableProjectKeys];
+        const languageKey = language as keyof typeof project;
+
+        // Verifică dacă limba există pentru proiect
+        if (!(languageKey in project)) {
+          setError(
+            `Language "${language}" not available for project "${slug}"`
+          );
+          setLoading(false);
+          return;
+        }
+
+        // Încarcă modulul MDX
+        const module = await project[languageKey]();
+        setProjectContent(() => module.default);
+        setError(null);
+      } catch (err) {
+        console.error("Error loading project:", err);
+        setError(
+          `Failed to load project content: ${
+            err instanceof Error ? err.message : "Unknown error"
+          }`
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProject();
+  }, [slug, language]);
+
+  if (error) {
+    return (
+      <Container>
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+        <Typography variant="h4" sx={{ mb: 2 }}>
+          Project not available
+        </Typography>
+        <Link component={RouterLink} to="/">
+          Back to Home
+        </Link>
+      </Container>
+    );
+  }
+
+  if (loading || !ProjectContent) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", py: 5 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  return (
+    <ErrorBoundary
+      fallback={<Typography>Failed to render project content</Typography>}
+    >
+      <ProjectContent />
+    </ErrorBoundary>
+  );
+};
 
 export default function ProjectPage() {
-  const { slug } = useParams();
-  const data = content[slug ?? ""];
+  const { slug } = useParams<{ slug: string }>();
+  const [searchParams] = useSearchParams();
+  const { i18n } = useTranslation();
 
-  if (!data) {
+  // Determină limba din URL query sau folosește limba curentă
+  const languageParam = searchParams.get("lang");
+  const language = languageParam || i18n.language;
+
+  if (!slug) {
     return (
       <Container>
         <Typography variant="h4" sx={{ mb: 2 }}>
@@ -51,42 +139,5 @@ export default function ProjectPage() {
     );
   }
 
-  return (
-    <Stack spacing={3}>
-      <Breadcrumbs>
-        <Link component={RouterLink} to="/">
-          Home
-        </Link>
-        <Typography color="text.primary">{data.title}</Typography>
-      </Breadcrumbs>
-      <Paper elevation={0} sx={{ p: { xs: 3, md: 5 }, borderRadius: 4 }}>
-        <Stack spacing={2}>
-          <Typography variant="h3" fontWeight={800}>
-            {data.title}
-          </Typography>
-          <Stack direction="row" spacing={1}>
-            {data.tags.map((t) => (
-              <Chip key={t} label={t} size="small" />
-            ))}
-          </Stack>
-          <Typography variant="body1" color="text.secondary">
-            {data.desc}
-          </Typography>
-          <Box
-            sx={{
-              height: 280,
-              borderRadius: 3,
-              bgcolor: "action.hover",
-              display: "grid",
-              placeItems: "center",
-            }}
-          >
-            <Typography variant="body2" color="text.secondary">
-              Hero image / chart / code preview placeholder
-            </Typography>
-          </Box>
-        </Stack>
-      </Paper>
-    </Stack>
-  );
+  return <MDXProjectPage slug={slug} language={language} />;
 }

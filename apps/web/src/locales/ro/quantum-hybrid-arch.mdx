@@ -1,0 +1,46 @@
+---
+title: Arhitectură Hibridă Cuantic–Clasică
+description: Note de cercetare, nuclee și simulatoare care explorează orchestrarea CPU+QPU, qRAM și canale de teleportare.
+tags: ["Cercetare", "Cuantic", "Sisteme"]
+image: "/src/assets/reac.svg"
+---
+
+import ProjectLayout, {
+  ProjectImage,
+  ProjectTag,
+} from "../../components/ProjectLayout";
+
+<ProjectTag>Cuantic</ProjectTag>
+<ProjectTag>Sisteme</ProjectTag>
+<ProjectTag>Cercetare</ProjectTag>
+
+## Prezentare generală
+
+Acest proiect explorează posibilitatea realizării unui sistem hibrid care combină puterea calculului clasic cu avantajele unice ale calculului cuantic.
+
+<ProjectImage
+  src="/src/assets/projects/quantum-hybrid-arch/diagram1.svg"
+  alt="Diagramă a arhitecturii hibride"
+/>
+
+## Detalii tehnice
+
+Arhitectura noastră se bazează pe următoarele componente cheie:
+
+- Interfață de comunicație cu latență redusă între CPU și QPU
+- Memorie cuantică pentru stocarea și manipularea qubiților
+- Scheduler specializat pentru alocarea optimă a sarcinilor
+
+export default ({ children }) => (
+  <ProjectLayout
+    frontmatter={{
+      title: "Arhitectură Hibridă Cuantic–Clasică",
+      description:
+        "Note de cercetare, nuclee și simulatoare care explorează orchestrarea CPU+QPU, qRAM și canale de teleportare.",
+      tags: ["Cercetare", "Cuantic", "Sisteme"],
+      image: "/src/assets/reac.svg",
+    }}
+  >
+    {children}
+  </ProjectLayout>
+);

@@ -13,6 +13,7 @@ import GitHubIcon from "@mui/icons-material/GitHub";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import logo from "/LogoEnhancedV2.png";
+import { Link as RouterLink } from "react-router-dom";
 
 import { useTranslation } from "react-i18next";
 
@@ -103,6 +104,14 @@ export default function Header({
               </Button>
               <Button href="#highlights" color="inherit" sx={chip}>
                 Highlights
+              </Button>
+              <Button
+                component={RouterLink}
+                to="/projects/quantum-hybrid-arch"
+                color="inherit"
+                sx={chip}
+              >
+                Projects
               </Button>
               <Button href="#pricing" color="inherit" sx={chip}>
                 Pricing
