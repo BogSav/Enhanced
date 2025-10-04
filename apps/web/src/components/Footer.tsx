@@ -1,17 +1,16 @@
+import EmailIcon from "@mui/icons-material/Email";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import XIcon from "@mui/icons-material/X";
 import {
   Box,
   Container,
   Divider,
   IconButton,
-  Link,
   Stack,
   Typography,
 } from "@mui/material";
-import EmailIcon from "@mui/icons-material/Email";
-import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import XIcon from "@mui/icons-material/X";
 
-export default function Footer() {
+export default function Footer(): React.ReactElement {
   return (
     <Box component="footer" id="contact" sx={{ mt: 6, py: 4 }}>
       <Divider sx={{ mb: 3 }} />

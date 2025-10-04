@@ -1,5 +1,3 @@
-import { useMemo, useState, useEffect, lazy, Suspense } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
 import {
   ThemeProvider,
   createTheme,
@@ -7,8 +5,11 @@ import {
   Container,
   Box,
 } from "@mui/material";
-import Header from "./components/Header";
+import { useMemo, useState, lazy, Suspense } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
+
 import Footer from "./components/Footer";
+import Header from "./components/Header";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 
@@ -18,15 +19,25 @@ export type PaletteMode = "light" | "dark";
 
 const THEME_KEY = "enhanced.theme";
 
-export default function App() {
-  const [mode, setMode] = useState<PaletteMode>("dark");
+function getInitialMode(): PaletteMode {
+  // Citim din localStorage direct în initializerul lazy al useState pentru a evita un efect suplimentar
+  if (typeof window !== "undefined") {
+    try {
+      const saved = localStorage.getItem(THEME_KEY) as PaletteMode | null;
+      if (saved === "light" || saved === "dark") {
+        return saved;
+      }
+    } catch {
+      // ignorăm erorile (ex: acces blocat la storage) și cădem pe fallback
+    }
+  }
+  return "dark";
+}
 
-  useEffect(() => {
-    const saved = localStorage.getItem(THEME_KEY) as PaletteMode | null;
-    if (saved === "light" || saved === "dark") setMode(saved);
-  }, []);
+export default function App(): React.ReactElement {
+  const [mode, setMode] = useState<PaletteMode>(() => getInitialMode());
 
-  const toggleMode = () => {
+  const toggleMode = (): void => {
     setMode((prev) => {
       const next = prev === "light" ? "dark" : "light";
       localStorage.setItem(THEME_KEY, next);
@@ -35,7 +46,7 @@ export default function App() {
   };
 
   const theme = useMemo(
-    () =>
+    (): import("@mui/material/styles").Theme =>
       createTheme({
         palette: {
           mode,

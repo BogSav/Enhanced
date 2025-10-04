@@ -1,3 +1,6 @@
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import LightModeIcon from "@mui/icons-material/LightMode";
 import {
   AppBar,
   Box,
@@ -9,13 +12,9 @@ import {
   Typography,
 } from "@mui/material";
 import { alpha, useTheme } from "@mui/material/styles";
-import GitHubIcon from "@mui/icons-material/GitHub";
-import LightModeIcon from "@mui/icons-material/LightMode";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
 import logo from "/LogoEnhancedV2.png";
-import { Link as RouterLink } from "react-router-dom";
-
 import { useTranslation } from "react-i18next";
+import { Link as RouterLink } from "react-router-dom";
 
 export default function Header({
   mode,
@@ -25,12 +24,12 @@ export default function Header({
   mode: "light" | "dark";
   onToggleMode: () => void;
   onLogoClick?: () => void;
-}) {
+}): React.ReactElement {
   const theme = useTheme();
   const { i18n } = useTranslation();
 
-  const toggleLanguage = () => {
-    i18n.changeLanguage(i18n.language === "en" ? "ro" : "en");
+  const toggleLanguage = (): void => {
+    void i18n.changeLanguage(i18n.language === "en" ? "ro" : "en");
   };
 
   const glass = {

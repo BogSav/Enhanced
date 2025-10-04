@@ -1,15 +1,17 @@
-import React, { Component, ErrorInfo, ReactNode } from "react";
 import { Box, Button, Typography } from "@mui/material";
+import { Component } from "react";
 
-interface Props {
+import type { ErrorInfo, ReactNode } from "react";
+
+type Props = {
   children: ReactNode;
   fallback?: ReactNode;
-}
+};
 
-interface State {
+type State = {
   hasError: boolean;
   error?: Error;
-}
+};
 
 class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
@@ -21,11 +23,11 @@ class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     console.error("Error in component:", error, errorInfo);
   }
 
-  render() {
+  render(): ReactNode {
     if (this.state.hasError) {
       if (this.props.fallback) {
         return this.props.fallback;
@@ -42,7 +44,9 @@ class ErrorBoundary extends Component<Props, State> {
           <Button
             variant="outlined"
             color="primary"
-            onClick={() => this.setState({ hasError: false })}
+            onClick={() => {
+              this.setState({ hasError: false });
+            }}
             sx={{ mt: 2 }}
           >
             Try again

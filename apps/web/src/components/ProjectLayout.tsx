@@ -1,6 +1,3 @@
-import { ReactNode } from "react";
-import { useTranslation } from "react-i18next";
-import { useParams, Link as RouterLink } from "react-router-dom";
 import {
   Box,
   Breadcrumbs,
@@ -10,6 +7,11 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { useParams, Link as RouterLink } from "react-router-dom";
+
+import type { ReactNode } from "react";
 
 type ProjectLayoutProps = {
   children: ReactNode;
@@ -22,7 +24,13 @@ type ProjectLayoutProps = {
 };
 
 // ProjectImage component
-export function ProjectImage({ src, alt }: { src: string; alt: string }) {
+export function ProjectImage({
+  src,
+  alt,
+}: {
+  src: string;
+  alt: string;
+}): React.ReactElement {
   return (
     <Box
       component="img"
@@ -41,7 +49,11 @@ export function ProjectImage({ src, alt }: { src: string; alt: string }) {
 }
 
 // ProjectTag component
-export function ProjectTag({ children }: { children: ReactNode }) {
+export function ProjectTag({
+  children,
+}: {
+  children: ReactNode;
+}): React.ReactElement {
   return (
     <Chip
       label={children}
@@ -60,7 +72,7 @@ export function ProjectTag({ children }: { children: ReactNode }) {
 export default function ProjectLayout({
   children,
   frontmatter,
-}: ProjectLayoutProps) {
+}: ProjectLayoutProps): React.ReactElement {
   const { i18n } = useTranslation();
   const { slug } = useParams();
 
@@ -112,7 +124,7 @@ export default function ProjectLayout({
           <Box mt={2}>
             <Link
               component={RouterLink}
-              to={`/projects/${slug}?lang=${
+              to={`/projects/${slug ?? ""}?lang=${
                 i18n.language === "en" ? "ro" : "en"
               }`}
             >

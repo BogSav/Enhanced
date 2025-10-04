@@ -3,14 +3,15 @@ import {
   Button,
   Chip,
   Container,
-  Grid,
   Paper,
   Stack,
   Typography,
 } from "@mui/material";
-import ProjectCard from "../components/ProjectCard";
-import type { Project } from "../components/ProjectCard";
 import { useTranslation } from "react-i18next";
+
+import ProjectCard from "../components/ProjectCard";
+
+import type { Project } from "../components/ProjectCard";
 
 const projects: Project[] = [
   {
@@ -43,7 +44,7 @@ const projects: Project[] = [
   },
 ];
 
-export default function Home() {
+export default function Home(): React.ReactElement {
   const { t } = useTranslation();
 
   return (
@@ -98,13 +99,23 @@ export default function Home() {
         <Typography variant="h4" sx={{ mb: 2, fontWeight: 800 }}>
           Featured Projects
         </Typography>
-        <Grid container spacing={2}>
+        <Box
+          sx={{
+            display: "grid",
+            gap: 2,
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "repeat(2, 1fr)",
+              md: "repeat(3, 1fr)",
+            },
+          }}
+        >
           {projects.map((p) => (
-            <Grid key={p.slug} item xs={12} sm={6} md={4}>
+            <Box key={p.slug}>
               <ProjectCard project={p} />
-            </Grid>
+            </Box>
           ))}
-        </Grid>
+        </Box>
       </Box>
 
       {/* CTA */}

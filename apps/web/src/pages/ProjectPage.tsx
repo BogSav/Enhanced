@@ -1,20 +1,19 @@
-import { useState, useEffect } from "react";
+import {
+  Box,
+  CircularProgress,
+  Container,
+  Link,
+  Typography,
+  Alert,
+} from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   useParams,
   useSearchParams,
   Link as RouterLink,
 } from "react-router-dom";
-import {
-  Box,
-  Breadcrumbs,
-  CircularProgress,
-  Container,
-  Link,
-  Stack,
-  Typography,
-  Alert,
-} from "@mui/material";
-import { useTranslation } from "react-i18next";
+
 import ErrorBoundary from "../components/ErrorBoundary";
 
 // Lista de proiecte disponibile cu importurile lor
@@ -34,14 +33,14 @@ const MDXProjectPage = ({
 }: {
   slug: string;
   language: string;
-}) => {
+}): React.ReactElement => {
   const [error, setError] = useState<string | null>(null);
   const [ProjectContent, setProjectContent] =
     useState<React.ComponentType | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadProject = async () => {
+    const loadProject = async (): Promise<void> => {
       try {
         setLoading(true);
         setError(null);
@@ -81,7 +80,7 @@ const MDXProjectPage = ({
       }
     };
 
-    loadProject();
+    void loadProject();
   }, [slug, language]);
 
   if (error) {
@@ -117,7 +116,7 @@ const MDXProjectPage = ({
   );
 };
 
-export default function ProjectPage() {
+export default function ProjectPage(): React.ReactElement {
   const { slug } = useParams<{ slug: string }>();
   const [searchParams] = useSearchParams();
   const { i18n } = useTranslation();

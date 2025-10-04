@@ -1,18 +1,20 @@
 import { MDXProvider } from "@mdx-js/react";
-import { ReactNode } from "react";
+
 import { ProjectImage, ProjectTag } from "./ProjectLayout";
+
+import type { ReactNode } from "react";
 
 const components = {
   ProjectImage,
   ProjectTag,
 };
 
-interface MDXProviderWrapperProps {
+type MDXProviderWrapperProps = {
   children: ReactNode;
-}
+};
 
 export default function MDXProviderWrapper({
   children,
-}: MDXProviderWrapperProps) {
+}: MDXProviderWrapperProps): React.ReactElement {
   return <MDXProvider components={components}>{children}</MDXProvider>;
 }

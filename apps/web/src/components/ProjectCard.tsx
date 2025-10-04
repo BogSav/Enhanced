@@ -16,7 +16,11 @@ export type Project = {
   tags?: string[];
 };
 
-export default function ProjectCard({ project }: { project: Project }) {
+export default function ProjectCard({
+  project,
+}: {
+  project: Project;
+}): React.ReactElement {
   const navigate = useNavigate();
   return (
     <Card
