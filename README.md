@@ -18,15 +18,29 @@ The repository follows a workspace-style layout to keep future services isolated
 └─ (Dockerfile[s])        One per service
 ```
 
-Inside `apps/web`, the recommended (or emerging) structure is:
+Inside `apps/web`, the current structure is:
 
-- `src/components` reusable UI elements
-- `src/pages` route-level views
-- `src/routes` routing configuration
-- `src/i18n` translation setup and locale resources
-- `src/theme` Material UI theme definition
-- `src/content` MDX-based posts or project descriptions
-- `src/lib` utilities and helpers
+**Source files (`src/`)**:
+
+- `components/` — reusable UI elements (Header, Footer, ProjectCard, MDXProvider, ErrorBoundary)
+- `pages/` — route-level views (Home, ProjectPage, NotFound)
+- `locales/` — translation resources (en/, ro/ with common.json + MDX content)
+- `assets/` — static resources (images, icons)
+- `App.tsx` — root component with routing logic
+- `main.tsx` — React app entry point and DOM mounting
+- `i18n.ts` — i18next initialization and configuration
+- `index.css` / `App.css` — global and component-level styles
+- `vite-env.d.ts` — ambient type declarations for Vite + MDX
+
+**Configuration files**:
+
+- `package.json` — dependencies, scripts, Node.js engine requirements
+- `vite.config.ts` — build tool configuration (React, MDX, dev server)
+- `tsconfig.json` / `tsconfig.app.json` / `tsconfig.node.json` — TypeScript compilation settings
+- `eslint.config.js` — linting rules and code quality enforcement
+- `index.html` — HTML shell and app entry point
+- `Dockerfile` / `Dockerfile.dev` — containerization for prod/dev environments
+- `nginx.conf` / `nginx.app.conf` — web server configuration for production
 
 This separation keeps presentation, routing, content, and configuration understandable and allows an eventual API service to plug in without restructuring the frontend.
 
@@ -48,50 +62,130 @@ This separation keeps presentation, routing, content, and configuration understa
 
 ## Development & Commands
 
-For local development using containers, start the live-reloading environment with:
+The `docker-compose.yml` defines two profiles:
+
+- `dev` → live reload / HMR (`web-dev`) plus on‑demand lint helpers (`web-lint`, `web-lint-fix`)
+- `prod` → production image (`web`) served via Nginx
+
+### 1. Start the development environment
+
+Start only the live‑reloading frontend (recommended – avoids auto‑starting the lint containers):
+
+```
+docker compose --profile dev up web-dev
+```
+
+If you really want every service in the `dev` profile (will also build images for `web-lint` and `web-lint-fix`):
 
 ```
 docker compose --profile dev up
 ```
 
-This runs the Vite dev server, enabling hot module replacement.
+The `web-dev` service mounts `src`, `public`, and `index.html` as read‑only plus `package.json` / `package-lock.json` read‑write so dependency changes persist on the host. It exposes Vite on http://localhost:5173.
 
-For a production-style build and runtime:
+### 2. Lint tasks (on demand)
+
+Run lint (read‑only, reports issues):
 
 ```
-docker compose --profile prod up --build
+docker compose --profile dev run --rm web-lint
 ```
 
-This triggers the TypeScript project build and Vite’s production bundling prior to serving optimized assets.
+Run lint with auto‑fix (writes changes back to your working tree):
 
-To stop services:
+```
+docker compose --profile dev run --rm web-lint-fix
+```
+
+### 3. Production build + serve locally
+
+Build (if needed) and start the optimized production image:
+
+```
+docker compose --profile prod up --build web
+```
+
+Subsequent restarts without forcing a rebuild:
+
+```
+docker compose --profile prod up web
+```
+
+The production image performs the TypeScript project build (`tsc -b`) and Vite production bundling inside the container, then Nginx serves the static assets on http://localhost (port 80).
+
+### 4. Executing package scripts inside the dev container
+
+For an interactive shell (PowerShell users: the container uses sh):
+
+```
+docker compose --profile dev run --rm web-dev sh -lc "npm run build"
+```
+
+Common scripts (can also be run with `exec` if the container is already up):
+
+```
+docker compose exec web-dev npm run dev
+docker compose exec web-dev npm run build
+docker compose exec web-dev npm run preview
+docker compose exec web-dev npm run lint
+```
+
+`npm run build` first type‑checks (`tsc -b`) then produces the optimized bundle. `npm run preview` serves an already‑built bundle for a quick production sanity check (different from the Nginx container approach above).
+
+### 5. Stopping & cleaning
+
+Stop and remove running containers:
 
 ```
 docker compose down
 ```
 
-To force a clean image rebuild:
+Rebuild images without cache (only the services whose Dockerfiles changed are rebuilt unless you specify one explicitly):
+
+```
+docker compose build --no-cache web-dev
+```
+
+Or all services:
 
 ```
 docker compose build --no-cache
 ```
 
-To remove local images associated with the compose stack (fresh rebuild scenario):
+Remove containers plus locally built images (fresh start scenario):
 
 ```
 docker compose down --rmi local
 ```
 
-Inside the running web container (or a one-off run) you can execute:
+Remove everything (containers, networks, volumes – DATA LOSS for anonymous volumes):
 
 ```
-npm run dev
-npm run build
-npm run preview
-npm run lint
+docker compose down --volumes --remove-orphans
 ```
 
-The build script first performs a TypeScript project build (`tsc -b`) and then produces the production bundle via Vite. The preview script serves the already-built assets.
+### 6. One‑off dependency install / audit inside dev profile
+
+If you added or updated dependencies directly in `package.json`, sync the lock file deterministically:
+
+```
+docker compose --profile dev run --rm web-dev npm install
+```
+
+To run an ad‑hoc script (example: check outdated packages):
+
+```
+docker compose --profile dev run --rm web-dev npx npm-check-updates
+```
+
+### 7. Troubleshooting tips
+
+- Port 5173 already in use → stop previous dev session (`docker compose down`) or change Vite port via env `VITE_PORT` and map it in `docker-compose.yml`.
+- Changes not reflecting → ensure the file is within a mounted path (`src`, `public`, `index.html`). Non‑mounted additions require rebuilding or adding a new volume mapping.
+- Lint auto‑fix didn’t persist → confirm you used `web-lint-fix` (the read‑only lint service cannot write changes) and that Git shows modifications.
+- Permission issues on Windows → Git line‑ending conversions can affect container caching; set `core.autocrlf=input` for consistent LF inside containers if needed.
+
+---
 
 ## Updating Dependencies
 
