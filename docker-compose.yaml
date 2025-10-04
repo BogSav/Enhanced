@@ -1,5 +1,3 @@
-version: "3.9"
-
 name: enhanced
 
 services:
@@ -20,6 +18,9 @@ services:
       - ./apps/web/public:/app/public:ro
       - ./apps/web/src:/app/src:ro
       - ./apps/web/index.html:/app/index.html:ro
+      # adaugă manifest + lockfile cu rw
+      - ./apps/web/package.json:/app/package.json
+      - ./apps/web/package-lock.json:/app/package-lock.json
     ports:
       - "5173:5173"
 

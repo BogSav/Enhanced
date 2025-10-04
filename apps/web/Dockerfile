@@ -2,7 +2,7 @@
 FROM node:24-alpine AS build
 WORKDIR /app
 COPY package*.json ./
-RUN npm update && npm ci
+RUN npm ci
 COPY . .
 RUN npm run build   
     # the upper command will build the project in => /app/dist
