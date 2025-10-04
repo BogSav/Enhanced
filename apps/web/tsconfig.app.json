@@ -1,27 +1,61 @@
 {
+  // -------------------------------------------------------------------------
+  // TypeScript Configuration – Application (runtime/browser bundle)
+  // -------------------------------------------------------------------------
+  // Goals:
+  //   - Strict, modern ECMAScript targeting (ES2022) with DOM lib support.
+  //   - Leverage Vite's ESM + fast transform pipeline (bundler moduleResolution).
+  //   - No emit (build pipeline handled by Vite; tsc used for type-check only).
+  //   - Enforce unused symbol hygiene and guard against accidental side effects.
+  //   - Optimize for tree-shakeable, explicit module syntax.
+  //
+  // Notes:
+  //   - Separate tsconfig for tooling (see tsconfig.node.json) isolates Node-only types.
+  //   - skipLibCheck speeds up type checking; can be disabled in CI if deeper validation needed.
+  //   - verbatimModuleSyntax + moduleResolution=bundler align with modern JS/ESM and keep only
+  //     the exact import/export forms (helps avoid synthesis surprises).
+  //   - erasableSyntaxOnly allows elimination of purely type-level constructs during transpile.
+  //   - allowImportingTsExtensions set to true so explicit .ts/.tsx imports are permitted if desired.
+  //   - Consider adding "paths" + a baseUrl for import aliases when structure grows.
+  // -------------------------------------------------------------------------
   "compilerOptions": {
+    // Build info cache location (used by tsc -b prebuild step for faster incremental checks)
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+
+    // Language & environment targets
     "target": "ES2022",
-    "useDefineForClassFields": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "skipLibCheck": true,
+    "useDefineForClassFields": true, // Align class field semantics with spec
+    "module": "ESNext", // ESM output expectation (interpreted by Vite)
+    "skipLibCheck": true, // Faster CI/local dev; set false if diagnosing lib types
 
-    /* Bundler mode */
-    "moduleResolution": "bundler",
+    /* Bundler / Module semantics */
+    "moduleResolution": "bundler", // Modern resolution (TypeScript >=5.0) optimized for bundlers
     "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
-    "moduleDetection": "force",
-    "noEmit": true,
-    "jsx": "react-jsx",
+    "verbatimModuleSyntax": true, // Preserve import/export form exactly (no synthetic defaults)
+    "moduleDetection": "force", // Treat all files as modules (avoids global script fallbacks)
+    "noEmit": true, // tsc only performs type checking
+    "jsx": "react-jsx", // React 17+ JSX transform
 
-    /* Linting */
+    /* Strictness / Quality Gates */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "erasableSyntaxOnly": true,
+    "erasableSyntaxOnly": true, // Enable erasure of types-only constructs (TS 5.4+)
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true // Surfaces imports that only have side-effects unexpectedly
+
+    // Potential future options (uncomment as needed):
+    // "exactOptionalPropertyTypes": true,
+    // "useUnknownInCatchVariables": true,
+    // "importsNotUsedAsValues": "error",
+    // "resolvePackageJsonExports": true,
+    // "resolvePackageJsonImports": true,
+    // "allowArbitraryExtensions": false,
+    // "paths": { "@/*": ["src/*"] },
+    // "baseUrl": "."
   },
   "include": ["src"]
+  // Exclusions are implicit (node_modules, etc.). Add an explicit "exclude" if custom build assets appear.
+  // "exclude": ["dist", "coverage"]
 }

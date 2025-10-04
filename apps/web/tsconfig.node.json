@@ -1,4 +1,18 @@
 {
+  // -------------------------------------------------------------------------
+  // TypeScript Configuration – Tooling / Node context
+  // -------------------------------------------------------------------------
+  // Purpose:
+  //   Isolates type checking for build & configuration scripts (e.g. vite.config.ts)
+  //   from the browser-focused application settings in tsconfig.app.json.
+  //   Prevents Node-only globals (process, Buffer) from leaking into client code.
+  //
+  // Differences vs tsconfig.app.json:
+  //   - ES2023 target (aligns with modern Node runtime features).
+  //   - Includes only Node libs (no DOM) for clarity.
+  //   - Adds Node type declarations via "types": ["node"].
+  //   - Narrow include list (config + ambient decls only).
+  // -------------------------------------------------------------------------
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
     "target": "ES2023",
@@ -6,20 +20,28 @@
     "module": "ESNext",
     "skipLibCheck": true,
 
-    /* Bundler mode */
+    /* Bundler alignment */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
     "noEmit": true,
 
-    /* Linting */
+    /* Strictness */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    "types": ["node"]
+
+    // Potential future enhancements (uncomment as needed):
+    // "exactOptionalPropertyTypes": true,
+    // "useUnknownInCatchVariables": true,
+    // "resolvePackageJsonExports": true,
+    // "resolvePackageJsonImports": true
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts", "types/**/*.d.ts"]
 }

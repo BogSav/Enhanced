@@ -1,10 +1,39 @@
+# -----------------------------------------------------------------------------
+# Development Dockerfile for the Enhanced web app
+#
+# Purpose:
+#   Provides a lightweight, reproducible environment for local development with
+#   Vite's dev server (HMR). This image includes devDependencies and tooling
+#   necessary for iterative work (lint, type checking, fast refresh).
+#
+# Key differences vs production Dockerfile:
+#   - Single stage (no multi‑stage optimization) for simplicity / speed.
+#   - Keeps node_modules inside the container; host mounts (defined in
+#     docker-compose) overlay source files without polluting your machine.
+#   - Exposes port 5173 for Vite; host mapping handled by docker-compose.
+#   - Runs `npm run dev` with `--host 0.0.0.0` to allow external access from
+#     the host network (Container -> Host browser).
+#
+# Potential future improvements:
+#   - Add ARG for enabling profiling builds.
+#   - Add a non-root user for stricter security (less critical for ephemeral dev).
+#   - Optionally separate lint / type-check stages if CI reuses this file.
+# -----------------------------------------------------------------------------
+
 FROM node:24-alpine
 WORKDIR /app
 
+# Copy only dependency manifests first to leverage Docker layer caching.
 COPY package*.json ./
+
+# Install exact dependencies according to the lockfile.
 RUN npm ci
+
+# Copy the rest of the project (sources, configs, assets, scripts).
 COPY . .
 
+# Vite dev server default port. Change with --port flag or env if required.
 EXPOSE 5173
 
+# Start the development server with host binding for container networking.
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

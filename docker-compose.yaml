@@ -1,30 +1,105 @@
 name: enhanced
 
+# -----------------------------------------------------------------------------
+# Docker Compose stack for the "Enhanced" project.
+#
+# Profiles:
+#   dev  - Live development (Vite + HMR) and ad‑hoc lint helpers.
+#   prod - Optimized production image served by Nginx.
+#
+# Usage examples:
+#   Start only dev app:        docker compose --profile dev up web-dev
+#   Run lint (read only):      docker compose --profile dev run --rm web-lint
+#   Run lint with fixes:       docker compose --profile dev run --rm web-lint-fix
+#   Start production image:    docker compose --profile prod up --build web
+#   Tear everything down:      docker compose down
+#
+# Rationale notes are included inline so future services can copy patterns.
+# -----------------------------------------------------------------------------
+
 services:
-  # -------- DEV PROFILE --------
+  # ---------------------------------------------------------------------------
+  # web-dev (development frontend)
+  # - Uses Dockerfile.dev (lighter, includes dev dependencies & Vite tooling)
+  # - Mounts source + public assets as read-only to prevent accidental writes
+  #   from inside the container (editor on host remains the source of truth)
+  # - package.json + package-lock.json are mounted read–write so that
+  #   dependency adds (npm install <pkg>) persist to the host.
+  # - Environment variables prefixed with VITE_ are exposed to the client
+  #   bundle by Vite (safelist); non‑prefixed vars remain server-only.
+  # - CHOKIDAR_* tweak file watching reliability on some host filesystems
+  #   (notably Docker Desktop on Windows / WSL2 or network mounts).
+  # ---------------------------------------------------------------------------
   web-dev:
     profiles: ["dev"]
     build:
       context: ./apps/web
       dockerfile: Dockerfile.dev
     environment:
-      # variabile vizibile în Vite trebuie să înceapă cu VITE_
+      # Public base URL for future API calls (currently placeholder - not in use)
       VITE_API_BASE_URL: "http://localhost:8080"
+      # Force polling file watcher for stability in containerized dev
       CHOKIDAR_USEPOLLING: "1"
+      # Polling interval (ms) – balanced for responsiveness vs CPU
       CHOKIDAR_INTERVAL: "100"
     env_file:
-      - ./apps/web/.env.local
+      - ./apps/web/.env.local # Optional developer-specific overrides - if needed
     volumes:
-      - ./apps/web/public:/app/public:ro
-      - ./apps/web/src:/app/src:ro
-      - ./apps/web/index.html:/app/index.html:ro
-      # adaugă manifest + lockfile cu rw
-      - ./apps/web/package.json:/app/package.json
-      - ./apps/web/package-lock.json:/app/package-lock.json
+      - ./apps/web/public:/app/public:ro # Static assets (images, favicon, etc.)
+      - ./apps/web/src:/app/src:ro # Application source (TypeScript/TSX)
+      - ./apps/web/index.html:/app/index.html:ro # Vite HTML entrypoint
+      - ./apps/web/package.json:/app/package.json # RW for dependency changes
+      - ./apps/web/package-lock.json:/app/package-lock.json # Preserve lock determinism
     ports:
-      - "5173:5173"
+      - "5173:5173" # Vite dev server (HMR)
 
-  # -------- PROD PROFILE --------
+  # ---------------------------------------------------------------------------
+  # web-lint (read-only lint pass)
+  # - Runs `npm run lint` and exits with proper status.
+  # - All mounted directories are read-only to guarantee it cannot mutate
+  #   sources (useful for CI pipelines or quick local verification).
+  # ---------------------------------------------------------------------------
+  web-lint:
+    profiles: ["dev"]
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile.dev
+    command: ["npm", "run", "lint"]
+    volumes:
+      - ./apps/web/src:/app/src:ro
+      - ./apps/web/eslint.config.js:/app/eslint.config.js:ro
+      - ./apps/web/package.json:/app/package.json:ro
+      - ./apps/web/package-lock.json:/app/package-lock.json:ro
+
+  # ---------------------------------------------------------------------------
+  # web-lint-fix (auto-fix capable lint pass)
+  # - Same image as web-lint but allows write access to /src so ESLint can
+  #   apply safe autofixes (`--fix`) - you might still need to review changes
+  #   and perform other manual adjustments.
+  # - package files remain read-only to avoid unintended dependency edits.
+  # - Use selectively; review git diff after running to confirm changes.
+  # ---------------------------------------------------------------------------
+  web-lint-fix:
+    profiles: ["dev"]
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile.dev
+    command: ["npm", "run", "lint", "--", "--fix"]
+    volumes:
+      - ./apps/web/src:/app/src
+      - ./apps/web/eslint.config.js:/app/eslint.config.js
+      - ./apps/web/package.json:/app/package.json:ro
+      - ./apps/web/package-lock.json:/app/package-lock.json:ro
+
+  # ---------------------------------------------------------------------------
+  # web (production image)
+  # - Uses Dockerfile (multi-stage) producing an optimized, immutable build
+  #   served by Nginx. No source code mounts – ensures parity with deployment.
+  # - Port 80 exposed locally. Adjust mapping if 80 is occupied (e.g. 8080:80).
+  # - Marked restart unless-stopped for resilience when run in longer sessions.
+  # - Extend later with healthchecks, static caching headers, reverse proxying
+  #   to backend services once they are introduced.
+  # ---------------------------------------------------------------------------
   web:
     profiles: ["prod"]
     build:
@@ -33,3 +108,15 @@ services:
     ports:
       - "80:80"
     restart: unless-stopped
+
+  # Future service placeholders (examples):
+  # api-gateway:
+  #   profiles: ["dev", "prod"]
+  #   build: { context: ./apps/api, dockerfile: Dockerfile }
+  #   environment:
+  #     PORT: 8080
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     - web (if reverse proxy chain required)
+  #   # Add volumes / healthcheck / command as the backend is implemented.

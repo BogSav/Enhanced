@@ -1,13 +1,35 @@
-<!doctype html>
+<!DOCTYPE html>
+<!--
+  Enhanced – Application HTML Shell
+  ---------------------------------------------------------------------------
+  This file is the single HTML entrypoint served by Vite in development and
+  copied (post-build) into the production bundle. React hydrates/mounts inside
+  the #root div. Everything else (routing, content, dynamic head elements) is
+  managed at runtime by the React application.
+
+  Key elements:
+    - <link rel="icon">: References a PNG; swap to SVG or multi-size set if needed.
+    - <meta viewport>: Ensures responsive scaling across devices.
+    - <script type="module">: Vite injects ESM loader + HMR client in dev; in
+      production the path is rewritten to hashed assets.
+
+  If you need to inject additional metadata (OpenGraph, theme-color, preloads),
+  consider a lightweight head manager (React Helmet / custom component) or
+  server-side/edge rendering in future evolutions of the platform.
+-->
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/LogoEnhancedV2.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>Enhanced</title>
   </head>
   <body>
+    <!-- React mounts here -->
     <div id="root"></div>
+
+    <!-- Entry module bootstraps React app (Vite replaces/imports dependencies) -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
