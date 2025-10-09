@@ -46,52 +46,44 @@ This separation keeps presentation, routing, content, and configuration understa
 
 ## Technologies
 
-- **React 19**: Core UI library for the single‑page application; functional components + hooks, React Router integration for client routing, future‑ready for streaming/concurrent features.
-- **TypeScript**: Strict typing across the codebase; incremental project build (`tsc -b`) runs before production bundling to surface type errors early.
+For this project I used the following technologies:
+
+- **React 19**: Core UI library for the single‑page application; functional components + hooks, **React Router** integration for client routing, future‑ready for streaming/concurrent features.
+- **TypeScript**: Used as main development lannguage; offers incremental project build (`tsc -b`) that runs before production bundling to surface type errors early.
 - **Vite**: Development server with fast cold starts and HMR; production bundler producing optimized ESM output; `@vitejs/plugin-react` enables fast refresh + JSX transform.
 - **Material UI (v7) + Icons**: Design system, accessible component primitives, theme customization (palette/typography/spacing), icon set via `@mui/icons-material` for consistent visual language.
-- **Emotion**: Styling engine used implicitly by Material UI and explicitly for custom styled components and `sx` shortcuts; enables theme token reuse.
 - **i18next** (browser language detector + HTTP backend): Centralized translation management; auto‑detects user locale; backend adapter pre‑configured for future server‑served resource loading.
 - **MDX Toolchain**: `@mdx-js/react` plus remark/rehype plugins (frontmatter, GFM, syntax highlighting) to author hybrid content (blog posts, project pages) with metadata (title, date, tags).
 - **ESLint + typescript-eslint**: Linting pipeline enforcing consistency, best practices, and preventing common React/TypeScript pitfalls (`npm run lint`).
-- **Node.js (>=18)**: Execution environment for the toolchain (Vite, TypeScript, ESLint) and base for container images; leverages modern language features (ES modules, fetch API).
-- **Docker**: Containerizes the frontend for parity between local and deployed environments; image can be promoted without rebuild drift.
-- **Docker Compose**: Orchestrates development (live reload mount) vs production (immutable build) profiles; simplifies multi‑service expansion (future API).
+- **Docker and Compose**: Containerizes the frontend for parity between local and deployed environments; image can be promoted without rebuild drift. Also it orchestrates development (live reload mount) vs production (immutable build) profiles.
 - **Nginx** (production testing / proxy layer): Serves the built static assets and can act as a reverse proxy entry point once backend services are introduced (planned integration).
-- **npm + npm-check-updates**: Package management and scripted dependency upgrading; lockfile ensures deterministic installs.
 
 ## Development & Commands
 
 The `docker-compose.yml` defines two profiles:
 
-- `dev` → live reload / HMR (`web-dev`) plus on‑demand lint helpers (`web-lint`, `web-lint-fix`)
-- `prod` → production image (`web`) served via Nginx
+- `dev` → live reload / HMR (`web-dev`) plus on‑demand lint helpers (`web-lint`, `web-lint-fix`) - available at `localhost:5173`
+- `prod` → production image (`web`) served via Nginx - available at `localhost:80`
 
 ### 1. Start the development environment
 
-Start only the live‑reloading frontend (recommended – avoids auto‑starting the lint containers):
+- Start only the live‑reloading frontend (recommended – avoids auto‑starting the lint containers):
 
 ```
 docker compose --profile dev up web-dev
-```
-
-If you really want every service in the `dev` profile (will also build images for `web-lint` and `web-lint-fix`):
-
-```
-docker compose --profile dev up
 ```
 
 The `web-dev` service mounts `src`, `public`, and `index.html` as read‑only plus `package.json` / `package-lock.json` read‑write so dependency changes persist on the host. It exposes Vite on http://localhost:5173.
 
 ### 2. Lint tasks (on demand)
 
-Run lint (read‑only, reports issues):
+- Run lint (read‑only, reports issues):
 
 ```
 docker compose --profile dev run --rm web-lint
 ```
 
-Run lint with auto‑fix (writes changes back to your working tree):
+- Run lint with auto‑fix (writes changes back to your working tree):
 
 ```
 docker compose --profile dev run --rm web-lint-fix
@@ -99,115 +91,22 @@ docker compose --profile dev run --rm web-lint-fix
 
 ### 3. Production build + serve locally
 
-Build (if needed) and start the optimized production image:
+- Build (if needed) and start the optimized production image:
 
 ```
 docker compose --profile prod up --build web
 ```
 
-Subsequent restarts without forcing a rebuild:
+The production image performs the TypeScript project build (`tsc -b`) and Vite production bundling inside the container, then Nginx serves the static assets on http://localhost:80.
 
-```
-docker compose --profile prod up web
-```
-
-The production image performs the TypeScript project build (`tsc -b`) and Vite production bundling inside the container, then Nginx serves the static assets on http://localhost (port 80).
-
-### 4. Executing package scripts inside the dev container
-
-For an interactive shell (PowerShell users: the container uses sh):
-
-```
-docker compose --profile dev run --rm web-dev sh -lc "npm run build"
-```
-
-Common scripts (can also be run with `exec` if the container is already up):
-
-```
-docker compose exec web-dev npm run dev
-docker compose exec web-dev npm run build
-docker compose exec web-dev npm run preview
-docker compose exec web-dev npm run lint
-```
-
-`npm run build` first type‑checks (`tsc -b`) then produces the optimized bundle. `npm run preview` serves an already‑built bundle for a quick production sanity check (different from the Nginx container approach above).
-
-### 5. Stopping & cleaning
-
-Stop and remove running containers:
-
-```
-docker compose down
-```
-
-Rebuild images without cache (only the services whose Dockerfiles changed are rebuilt unless you specify one explicitly):
-
-```
-docker compose build --no-cache web-dev
-```
-
-Or all services:
-
-```
-docker compose build --no-cache
-```
-
-Remove containers plus locally built images (fresh start scenario):
-
-```
-docker compose down --rmi local
-```
-
-Remove everything (containers, networks, volumes – DATA LOSS for anonymous volumes):
-
-```
-docker compose down --volumes --remove-orphans
-```
-
-### 6. One‑off dependency install / audit inside dev profile
-
-If you added or updated dependencies directly in `package.json`, sync the lock file deterministically:
-
-```
-docker compose --profile dev run --rm web-dev npm install
-```
-
-To run an ad‑hoc script (example: check outdated packages):
-
-```
-docker compose --profile dev run --rm web-dev npx npm-check-updates
-```
-
-### 7. Troubleshooting tips
+### 4. Troubleshooting tips
 
 - Port 5173 already in use → stop previous dev session (`docker compose down`) or change Vite port via env `VITE_PORT` and map it in `docker-compose.yml`.
 - Changes not reflecting → ensure the file is within a mounted path (`src`, `public`, `index.html`). Non‑mounted additions require rebuilding or adding a new volume mapping.
 - Lint auto‑fix didn’t persist → confirm you used `web-lint-fix` (the read‑only lint service cannot write changes) and that Git shows modifications.
 - Permission issues on Windows → Git line‑ending conversions can affect container caching; set `core.autocrlf=input` for consistent LF inside containers if needed.
 
----
-
-## Updating Dependencies
-
-A single command can update npm itself and bump all dependencies to their latest versions (including potential breaking changes). Run this in a one-off dev container:
-
-```
-docker compose --profile dev run --rm web-dev sh -lc "npm install -g npm@latest && npm outdated || true && npx npm-check-updates -u && npm install && npm audit fix || true"
-```
-
-Afterwards verify integrity:
-
-```
-docker compose --profile dev run --rm web-dev npm run build
-```
-
-If stable:
-
-```
-docker compose --profile prod up --build
-```
-
-# Roadmap & Future Work
+# Future Work
 
 Enhanced will evolve from a static portfolio into a hosting platform for a family of “Enhanced” web projects. Each larger project will be delivered as an independently deployable microservice (API service, background worker, scheduled job, edge/SSR function, or standalone static UI). The current web app becomes the aggregation shell: global navigation, authentication boundary, user preferences, documentation, marketing, and consolidated project status dashboards.
 
@@ -237,7 +136,7 @@ Approach selection is pragmatic: small static experiment → S3 + CDN; interacti
 
 # Contributing & Branch Strategy
 
-There are three main long‑lived branches: trunk, master, and the release branch.
+There are three main long‑lived branches: **trunk**, **master**, and the **release** branch.
 
 - **trunk** is the experimental stream. Unstable, partially implemented, or breaking refactors land here first. It may be in a non‑functional state at any time; its purpose is velocity and exploration.
 
