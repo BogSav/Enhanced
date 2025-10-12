@@ -8,44 +8,40 @@ import {
   Typography,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { useMemo } from "react";
 
 import ProjectCard from "../components/ProjectCard";
 
-import type { Project } from "../components/ProjectCard";
+import type { ProjectMetadata } from "../components/ProjectCard";
 
-const projects: Project[] = [
-  {
-    slug: "quantum-hybrid-arch",
-    title: "Hybrid Quantum–Classical Architecture",
-    description:
-      "Research notes, kernels & simulators exploring CPU+QPU orchestration, qRAM, and teleportation channels.",
-    tags: ["Research", "Quantum", "Systems"],
-  },
-  {
-    slug: "enhanced-ai-platform",
-    title: "Enhanced AI Platform",
-    description:
-      "Containerized microservices for LLM inference, routing, and multi‑tenant chat with audit trails.",
-    tags: ["AI", "Docker", "TypeScript"],
-  },
-  {
-    slug: "cnc-linking",
-    title: "CNC Linking Algorithms",
-    description:
-      "Advanced toolpath linking, arc trimming, and lead optimization for high‑speed machining.",
-    tags: ["C++", "Geometry", "Manufacturing"],
-  },
-  {
-    slug: "unconventional-research",
-    title: "Unconventional Research Blog",
-    description:
-      "Wild hypotheses, careful reasoning, and playful experiments to stretch imagination.",
-    tags: ["Writing", "Science"],
-  },
-];
+// Dynamically load all MDX files from locales folders
+const enModules = import.meta.glob("../locales/en/*.mdx", { eager: true });
+const roModules = import.meta.glob("../locales/ro/*.mdx", { eager: true });
 
 export default function Home(): React.ReactElement {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  // Process the imported MDX modules to extract projects metadata
+  const projects: ProjectMetadata[] = useMemo(() => {
+    const modules = i18n.language === "ro" ? roModules : enModules;
+
+    return Object.entries(modules).map(([path, module]) => {
+      // Extract slug from the file path
+      const slug = path.split("/").pop()?.replace(".mdx", "") || "";
+
+      // Extract frontmatter metadata from the module
+      const frontmatter = (module as any).frontmatter;
+
+      // Create the project metadata object based on the frontmatter data and slug
+      return {
+        slug,
+        title: frontmatter.title,
+        description: frontmatter.description,
+        tags: frontmatter.tags,
+        status: frontmatter.status,
+      };
+    });
+  }, [i18n.language]);
 
   return (
     <Stack spacing={6}>
@@ -70,24 +66,20 @@ export default function Home(): React.ReactElement {
               sx={{ alignSelf: "flex-start" }}
             />
             <Typography variant="h2">
-              Enhanced — building the future of{" "}
-              <Box component="span" sx={{ color: "primary.main" }}>
-                AI
-              </Box>{" "}
-              ×{" "}
               <Box component="span" sx={{ color: "secondary.main" }}>
-                Quantum
-              </Box>
+                Enhanced
+              </Box>{" "}
+              - {t("home.title")}
             </Typography>
             <Typography variant="h6" color="text.secondary" maxWidth={800}>
-              {t("hero.subtitle")}
+              {t("home.subtitle")}
             </Typography>
             <Stack direction="row" spacing={2} sx={{ pt: 1 }}>
               <Button size="large" variant="contained" href="#projects">
-                {t("hero.explore")}
+                {t("home.explore")}
               </Button>
               <Button size="large" variant="outlined" href="#contact">
-                {t("cta.contact")}
+                {t("home.contact")}
               </Button>
             </Stack>
           </Stack>
@@ -97,7 +89,7 @@ export default function Home(): React.ReactElement {
       {/* Projects */}
       <Box id="projects">
         <Typography variant="h4" sx={{ mb: 2, fontWeight: 800 }}>
-          Featured Projects
+          {t("home.proiecte")}
         </Typography>
         <Box
           sx={{
@@ -112,7 +104,7 @@ export default function Home(): React.ReactElement {
         >
           {projects.map((p) => (
             <Box key={p.slug}>
-              <ProjectCard project={p} />
+              <ProjectCard projectMetadata={p} />
             </Box>
           ))}
         </Box>
@@ -123,15 +115,18 @@ export default function Home(): React.ReactElement {
         elevation={0}
         sx={{ p: { xs: 3, md: 5 }, borderRadius: 4, textAlign: "center" }}
       >
-        <Typography variant="h5" sx={{ mb: 2, fontWeight: 700 }}>
-          Open for collaborations & interesting problems.
+        <Typography
+          variant="h5"
+          sx={{ mb: 2, fontWeight: 700, whiteSpace: "pre-line" }}
+        >
+          {t("home.colaborare")}
         </Typography>
         <Button
           size="large"
           variant="contained"
-          href="mailto:hello@enhanced.com"
+          href="mailto:bogdansava59@yahoo.com"
         >
-          Email me
+          {t("home.email")}
         </Button>
       </Paper>
     </Stack>

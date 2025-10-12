@@ -8,24 +8,13 @@ import {
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  useParams,
-  useSearchParams,
-  Link as RouterLink,
-} from "react-router-dom";
+import { useParams, Link as RouterLink } from "react-router-dom";
 
 import ErrorBoundary from "../components/ErrorBoundary";
 
-// Lista de proiecte disponibile cu importurile lor
-const availableProjects = {
-  "quantum-hybrid-arch": {
-    en: () => import("../locales/en/quantum-hybrid-arch.mdx"),
-    ro: () => import("../locales/ro/quantum-hybrid-arch.mdx"),
-  },
-  // Poți adăuga alte proiecte aici
-};
-
-type AvailableProjectKeys = keyof typeof availableProjects;
+// Dynamic imports for all MDX files
+const enModules = import.meta.glob("../locales/en/*.mdx");
+const roModules = import.meta.glob("../locales/ro/*.mdx");
 
 const MDXProjectPage = ({
   slug,
@@ -45,28 +34,22 @@ const MDXProjectPage = ({
         setLoading(true);
         setError(null);
 
-        // Verifică dacă proiectul există
-        if (!(slug in availableProjects)) {
+        // Select the appropriate modules based on language
+        const modules = language.startsWith("ro") ? roModules : enModules;
+        const langFolder = language.startsWith("ro") ? "ro" : "en";
+        const path = `../locales/${langFolder}/${slug}.mdx`;
+
+        // Check if the module exists
+        const importer = modules[path];
+        if (!importer) {
           setError(`Project "${slug}" not found`);
           setLoading(false);
           return;
         }
 
-        const project = availableProjects[slug as AvailableProjectKeys];
-        const languageKey = language as keyof typeof project;
-
-        // Verifică dacă limba există pentru proiect
-        if (!(languageKey in project)) {
-          setError(
-            `Language "${language}" not available for project "${slug}"`
-          );
-          setLoading(false);
-          return;
-        }
-
-        // Încarcă modulul MDX
-        const module = await project[languageKey]();
-        setProjectContent(() => module.default);
+        // Load the MDX module
+        const module = await importer();
+        setProjectContent(() => (module as any).default);
         setError(null);
       } catch (err) {
         console.error("Error loading project:", err);
@@ -118,12 +101,10 @@ const MDXProjectPage = ({
 
 export default function ProjectPage(): React.ReactElement {
   const { slug } = useParams<{ slug: string }>();
-  const [searchParams] = useSearchParams();
   const { i18n } = useTranslation();
 
-  // Determină limba din URL query sau folosește limba curentă
-  const languageParam = searchParams.get("lang");
-  const language = languageParam || i18n.language;
+  // Folosește limba curentă din i18n
+  const language = i18n.language;
 
   if (!slug) {
     return (

@@ -1,7 +1,23 @@
 {
-  "hero": {
-    "title": "Enhanced - building the future of AI x Quantum",
-    "subtitle": "I craft systems at the intersection of high-performance software, machine intelligence, and quantum computing.",
-    "explore": "Explore projects"
+  "header": {
+    "home": "Home",
+    "projects": "Projects",
+    "blogs": "Blogs",
+    "about": "About"
+  },
+  "lang": {
+    "switchToRo": "Switch to Romanian",
+    "switchToEn": "Switch to English",
+    "ro": "RO",
+    "en": "EN"
+  },
+  "home": {
+    "title": "Interactive portfolio",
+    "subtitle": "Projects at the intersection of hardware accelerated computing, artificial intelligence, and quantum computing.",
+    "explore": "Explore projects",
+    "contact": "Contact me",
+    "proiecte": "Featured Projects",
+    "colaborare": "Open for collaborations & interesting problems.\n Feel free to reach out!",
+    "email": "Email me"
   }
 }

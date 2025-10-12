@@ -1,7 +1,23 @@
 {
-  "hero": {
-    "title": "Enhanced — construim viitorul AI x Quantum",
-    "subtitle": "Creez sisteme la intersecția dintre software de înaltă performanță, inteligență artificială și computing cuantic.",
-    "explore": "Explorează proiectele"
+  "header": {
+    "home": "Acasă",
+    "projects": "Proiecte",
+    "blogs": "Bloguri",
+    "about": "Despre"
+  },
+  "lang": {
+    "switchToRo": "Schimbă la română",
+    "switchToEn": "Schimbă la engleză",
+    "ro": "RO",
+    "en": "EN"
+  },
+  "home": {
+    "title": "Portofoliu interactiv",
+    "subtitle": "Proiecte la intersecția dintre accelerare hardware, inteligența artificială si quantum computing.",
+    "explore": "Explorează proiectele",
+    "contact": "Contactează-mă",
+    "proiecte": "Proiecte",
+    "colaborare": "Deschis pentru colaborări și probleme interesante.\n Nu ezitați să mă contactați!",
+    "email": "Trimite-mi un mail"
   }
 }

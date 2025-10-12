@@ -11,48 +11,31 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { alpha, useTheme } from "@mui/material/styles";
-import logo from "/LogoEnhancedV2.png";
+import { getGlassStyle } from "./Style";
+import logoImage from "/LogoEnhancedV2.png";
 import { useTranslation } from "react-i18next";
 import { Link as RouterLink } from "react-router-dom";
 
 export default function Header({
-  mode,
-  onToggleMode,
+  themeKey,
+  onToggleTheme,
   onLogoClick,
 }: {
-  mode: "light" | "dark";
-  onToggleMode: () => void;
+  themeKey: "light" | "dark";
+  onToggleTheme: () => void;
   onLogoClick?: () => void;
 }): React.ReactElement {
-  const theme = useTheme();
-  const { i18n } = useTranslation();
+  // Get the translation function and current language from i18n
+  const { t, i18n } = useTranslation();
 
+  // Get the glass style based on the current theme for the header background
+  const glassStyle = getGlassStyle(themeKey);
   const toggleLanguage = (): void => {
     void i18n.changeLanguage(i18n.language === "en" ? "ro" : "en");
   };
 
-  const glass = {
-    borderRadius: 999,
-    px: 1,
-    py: 0.75,
-    border: `1px solid ${alpha(
-      theme.palette.common.white,
-      mode === "dark" ? 0.08 : 0.12
-    )}`,
-    bgcolor: alpha(mode === "dark" ? "#0f141b" : "#ddddddff", 0.6),
-    backgroundImage: `linear-gradient(135deg, ${alpha(
-      theme.palette.primary.main,
-      0.12
-    )}, ${alpha(theme.palette.secondary.main, 0.12)})`,
-    backdropFilter: "saturate(180%) blur(14px)",
-    boxShadow:
-      mode === "dark"
-        ? "0 6px 30px rgba(0,0,0,.35)"
-        : "0 6px 24px rgba(0,0,0,.08)",
-  } as const;
-
-  const chip = {
+  // Reusable style for the navigation buttons - this is a descriptor compatible with MUI's sx prop
+  const chipStyle = {
     borderRadius: 999,
     fontWeight: 600,
     px: 1.5,
@@ -62,14 +45,16 @@ export default function Header({
   return (
     <AppBar position="sticky" color="transparent" elevation={0} sx={{ p: 1 }}>
       <Container maxWidth="lg">
-        <Box sx={glass}>
+        {/* This box contains the header content - logo, title, and navigation links */}
+        <Box sx={glassStyle}>
           <Stack
             direction="row"
             alignItems="center"
             justifyContent="space-between"
             spacing={1}
           >
-            {/* Brand */}
+            {/*==========================================================================*/}
+            {/* This stack contains the logo and title of the project */}
             <Stack
               direction="row"
               alignItems="center"
@@ -79,7 +64,7 @@ export default function Header({
             >
               <Box
                 component="img"
-                src={logo}
+                src={logoImage}
                 alt="Enhanced"
                 sx={{ width: 28, height: 28, borderRadius: 1 }}
               />
@@ -88,71 +73,72 @@ export default function Header({
               </Typography>
             </Stack>
 
-            {/* Nav links */}
+            {/*==========================================================================*/}
+            {/* This stack contains the navigation links: HomePage, Projects, Blogs */}
             <Stack
               direction="row"
               alignItems="center"
               spacing={0.5}
               sx={{ display: { xs: "none", md: "flex" } }}
             >
-              <Button href="#features" color="inherit" sx={chip}>
-                Features
-              </Button>
-              <Button href="#testimonials" color="inherit" sx={chip}>
-                Testimonials
-              </Button>
-              <Button href="#highlights" color="inherit" sx={chip}>
-                Highlights
+              <Button
+                component={RouterLink}
+                to="/"
+                color="inherit"
+                sx={chipStyle}
+              >
+                {t("header.home")}
               </Button>
               <Button
                 component={RouterLink}
-                to="/projects/quantum-hybrid-arch"
+                to="/#projects"
                 color="inherit"
-                sx={chip}
+                sx={chipStyle}
               >
-                Projects
+                {t("header.projects")}
               </Button>
-              <Button href="#pricing" color="inherit" sx={chip}>
-                Pricing
-              </Button>
-              <Button href="#faq" color="inherit" sx={chip}>
-                FAQ
-              </Button>
-              <Button href="#blog" color="inherit" sx={chip}>
-                Blog
+              <Button href="#blogs" color="inherit" sx={chipStyle}>
+                {t("header.blogs")}
               </Button>
             </Stack>
 
-            {/* Actions (no auth buttons) */}
+            {/*==========================================================================*/}
+            {/* This stack contains the language toggle, theme switch and GitHub link */}
             <Stack direction="row" alignItems="center" spacing={0.5} pr={1}>
-              {/* Add Language Toggle */}
+              {/* This tooltip toggles the language */}
               <Tooltip
                 title={
                   i18n.language === "en"
-                    ? "Switch to Romanian"
-                    : "Switch to English"
+                    ? t("lang.switchToRo")
+                    : t("lang.switchToEn")
                 }
               >
-                <IconButton onClick={toggleLanguage} size="small" sx={chip}>
-                  {i18n.language === "en" ? "RO" : "EN"}
+                <IconButton
+                  onClick={toggleLanguage}
+                  size="small"
+                  sx={chipStyle}
+                >
+                  {i18n.language === "en" ? t("lang.ro") : t("lang.en")}
                 </IconButton>
               </Tooltip>
+              {/* This tooltip toggles the theme */}
               <Tooltip
-                title={mode === "dark" ? "Light mode" : "Dark mode"}
+                title={themeKey === "dark" ? "Light mode" : "Dark mode"}
                 arrow
               >
                 <IconButton
-                  onClick={onToggleMode}
+                  onClick={onToggleTheme}
                   color="inherit"
                   size="small"
                   sx={{ borderRadius: 999 }}
                 >
-                  {mode === "dark" ? <LightModeIcon /> : <DarkModeIcon />}
+                  {themeKey === "dark" ? <LightModeIcon /> : <DarkModeIcon />}
                 </IconButton>
               </Tooltip>
+              {/* This icon button links to the GitHub repository */}
               <IconButton
                 color="inherit"
-                href="https://github.com/"
+                href="https://github.com/BogSav"
                 target="_blank"
                 size="small"
                 sx={{ borderRadius: 999 }}
