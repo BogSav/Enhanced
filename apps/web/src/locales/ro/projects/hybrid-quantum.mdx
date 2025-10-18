@@ -1,9 +1,8 @@
 ---
-title: Arhitectură Hibridă Cuantic–Clasică
-description: Note de cercetare, nuclee și simulatoare care explorează orchestrarea CPU+QPU, qRAM și canale de teleportare.
-tags: ["Cercetare", "Cuantic", "Sisteme"]
-status: In Lucru
-image: "/src/assets/reac.svg"
+title: Hybrid Quantum - Classical Architecture
+description: Research notes, kernels & simulators exploring CPU+QPU orchestration, qRAM, and teleportation channels.
+tags: ["Research", "Quantum", "Systems"]
+status: Work In Progress
 ---
 
 import ProjectLayout, {
@@ -11,37 +10,22 @@ import ProjectLayout, {
   ProjectTag,
 } from "../../../components/ProjectLayout";
 
-<ProjectTag>Cuantic</ProjectTag>
-<ProjectTag>Sisteme</ProjectTag>
-<ProjectTag>Cercetare</ProjectTag>
+export const imagesPath = "/src/assets/hybrid-quantum";
 
-## Prezentare generală
+# Overview
 
-Acest proiect explorează posibilitatea realizării unui sistem hibrid care combină puterea calculului clasic cu avantajele unice ale calculului cuantic.
+This project explores the possibility of creating a hybrid system that combines the power of classical computing with the unique advantages of quantum computation.
 
-<ProjectImage
-  src="/src/assets/projects/quantum-hybrid-arch/diagram1.svg"
-  alt="Diagramă a arhitecturii hibride"
-/>
+<ProjectImage src={`${imagesPath}/SmallWaves.png`} />
 
-## Detalii tehnice
+## Technical Details
 
-Arhitectura noastră se bazează pe următoarele componente cheie:
+Our architecture is based on the following key components:
 
-- Interfață de comunicație cu latență redusă între CPU și QPU
-- Memorie cuantică pentru stocarea și manipularea qubiților
-- Scheduler specializat pentru alocarea optimă a sarcinilor
+- Low-latency communication interface between CPU and QPU
+- Quantum memory for storing and manipulating qubits
+- Specialized scheduler for optimal task allocation
 
 export default ({ children }) => (
-  <ProjectLayout
-    frontmatter={{
-      title: "Arhitectură Hibridă Cuantic–Clasică",
-      description:
-        "Note de cercetare, nuclee și simulatoare care explorează orchestrarea CPU+QPU, qRAM și canale de teleportare.",
-      tags: ["Cercetare", "Cuantic", "Sisteme"],
-      image: "/src/assets/reac.svg",
-    }}
-  >
-    {children}
-  </ProjectLayout>
+  <ProjectLayout frontmatter={frontmatter}>{children}</ProjectLayout>
 );
