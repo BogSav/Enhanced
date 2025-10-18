@@ -8,38 +8,30 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { useTranslation } from "react-i18next";
-import { useParams, Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 
 import type { ReactNode } from "react";
 
-type ProjectLayoutProps = {
-  children: ReactNode;
-  frontmatter: {
-    title: string;
-    description: string;
-    tags?: string[];
-    image?: string;
-  };
+// Type for frontmatter, matching MDX frontmatter structure
+type Frontmatter = {
+  title: string;
+  description: string;
+  tags?: string[];
+  image?: string;
 };
 
+// Inline prop types for ProjectLayout to keep the file simple
+
 // ProjectImage component
-export function ProjectImage({
-  src,
-  alt,
-}: {
-  src: string;
-  alt: string;
-}): React.ReactElement {
+export function ProjectImage({ src }: { src: string }): React.ReactElement {
   return (
     <Box
       component="img"
       src={src}
-      alt={alt}
       sx={{
-        width: "100%",
+        width: "60%",
         height: "auto",
-        maxHeight: 400,
+        maxHeight: 600,
         borderRadius: 3,
         objectFit: "cover",
         my: 2,
@@ -72,12 +64,18 @@ export function ProjectTag({
 export default function ProjectLayout({
   children,
   frontmatter,
-}: ProjectLayoutProps): React.ReactElement {
-  const { i18n } = useTranslation();
-  const { slug } = useParams();
+}: {
+  children: ReactNode;
+  frontmatter?: Frontmatter;
+}): React.ReactElement {
+  if (!frontmatter) {
+    // Fallback: render children only if no frontmatter is found
+    return <>{children}</>;
+  }
 
   return (
     <Stack spacing={3}>
+      {/* Navigation link */}
       <Breadcrumbs>
         <Link component={RouterLink} to="/">
           Home
@@ -85,10 +83,15 @@ export default function ProjectLayout({
         <Typography color="text.primary">{frontmatter.title}</Typography>
       </Breadcrumbs>
 
+      {/* Main project content */}
       <Paper elevation={0} sx={{ p: { xs: 3, md: 5 }, borderRadius: 4 }}>
         <Stack spacing={2}>
           <Typography variant="h3" fontWeight={800}>
             {frontmatter.title}
+          </Typography>
+
+          <Typography variant="body1" color="text.secondary">
+            {frontmatter.description}
           </Typography>
 
           {/* Render tags from frontmatter */}
@@ -100,37 +103,8 @@ export default function ProjectLayout({
             </Box>
           )}
 
-          {frontmatter.image && (
-            <Box
-              component="img"
-              src={frontmatter.image}
-              alt={frontmatter.title}
-              sx={{
-                width: "100%",
-                height: "auto",
-                maxHeight: 400,
-                borderRadius: 3,
-                objectFit: "cover",
-              }}
-            />
-          )}
-
-          <Typography variant="body1" color="text.secondary">
-            {frontmatter.description}
-          </Typography>
-
+          {/* This is the actual MDX content of the project - it is stored in the children object*/}
           <Box>{children}</Box>
-
-          <Box mt={2}>
-            <Link
-              component={RouterLink}
-              to={`/projects/${slug ?? ""}?lang=${
-                i18n.language === "en" ? "ro" : "en"
-              }`}
-            >
-              {i18n.language === "en" ? "Vezi în română" : "View in English"}
-            </Link>
-          </Box>
         </Stack>
       </Paper>
     </Stack>

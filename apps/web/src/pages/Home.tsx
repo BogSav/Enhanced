@@ -99,20 +99,22 @@ export default function Home(): React.ReactElement {
           {t("home.proiecte")}
         </Typography>
 
-        {/* Projects grid */}
+        {/* Projects masonry using CSS columns (no extra deps) */}
         <Box
           sx={{
-            display: "grid",
-            gap: 6,
-            gridTemplateColumns: {
-              xs: "4fr",
-              sm: "repeat(2, 4fr)",
-              md: "repeat(2, 4fr)",
-            },
+            columnCount: { xs: 1, sm: 2, md: 3 },
+            columnGap: 4,
           }}
         >
           {projects.map((p) => (
-            <Box key={p.slug}>
+            <Box
+              key={p.slug}
+              sx={{
+                breakInside: "avoid-column",
+                mb: 3,
+                display: "block",
+              }}
+            >
               <ProjectCard projectMetadata={p} />
             </Box>
           ))}

@@ -48,15 +48,18 @@ export default function Footer(): React.ReactElement {
 
           {/* Socials */}
           <Stack direction="row" spacing={0.5} alignItems="center">
-            <Tooltip title="contact@enhanced.ro">
-              <IconButton aria-label="Email" href="mailto:contact@enhanced.ro">
+            <Tooltip title="bogdansava59@yahoo.com">
+              <IconButton
+                aria-label="Email"
+                href="mailto:bogdansava59@yahoo.com"
+              >
                 <EmailIcon />
               </IconButton>
             </Tooltip>
             <Tooltip title="LinkedIn">
               <IconButton
                 aria-label="LinkedIn"
-                href="https://www.linkedin.com/in/username"
+                href="https://www.linkedin.com/in/bogdan-sava-613212177"
                 target="_blank"
                 rel="noopener noreferrer me"
               >
@@ -66,7 +69,7 @@ export default function Footer(): React.ReactElement {
             <Tooltip title="GitHub">
               <IconButton
                 aria-label="GitHub"
-                href="https://github.com/username"
+                href="https://github.com/BogSav"
                 target="_blank"
                 rel="noopener noreferrer"
               >

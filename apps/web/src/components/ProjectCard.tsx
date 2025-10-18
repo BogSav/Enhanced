@@ -37,7 +37,7 @@ export default function ProjectCard({
           `linear-gradient(-45deg, ${t.palette.background.default} 40%, ${t.palette.secondary.main} 180%)`,
         borderRadius: 1.5,
         boxShadow: (t) =>
-          `5px 5px 15px ${alpha(t.palette.text.secondary, 0.2)}`,
+          `5px 5px 10px ${alpha(t.palette.text.secondary, 0.2)}`,
       }}
     >
       {/* We define the clickable area of the card that navigates to the project details page as the entire area of the card */}
@@ -51,7 +51,7 @@ export default function ProjectCard({
         {/* Then the card content - description, tags and status */}
         <CardContent>
           {/* Description of the project */}
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
             {projectMetadata.description}
           </Typography>
 
@@ -70,12 +70,16 @@ export default function ProjectCard({
             direction="row"
             alignItems="center"
             spacing={1}
-            sx={{ mb: 1, mt: 2 }}
+            sx={{ mb: 1, mt: 3 }}
           >
             <Typography
               variant="caption"
               color="text.secondary"
-              sx={{ fontWeight: 500, color: (t) => t.palette.text.primary }}
+              sx={{
+                fontWeight: 500,
+                fontSize: "0.8rem",
+                color: (t) => t.palette.text.primary,
+              }}
             >
               Status:
             </Typography>
