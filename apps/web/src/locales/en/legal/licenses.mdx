@@ -1,0 +1,65 @@
+import { Container, Stack, Typography, Link, List, ListItem, ListItemText } from "@mui/material";
+
+export default function LicensesPage() {
+  return (
+    <Container sx={{ py: 6 }}>
+      <Stack spacing={2}>
+        <Typography variant="h4" fontWeight={800}>Licenses & Terms</Typography>
+        <Typography variant="body2" color="text.secondary">
+          Last updated: October 18, 2025
+        </Typography>
+
+        <Typography variant="h6">1. Intellectual property</Typography>
+        <Typography>
+          All texts, images, illustrations, screenshots, project descriptions,
+          as well as the structure and design of this site are © 2019–2025 Bogdan I.
+          All rights reserved.
+        </Typography>
+
+        <Typography variant="h6">2. Permission to use (view-only)</Typography>
+        <Typography>
+          You are granted a limited, revocable, non-exclusive, non-transferable
+          license to access and view the content on this site for informational
+          purposes only. You do not have permission to copy, download, reproduce,
+          redistribute, publish, adapt, mirror, archive or use the content in other
+          projects—personal or commercial—without our written consent.
+        </Typography>
+
+        <Typography variant="h6">3. Code and projects</Typography>
+        <Typography>
+          Code and technical descriptions shown are provided for demonstration
+          purposes. Reuse, cloning, redistribution or integration into other
+          projects is prohibited unless an explicit license is visibly stated
+          for specific material.
+        </Typography>
+
+        <Typography variant="h6">4. Contributions</Typography>
+        <Typography>
+          If you submit suggestions or patches (e.g., via issue/PR), you represent
+          that you have the right to provide them and grant us a non-exclusive,
+          worldwide, irrevocable, royalty-free license to use, reproduce and
+          integrate the contribution into the project. This does not grant you
+          rights over existing content.
+        </Typography>
+
+        <Typography variant="h6">5. Third-party attributions (if applicable)</Typography>
+        <List dense>
+          <ListItem>
+            <ListItemText
+              primary="Material UI Icons"
+              secondary="According to the Material UI Icons project license."
+            />
+          </ListItem>
+          {/* Add fonts/third-party images here, if present, with license/link */}
+        </List>
+
+        <Typography variant="h6">6. Infringements & Contact</Typography>
+        <Typography>
+          For use requests or to report an infringement, please write to
+          <Link href="mailto:contact@enhanced.ro">contact@enhanced.ro</Link>.
+        </Typography>
+      </Stack>
+    </Container>
+
+);
+}

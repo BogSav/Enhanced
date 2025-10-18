@@ -15,8 +15,12 @@ import ProjectCard from "../components/ProjectCard";
 import type { ProjectMetadata } from "../components/ProjectCard";
 
 // Dynamically load all MDX files from locales folders
-const enModules = import.meta.glob("../locales/en/*.mdx", { eager: true });
-const roModules = import.meta.glob("../locales/ro/*.mdx", { eager: true });
+const enModules = import.meta.glob("../locales/en/projects/*.mdx", {
+  eager: true,
+});
+const roModules = import.meta.glob("../locales/ro/projects/*.mdx", {
+  eager: true,
+});
 
 export default function Home(): React.ReactElement {
   const { t, i18n } = useTranslation();
@@ -45,7 +49,7 @@ export default function Home(): React.ReactElement {
 
   return (
     <Stack spacing={6}>
-      {/* Hero */}
+      {/* First part of the home page - Hero section */}
       <Container maxWidth="lg" sx={{ pt: { xs: 0, md: 2 } }}>
         <Paper
           elevation={0}
@@ -58,6 +62,7 @@ export default function Home(): React.ReactElement {
                 : "radial-gradient(1000px 500px at 0% 0%, rgba(14,165,233,.12), transparent), radial-gradient(800px 400px at 100% 0%, rgba(124,58,237,.10), transparent)",
           }}
         >
+          {/* Title, description and tags */}
           <Stack spacing={2}>
             <Chip
               label="Portfolio & Lab"
@@ -74,31 +79,35 @@ export default function Home(): React.ReactElement {
             <Typography variant="h6" color="text.secondary" maxWidth={800}>
               {t("home.subtitle")}
             </Typography>
-            <Stack direction="row" spacing={2} sx={{ pt: 1 }}>
-              <Button size="large" variant="contained" href="#projects">
-                {t("home.explore")}
-              </Button>
-              <Button size="large" variant="outlined" href="#contact">
-                {t("home.contact")}
-              </Button>
-            </Stack>
+          </Stack>
+
+          {/* Action buttons - projects and contact */}
+          <Stack direction="row" spacing={2} sx={{ pt: 3 }}>
+            <Button size="large" variant="contained" href="#projects">
+              {t("home.explore")}
+            </Button>
+            <Button size="large" variant="outlined" href="#contact">
+              {t("home.contact")}
+            </Button>
           </Stack>
         </Paper>
       </Container>
 
-      {/* Projects */}
+      {/* Render all the projects using the <ProjectCard /> component */}
       <Box id="projects">
         <Typography variant="h4" sx={{ mb: 2, fontWeight: 800 }}>
           {t("home.proiecte")}
         </Typography>
+
+        {/* Projects grid */}
         <Box
           sx={{
             display: "grid",
-            gap: 2,
+            gap: 6,
             gridTemplateColumns: {
-              xs: "1fr",
-              sm: "repeat(2, 1fr)",
-              md: "repeat(3, 1fr)",
+              xs: "4fr",
+              sm: "repeat(2, 4fr)",
+              md: "repeat(2, 4fr)",
             },
           }}
         >
@@ -110,7 +119,7 @@ export default function Home(): React.ReactElement {
         </Box>
       </Box>
 
-      {/* CTA */}
+      {/* Contact area - message and mail */}
       <Paper
         elevation={0}
         sx={{ p: { xs: 3, md: 5 }, borderRadius: 4, textAlign: "center" }}

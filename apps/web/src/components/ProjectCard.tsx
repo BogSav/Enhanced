@@ -37,7 +37,7 @@ export default function ProjectCard({
           `linear-gradient(-45deg, ${t.palette.background.default} 40%, ${t.palette.secondary.main} 180%)`,
         borderRadius: 1.5,
         boxShadow: (t) =>
-          `5px 5px 15px ${alpha(t.palette.text.secondary, 0.3)}`,
+          `5px 5px 15px ${alpha(t.palette.text.secondary, 0.2)}`,
       }}
     >
       {/* We define the clickable area of the card that navigates to the project details page as the entire area of the card */}
@@ -55,8 +55,23 @@ export default function ProjectCard({
             {projectMetadata.description}
           </Typography>
 
+          {/* Tags associated with the project */}
+          {/* We process all the available tags and dispaly them with a stack object */}
+          {projectMetadata.tags && (
+            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+              {projectMetadata.tags.map((t) => (
+                <Chip key={t} label={t} size="small" variant="filled" />
+              ))}
+            </Stack>
+          )}
+
           {/* Status chip with special styling */}
-          <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            spacing={1}
+            sx={{ mb: 1, mt: 2 }}
+          >
             <Typography
               variant="caption"
               color="text.secondary"
@@ -77,16 +92,6 @@ export default function ProjectCard({
               }}
             />
           </Stack>
-
-          {/* Tags associated with the project */}
-          {/* We process all the available tags and dispaly them with a stack object */}
-          {projectMetadata.tags && (
-            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-              {projectMetadata.tags.map((t) => (
-                <Chip key={t} label={t} size="small" variant="filled" />
-              ))}
-            </Stack>
-          )}
         </CardContent>
       </CardActionArea>
     </Card>

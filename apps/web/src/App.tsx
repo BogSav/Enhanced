@@ -12,9 +12,10 @@ export type ThemeKey = "light" | "dark";
 
 const THEME_KEY = "enhanced.theme";
 const ProjectPage = lazy(() => import("./pages/ProjectPage"));
+const InfoPage = lazy(() => import("./pages/InfoPage"));
 
+// Try to read the saved theme from localStorage
 function getInitialThemeKey(): ThemeKey {
-  // Try to read the saved theme from localStorage
   if (typeof window !== "undefined") {
     try {
       const savedThemeKey = localStorage.getItem(THEME_KEY) as ThemeKey | null;
@@ -22,19 +23,20 @@ function getInitialThemeKey(): ThemeKey {
         return savedThemeKey;
       }
     } catch {
-      // We ignore errors reading localStorage and simply fallback to the default dark
+      // We ignore errors reading localStorage and simply fallback to the default theme: dark
     }
   }
   return "dark";
 }
 
 export default function App(): React.ReactElement {
-  // State to hold the current theme, initialized from localStorage or default
+  // We create a react state to hold the current theme key and initialize it from localStorage
   const [themeKey, keyThemeSetter] = useState<ThemeKey>(() =>
     getInitialThemeKey()
   );
 
-  // Function to toggle between light and dark themes and save preference to localStorage - is used only in header
+  // Function to toggle between light and dark themes and save preference to localStorage
+  // We use the state setter we got from the previous useState to update the theme key
   const toggleTheme = (): void => {
     keyThemeSetter((prevThemeKey) => {
       const nextThemeKey = prevThemeKey === "light" ? "dark" : "light";
@@ -48,22 +50,34 @@ export default function App(): React.ReactElement {
 
   return (
     <ThemeProvider theme={theme}>
+      {/* Include global styles and layout - this resets CSS with the MUI's own styles */}
       <CssBaseline />
+
+      {/* Create the main layout container - here we are going to include the header, main content, and footer */}
       <Box display="flex" flexDirection="column" minHeight="100vh">
+        {/* First, we include the header - the sticky nav with the theme/language switch */}
         <Header
           themeKey={themeKey}
           onToggleTheme={toggleTheme}
           onLogoClick={() => navigate("/")}
         />
+
+        {/* Second, we include the main content area. The main content will be rendered based on the URL path though the react router */}
         <Container sx={{ flexGrow: 1, py: { xs: 4, md: 6 } }}>
+          {/* We use Suspense to handle lazy loading of the project pages */}
           <Suspense fallback={<div>Loading...</div>}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/projects/:slug" element={<ProjectPage />} />
+              <Route path="/privacy" element={<InfoPage slug="privacy" />} />
+              <Route path="/cookies" element={<InfoPage slug="cookies" />} />
+              <Route path="/licenses" element={<InfoPage slug="licenses" />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
         </Container>
+
+        {/* Finally, we include the footer */}
         <Footer />
       </Box>
     </ThemeProvider>

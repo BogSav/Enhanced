@@ -1,19 +1,31 @@
+import React from "react";
 import EmailIcon from "@mui/icons-material/Email";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import XIcon from "@mui/icons-material/X";
+import GitHubIcon from "@mui/icons-material/GitHub";
 import {
   Box,
   Container,
-  Divider,
   IconButton,
+  Link,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 
 export default function Footer(): React.ReactElement {
+  const year = new Date().getFullYear();
+
   return (
-    <Box component="footer" id="contact" sx={{ mt: 6, py: 4 }}>
-      <Divider sx={{ mb: 3 }} />
+    <Box
+      component="footer"
+      sx={(t) => ({
+        mt: "auto",
+        pt: 4,
+        pb: 4,
+        borderTop: `2px solid ${t.palette.divider}`,
+      })}
+    >
+      {/* Main container for the footer content */}
       <Container>
         <Stack
           direction={{ xs: "column", sm: "row" }}
@@ -21,38 +33,75 @@ export default function Footer(): React.ReactElement {
           alignItems={{ xs: "flex-start", sm: "center" }}
           spacing={2}
         >
+          {/* Brand + copyright/licensing */}
           <Box>
             <Typography variant="h6" fontWeight={800}>
               Enhanced
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              © {new Date().getFullYear()} Bogdan. All rights reserved.
+              © 2019–{year} Bogdan S. Code: MIT · Content: CC BY-NC 4.0
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              Bucharest, RO
             </Typography>
           </Box>
-          <Stack direction="row" spacing={1} alignItems="center">
-            <IconButton aria-label="email" href="mailto:hello@enhanced.com">
-              <EmailIcon />
-            </IconButton>
-            <IconButton
-              aria-label="linkedin"
-              href="https://www.linkedin.com/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <LinkedInIcon />
-            </IconButton>
-            <IconButton
-              aria-label="x"
-              href="https://x.com/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <XIcon />
-            </IconButton>
+
+          {/* Socials */}
+          <Stack direction="row" spacing={0.5} alignItems="center">
+            <Tooltip title="contact@enhanced.ro">
+              <IconButton aria-label="Email" href="mailto:contact@enhanced.ro">
+                <EmailIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="LinkedIn">
+              <IconButton
+                aria-label="LinkedIn"
+                href="https://www.linkedin.com/in/username"
+                target="_blank"
+                rel="noopener noreferrer me"
+              >
+                <LinkedInIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="GitHub">
+              <IconButton
+                aria-label="GitHub"
+                href="https://github.com/username"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <GitHubIcon />
+              </IconButton>
+            </Tooltip>
           </Stack>
-          <Typography variant="body2" color="text.secondary">
-            Bucharest, RO
-          </Typography>
+
+          {/* Legal/utility links */}
+          <Stack direction="row" spacing={1.5} alignItems="center">
+            <Link
+              href="/privacy"
+              underline="hover"
+              variant="body2"
+              color="text.secondary"
+            >
+              Privacy
+            </Link>
+            <Link
+              href="/cookies"
+              underline="hover"
+              variant="body2"
+              color="text.secondary"
+            >
+              Cookies
+            </Link>
+            <Link
+              href="/licenses"
+              underline="hover"
+              variant="body2"
+              color="text.secondary"
+            >
+              Licenses
+            </Link>
+          </Stack>
         </Stack>
       </Container>
     </Box>

@@ -1,0 +1,33 @@
+import { Container, Stack, Typography, Link } from "@mui/material";
+
+export default function CookiesPage() {
+  return (
+    <Container sx={{ py: 6 }}>
+      <Stack spacing={2}>
+        <Typography variant="h4" fontWeight={800}>Politica de Cookie-uri</Typography>
+        <Typography variant="body2" color="text.secondary">
+          Ultima actualizare: 18 octombrie 2025
+        </Typography>
+
+        <Typography>
+          Acest site nu folosește cookie-uri și nu utilizează tehnologii similare
+          de urmărire (ex. pixeli, beacons) pentru analiză, publicitate sau profilare.
+        </Typography>
+
+        <Typography variant="h6">Tema salvată local</Typography>
+        <Typography>
+          Preferința de temă (luminos/întunecat) poate fi salvată în
+          <i> localStorage </i> al browserului pentru confortul tău. Aceasta nu este un cookie,
+          nu identifică utilizatorii și nu este transmisă către servere terțe.
+        </Typography>
+
+        <Typography variant="h6">Întrebări</Typography>
+        <Typography>
+          Pentru orice întrebări, scrie-ne la&nbsp;
+          <Link href="mailto:contact@enhanced.ro">contact@enhanced.ro</Link>.
+        </Typography>
+      </Stack>
+    </Container>
+
+);
+}

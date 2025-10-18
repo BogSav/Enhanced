@@ -1,0 +1,64 @@
+import { Container, Stack, Typography, Link, List, ListItem, ListItemText } from "@mui/material";
+
+export default function LicensesPage() {
+  return (
+    <Container sx={{ py: 6 }}>
+      <Stack spacing={2}>
+        <Typography variant="h4" fontWeight={800}>Licenses & Terms</Typography>
+        <Typography variant="body2" color="text.secondary">
+          Ultima actualizare: 18 octombrie 2025
+        </Typography>
+
+        <Typography variant="h6">1. Proprietate intelectuală</Typography>
+        <Typography>
+          Toate textele, imaginile, ilustrațiile, capturile, descrierile de proiecte,
+          precum și structura și designul acestui site sunt © 2019–2025 Bogdan I.
+          Toate drepturile rezervate.
+        </Typography>
+
+        <Typography variant="h6">2. Permisiune de utilizare (view-only)</Typography>
+        <Typography>
+          Ți se acordă o licență limitată, revocabilă, ne-exclusivă, netransferabilă,
+          de a accesa și vizualiza conținutul pe acest site în scop de informare.
+          Nu ai permisiunea de a copia, descărca, reproduce, redistribui, publica,
+          adapta, oglindi (mirror), arhiva sau utiliza conținutul în alte proiecte,
+          personale sau comerciale, fără acordul nostru scris.
+        </Typography>
+
+        <Typography variant="h6">3. Cod și proiecte</Typography>
+        <Typography>
+          Codul și descrierile tehnice afișate sunt prezentate în scop demonstrativ.
+          Reutilizarea, clonarea, redistribuirea sau integrarea în alte proiecte
+          este interzisă, cu excepția cazului în care o licență explicită este
+          menționată în mod vizibil pentru un anumit material.
+        </Typography>
+
+        <Typography variant="h6">4. Contribuții</Typography>
+        <Typography>
+          Dacă trimiți sugestii sau patch-uri (ex. prin issue/PR), declari că ai dreptul
+          de a le oferi și ne acorzi o licență ne-exclusivă, globală, irevocabilă și gratuită
+          de a utiliza, reproduce și integra contribuția în proiect. Aceasta nu îți conferă
+          drepturi asupra conținutului existent.
+        </Typography>
+
+        <Typography variant="h6">5. Atribuiri terțe (dacă se aplică)</Typography>
+        <List dense>
+          <ListItem>
+            <ListItemText
+              primary="Material UI Icons"
+              secondary="Conform licenței proiectului Material UI Icons."
+            />
+          </ListItem>
+          {/* Adaugă aici fonturi/imagine terțe, dacă apar, cu licență/link */}
+        </List>
+
+        <Typography variant="h6">6. Încălcări & Contact</Typography>
+        <Typography>
+          Pentru solicitări de utilizare sau raportarea unei încălcări, scrie-ne la{" "}
+          <Link href="mailto:contact@enhanced.ro">contact@enhanced.ro</Link>.
+        </Typography>
+      </Stack>
+    </Container>
+
+);
+}
