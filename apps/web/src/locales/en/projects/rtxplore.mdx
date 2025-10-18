@@ -1,6 +1,6 @@
 ---
 title: RTXplore
-description: Graphics engine with rasterization and ray tracing renderieng techniques.
+description: This project focuses on the development of a graphics engine that integrates both ray tracing and rasterization rendering techniques.
 tags: ["RayTracing", "Graphics", "Architecture", "DirectX12"]
 status: Maintenance
 ---
@@ -11,20 +11,156 @@ import ProjectLayout, {
 } from "../../../components/ProjectLayout";
 
 export const imagesPath = "/src/assets/rtxplore";
+export const imagesComparisonPath = "/src/assets/rtxplore/Comp";
 
-## Overview
+# What I Built
 
-<ProjectImage src={`${imagesPath}/SmallWaves.png`} />
+I designed and implemented a small graphics engine that mixes **rasterization** and **ray tracing** under a single architecture: one scene, two complete pipelines, shared resource management, and comparable visual stages.
 
-This project explores the possibility of creating a hybrid system that combines the power of classical computing with the unique advantages of quantum computation.
+The key focus areas:
 
-## Technical Details
+- Procedural terrain and water generation
+- Texture and model tooling
+- CPU - GPU synchronization
+- TLAS/BLAS build
+- Effect parity (visual results are directly comparable between rendering techniques).
 
-Our architecture is based on the following key components:
+---
 
-- Low-latency communication interface between CPU and QPU
-- Quantum memory for storing and manipulating qubits
-- Specialized scheduler for optimal task allocation
+# Effects Gallery
+
+Let's jump straight into the visual results achieved in this projects (since that's the main point of a graphics engine).
+In a further section I will show you the direct comparison between ray tracing and rasterization for the same scene and materials.
+
+## Terrain & Water
+
+- As you can see in the image below, the scene consists of a procedurally generated mountainous terrain with a water body with dynamic waves.
+
+<ProjectImage
+  src={`${imagesPath}/RasterizationReflexionsRefractions.png`}
+  alt="Raster reflections (env map / SSR)"
+  caption="Raster reflections: fast via dynamic cubemap/SSR; can miss off-screen detail."
+/>
+
+## Ray Tracing Effects
+
+- In the image below you can see ray-traced reflections on the water surface, with recursive rays capturing both the skybox and terrain details.
+
+<ProjectImage
+  src={`${imagesPath}/RayTracingReflexions.png`}
+  alt="Ray-traced reflections on water"
+  caption="Ray tracing — physically correct reflections with recursive rays and skybox miss path."
+/>
+
+- Here we have ray-traced refractions through the water surface, with geometric correction for accurate light bending.
+
+<ProjectImage
+  src={`${imagesPath}/RayTracingRefractions.png`}
+  alt="Ray-traced refractions"
+  caption="Ray tracing — refractions through a displaced water surface with geometric correction."
+/>
+
+---
+
+# Ray Tracing vs. Rasterization
+
+## Quick comparison (what matters in practice)
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+  <ProjectImage
+    src={`${imagesComparisonPath}/Texture.png`}
+    alt="Specular/roughness response"
+    caption="Material response parity: Blinn-Phong + microfacet (raster) tuned to match RT look."
+  />
+  <ProjectImage
+    src={`${imagesComparisonPath}/BSW.png`}
+    alt="Big/Small waves sheet"
+    caption="Wave detail: small ripples from normal/displacement maps; big forms from Gerstner."
+  />
+  <ProjectImage
+    src={`${imagesComparisonPath}/Refractions.png`}
+    alt="Raster vs Ray tracing refractions comparison"
+    caption="Side-by-side: raster (env map) vs ray tracing (true refraction)."
+  />
+</div>
+
+Key takeaways:
+
+- rasterization wins for throughput and predictable cost; great for live interaction and broad hardware.
+- RT wins for correctness of reflection/refraction at grazing angles, edge cases, and multi-bounce paths.
+- My engine lets you toggle the pipeline while keeping the same scene and materials, so differences are visible—not theoretical.
+
+---
+
+# Technical Highlights
+
+## Procedural Terrain (Height Map)
+
+<ProjectImage
+  src={`${imagesPath}/TerrainHeightMap.png`}
+  alt="Height map"
+  caption="Fractal fBm (Simplex) height generation → chunked mesh + AABB per chunk for frustum culling."
+/>
+
+What I implemented:
+
+- fBm(Simplex) height synthesis wrapped in a reusable “heightFunction(x, z)”.
+- Chunked surface builder that emits submeshes, indices, and per-chunk AABBs.
+- Culling in world space (inverse-view frustum + object transforms) to keep only visible chunks on the GPU.
+
+## Water: Small vs Large Waves
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+  <ProjectImage
+    src={`${imagesPath}/SmallWaves.png`}
+    alt="Small waves"
+    caption="Small-scale: normal + displacement maps driven by wind to fake capillary ripples."
+  />
+  <ProjectImage
+    src={`${imagesPath}/LargeWaves.png`}
+    alt="Large waves"
+    caption="Large-scale: multi-Gerstner sum, analytic T/B/N from ∂P/∂x, ∂P/∂z for stable lighting."
+  />
+</div>
+
+What I implemented:
+
+- A parametric Gerstner wrapper that outputs displaced position and TBN per-vertex (used in both pipelines).
+- Unified material model so water shading is comparable between raster and RT.
+
+## Shadows
+
+<ProjectImage
+  src={`${imagesPath}/ShadowMap.png`}
+  alt="Shadow map"
+  caption="Depth-only pass, PCF filtering; consistent biasing tuned for mountainous terrain."
+/>
+
+What I implemented:
+
+- Depth atlas + PCF sampling tuned for terrain scale and water contact.
+- Ray-based shadow checks for RT path when enabled (free of biasing artifacts).
+
+## Ray–Surface Intersection (Procedural)
+
+<ProjectImage
+  src={`${imagesPath}/IntersectionShader2.png`}
+  alt="Intersection shader"
+  caption="DXR procedural: AABB hit → exact surface intersection in Intersection/Closest-Hit."
+/>
+
+What I implemented:
+
+- TLAS/BLAS build + shader tables; custom Intersection Shader for procedurally displaced water within AABBs.
+- Miss shader sampling the rotating skybox; recursive rays for reflection/refraction.
+
+---
+
+# Why this matters
+
+- one scene, two pipelines → apples-to-apples comparison of visuals and costs
+- portable building blocks (chunked terrain, Gerstner, shadow pass, DXR tables) you can reuse in larger engines
+- clear visual deltas for a thesis defense: correctness vs performance, with concrete imagery from the same content
 
 export default ({ children }) => (
   <ProjectLayout frontmatter={frontmatter}>{children}</ProjectLayout>

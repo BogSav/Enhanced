@@ -6,8 +6,12 @@ import {
   Paper,
   Stack,
   Typography,
+  alpha,
+  Dialog,
+  IconButton,
 } from "@mui/material";
 import React from "react";
+import CloseIcon from "@mui/icons-material/Close";
 import { Link as RouterLink } from "react-router-dom";
 
 import type { ReactNode } from "react";
@@ -23,20 +27,101 @@ type Frontmatter = {
 // Inline prop types for ProjectLayout to keep the file simple
 
 // ProjectImage component
-export function ProjectImage({ src }: { src: string }): React.ReactElement {
+export function ProjectImage({
+  src,
+  alt,
+}: {
+  src: string;
+  alt?: string;
+}): React.ReactElement {
+  const [open, setOpen] = React.useState(false);
+
+  const handleOpen = React.useCallback(() => setOpen(true), []);
+  const handleClose = React.useCallback(() => setOpen(false), []);
+
+  React.useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") handleClose();
+    }
+    if (open) document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open, handleClose]);
+
   return (
-    <Box
-      component="img"
-      src={src}
-      sx={{
-        width: "60%",
-        height: "auto",
-        maxHeight: 600,
-        borderRadius: 3,
-        objectFit: "cover",
-        my: 2,
-      }}
-    />
+    <>
+      <Box
+        component="img"
+        src={src}
+        alt={alt ?? "project image"}
+        onClick={handleOpen}
+        sx={{
+          width: "60%",
+          height: "auto",
+          maxHeight: 600,
+          objectFit: "cover",
+          my: 2,
+          borderRadius: 1.5,
+          boxShadow: (t) =>
+            `7px 7px 10px ${alpha(t.palette.text.secondary, 0.2)}`,
+          cursor: "zoom-in",
+        }}
+        role="button"
+        aria-label="Open image in large view"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            handleOpen();
+          }
+        }}
+      />
+
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        maxWidth={false}
+        PaperProps={{
+          sx: { backgroundColor: "transparent", boxShadow: "none" },
+        }}
+      >
+        <Box
+          sx={{
+            position: "relative",
+            p: 0.5,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <IconButton
+            aria-label="close image"
+            onClick={handleClose}
+            sx={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+              color: "white",
+              bgcolor: "rgba(0,0,0,0.4)",
+              "&:hover": { bgcolor: "rgba(0,0,0,0.6)" },
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+
+          <Box
+            component="img"
+            src={src}
+            alt={alt ?? "project image large"}
+            sx={{
+              maxWidth: "90vw",
+              maxHeight: "90vh",
+              width: "auto",
+              height: "auto",
+              borderRadius: 1,
+            }}
+          />
+        </Box>
+      </Dialog>
+    </>
   );
 }
 
