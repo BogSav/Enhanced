@@ -30,9 +30,11 @@ type Frontmatter = {
 export function ProjectImage({
   src,
   alt,
+  caption,
 }: {
   src: string;
   alt?: string;
+  caption?: string;
 }): React.ReactElement {
   const [open, setOpen] = React.useState(false);
 
@@ -50,30 +52,44 @@ export function ProjectImage({
   return (
     <>
       <Box
-        component="img"
-        src={src}
-        alt={alt ?? "project image"}
-        onClick={handleOpen}
-        sx={{
-          width: "60%",
-          height: "auto",
-          maxHeight: 600,
-          objectFit: "cover",
-          my: 2,
-          borderRadius: 1.5,
-          boxShadow: (t) =>
-            `7px 7px 10px ${alpha(t.palette.text.secondary, 0.2)}`,
-          cursor: "zoom-in",
-        }}
-        role="button"
-        aria-label="Open image in large view"
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            handleOpen();
-          }
-        }}
-      />
+        sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+      >
+        <Box
+          component="img"
+          src={src}
+          alt={alt ?? "project image"}
+          onClick={handleOpen}
+          sx={{
+            width: "60%",
+            height: "auto",
+            maxHeight: 600,
+            objectFit: "cover",
+            my: 2,
+            borderRadius: 1.5,
+            boxShadow: (t) =>
+              `7px 7px 10px ${alpha(t.palette.text.secondary, 0.2)}`,
+            cursor: "zoom-in",
+          }}
+          role="button"
+          aria-label="Open image in large view"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              handleOpen();
+            }
+          }}
+        />
+
+        {caption && (
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{ mt: 0.5, textAlign: "center", maxWidth: "60%" }}
+          >
+            {caption}
+          </Typography>
+        )}
+      </Box>
 
       <Dialog
         open={open}
@@ -88,6 +104,7 @@ export function ProjectImage({
             position: "relative",
             p: 0.5,
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
           }}
@@ -113,12 +130,27 @@ export function ProjectImage({
             alt={alt ?? "project image large"}
             sx={{
               maxWidth: "90vw",
-              maxHeight: "90vh",
+              maxHeight: "80vh",
               width: "auto",
               height: "auto",
               borderRadius: 1,
             }}
           />
+
+          {caption && (
+            <Typography
+              variant="body2"
+              sx={{
+                mt: 1,
+                color: "common.white",
+                textAlign: "center",
+                textShadow: "0 1px 4px rgba(0,0,0,0.8)",
+                maxWidth: "90vw",
+              }}
+            >
+              {caption}
+            </Typography>
+          )}
         </Box>
       </Dialog>
     </>
