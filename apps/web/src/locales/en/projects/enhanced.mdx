@@ -1,30 +1,47 @@
 ---
 title: Enhanced
 description: Interactive portfolio showcasing my projects with rich media and dynamic content.
-tags: ["React", "WEB"]
-status: Work In Progress
+tags: ["React", "WEB", "TypeScript", "MDX"]
+status: DONE
 ---
 
 import ProjectLayout, {
   ProjectImage,
   ProjectTag,
+  GitHubLink,
 } from "../../../components/ProjectLayout";
 
-export const imagesPath = "/src/assets/enhanced";
+# Introduction
 
-# Overview
+Enhanced is actually this platform; a personal platform that acts as an interactive project portfolio and (future) blog hub.
 
-This project explores the possibility of creating a hybrid system that combines the power of classical computing with the unique advantages of quantum computation.
+It began as a purely static frontend focused on showcasing programming skills, but the layout and repository are intentionally prepared for expansion into a microservice-based system. At present only the web application (apps/web) is active; the API layer (apps/api) is a placeholder for future dynamic capabilities like content management, authentication, analytics, and authoring tools.
 
-<ProjectImage src={`${imagesPath}/SmallWaves.png`} />
+For more technical infomation I suggest taking a look at my repository:
 
-## Technical Details
+<GitHubLink
+  url="https://github.com/BogSav/Enhanced"
+  label="You can find the project on my github here."
+  iconSize="large"
+/>
 
-Our architecture is based on the following key components:
+# Technologies
 
-- Low-latency communication interface between CPU and QPU
-- Quantum memory for storing and manipulating qubits
-- Specialized scheduler for optimal task allocation
+For this project I used the following technologies:
+
+- **React 19**: Core UI library for the single‑page application; functional components + hooks, **React Router** integration for client routing, future‑ready for streaming/concurrent features.
+- **TypeScript**: Used as main development lannguage; offers incremental project build (`tsc -b`) that runs before production bundling to surface type errors early.
+- **Vite**: Development server with fast cold starts and HMR; production bundler producing optimized ESM output; `@vitejs/plugin-react` enables fast refresh + JSX transform.
+- **Material UI (v7) + Icons**: Design system, accessible component primitives, theme customization (palette/typography/spacing), icon set via `@mui/icons-material` for consistent visual language.
+- **i18next** (browser language detector + HTTP backend): Centralized translation management; auto‑detects user locale; backend adapter pre‑configured for future server‑served resource loading.
+- **MDX Toolchain**: `@mdx-js/react` plus remark/rehype plugins (frontmatter, GFM, syntax highlighting) to author hybrid content (blog posts, project pages) with metadata (title, date, tags).
+- **ESLint + typescript-eslint**: Linting pipeline enforcing consistency, best practices, and preventing common React/TypeScript pitfalls (`npm run lint`).
+- **Docker and Compose**: Containerizes the frontend for parity between local and deployed environments; image can be promoted without rebuild drift. Also it orchestrates development (live reload mount) vs production (immutable build) profiles.
+- **Nginx** (production testing / proxy layer): Serves the built static assets and can act as a reverse proxy entry point once backend services are introduced (planned integration).
+
+# Future Work
+
+Enhanced will evolve from a static portfolio into a hosting platform for a family of “Enhanced” web projects. Each larger project will be delivered as an independently deployable microservice (API service, background worker, scheduled job, edge/SSR function, or standalone static UI). The current web app becomes the aggregation shell: global navigation, authentication boundary, user preferences, documentation, marketing, and consolidated project status dashboards.
 
 export default ({ children }) => (
   <ProjectLayout frontmatter={frontmatter}>{children}</ProjectLayout>

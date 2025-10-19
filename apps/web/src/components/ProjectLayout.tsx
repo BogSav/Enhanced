@@ -12,6 +12,9 @@ import {
 } from "@mui/material";
 import React from "react";
 import CloseIcon from "@mui/icons-material/Close";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import { Alert } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 
 import type { ReactNode } from "react";
@@ -24,9 +27,10 @@ type Frontmatter = {
   image?: string;
 };
 
-// Inline prop types for ProjectLayout to keep the file simple
+// Below we define some reusable components for the MDX project pages
 
-// ProjectImage component
+// ProjectImage component - this component contains caption for the image, and a dialog to show the image in large format when clicked
+// This components are designed to be used inside MDX files to display project images with captions and zoom functionality
 export function ProjectImage({
   src,
   alt,
@@ -42,18 +46,26 @@ export function ProjectImage({
   const handleClose = React.useCallback(() => setOpen(false), []);
 
   React.useEffect(() => {
+    // We add an event listener for keyboard input such that when the dialog is open, pressing Escape closes it
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") handleClose();
     }
-    if (open) document.addEventListener("keydown", onKey);
+
+    if (open) {
+      document.addEventListener("keydown", onKey);
+    }
+
+    // We remove the event listener on cleanup
     return () => document.removeEventListener("keydown", onKey);
   }, [open, handleClose]);
 
   return (
     <>
+      {/* First we define the original image plus the caption, below you can find the big dialog for the image */}
       <Box
         sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
       >
+        {/* Clickable image that opens the dialog */}
         <Box
           component="img"
           src={src}
@@ -80,6 +92,7 @@ export function ProjectImage({
           }}
         />
 
+        {/* Caption below the image */}
         {caption && (
           <Typography
             variant="caption"
@@ -91,6 +104,7 @@ export function ProjectImage({
         )}
       </Box>
 
+      {/* Then we define the dialog that shows the large image - here we also have to define the close button and the caption again*/}
       <Dialog
         open={open}
         onClose={handleClose}
@@ -109,6 +123,7 @@ export function ProjectImage({
             justifyContent: "center",
           }}
         >
+          {/* Close button */}
           <IconButton
             aria-label="close image"
             onClick={handleClose}
@@ -124,6 +139,7 @@ export function ProjectImage({
             <CloseIcon />
           </IconButton>
 
+          {/* The actual image in big format */}
           <Box
             component="img"
             src={src}
@@ -137,6 +153,7 @@ export function ProjectImage({
             }}
           />
 
+          {/* Caption below the large image */}
           {caption && (
             <Typography
               variant="body2"
@@ -157,7 +174,7 @@ export function ProjectImage({
   );
 }
 
-// ProjectTag component
+// This is the ProjectTag component
 export function ProjectTag({
   children,
 }: {
@@ -175,6 +192,55 @@ export function ProjectTag({
         fontWeight: 500,
       }}
     />
+  );
+}
+
+// Small reusable GitHub link with icon + text
+export function GitHubLink({
+  url,
+  label = "View on GitHub",
+  iconSize = "small",
+}: {
+  url: string;
+  label?: string;
+  iconSize?: "small" | "medium" | "large";
+}): React.ReactElement {
+  return (
+    <Link
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      underline="none"
+      sx={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 1,
+      }}
+    >
+      <GitHubIcon fontSize={iconSize as any} aria-hidden="true" />
+      <Typography variant="body2">{label}</Typography>
+    </Link>
+  );
+}
+
+// WarningBox: simple red/yellow warning box with an icon
+export function WarningBox({
+  title,
+  severity,
+}: {
+  title?: string;
+  severity?: "error" | "warning";
+}): React.ReactElement {
+  return (
+    <Alert
+      severity={severity || "warning"}
+      icon={<WarningAmberIcon />}
+      sx={{ mt: 2, mb: 2 }}
+    >
+      {title ? (
+        <strong style={{ display: "block", marginBottom: 6 }}>{title}</strong>
+      ) : null}
+    </Alert>
   );
 }
 

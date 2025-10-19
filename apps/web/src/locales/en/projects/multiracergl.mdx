@@ -1,31 +1,81 @@
 ---
 title: MultiRacerGL
-description: Graphics engine with multiplayer capabilities.
-tags: ["Multiplayer", "Graphics", "BOOST asio", "OpenGL"]
+description: Minimal racing game in OpenGL with a custom multiplayer server built on Boost.Asio.
+tags: ["OpenGL", "C++", "Boost.Asio", "Multiplayer", "CMake"]
 status: Maintenance
 ---
 
 import ProjectLayout, {
-  ProjectImage,
-  ProjectTag,
+  WarningBox,
+  GitHubLink,
 } from "../../../components/ProjectLayout";
 
-export const imagesPath = "/src/assets/rtxplore";
+# Overview
 
-## Overview
+MultiRacerGL is one of my first 3D projects: a **racing** game written in **OpenGL** with a small custom engine for model/texture loading and a separate **multiplayer** component built on **Boost.Asio**. The codebase is split into two projects: `Game/` (client) and `Server/` (TCP server), orchestrated with **CMake**.
 
-This project explores the possibility of creating a hybrid system that combines the power of classical computing with the unique advantages of quantum computation.
+## What I Built
 
-## Technical Details
+- **OpenGL renderer**: basic lighting (diffuse/specular), **model loading** and **texture loading**, and a **procedurally generated track**.
+- **Real-time multiplayer**: a standalone **Boost.Asio (TCP)** server handling concurrent connections and synchronizing every player’s transform.
+- **Thread-safe session state**: a shared data structure (positions, velocities, IDs) updated by network threads and safely read by the renderer.
+- **Serialization**: simple packet serialization (built as an experiment to learn the mechanism; can be replaced with a compact binary protocol).
+- **Threading model**:
+  - Client: one thread for **rendering** and one for **network I/O**.
+  - Server: **one thread per client** (easy to reason about; great for a first iteration).
 
-Our architecture is based on the following key components:
+<GitHubLink
+  url="https://github.com/BogSav/MultiRacerGL"
+  label="You can find the project on my github here."
+  iconSize="large"
+/>
 
-- Low-latency communication interface between CPU and QPU
-- Quantum memory for storing and manipulating qubits
-- Specialized scheduler for optimal task allocation
+---
+
+# Technical Stuff
+
+## Rendering (client)
+
+- **OpenGL core** with VAO/VBO/IBO and straightforward vertex/fragment shaders.
+- **Lighting**: classic Phong/Blinn–Phong highlights for readable materials.
+- **Model & texture loading**: utility modules to bring in meshes and textures cleanly.
+- **Track generation**: procedural vertices/normals/UVs for a race track (extensible to banked segments).
+
+## Multiplayer Architecture
+
+- **Server (Boost.Asio, TCP)**
+
+  - Accepts new connections and spawns **one thread per connection**.
+  - Maintains a **thread-safe map** of players and **broadcasts** state at a fixed tickrate.
+  - Exchanges serialized packets with position/rotation/velocity.
+
+- **Client (Game)**
+  - The network thread **receives updates** and posts them to a synchronized buffer.
+  - The render thread **reads snapshots** non-blocking and updates other cars in the scene.
+
+> The per-client-thread server is intentionally simple and clear. A future step is moving to **asynchronous I/O** with a shared `io_context` and a small thread pool.
+
+## Tech Stack (concise)
+
+- **C++ / C / GLSL**, **OpenGL**, **Boost.Asio**, **CMake**
+- Classic **std::thread** + synchronization primitives
+- Lightweight, custom **serialization** for proof-of-concept
+
+---
+
+# Next Steps
+
+- **Binary protocol** with fixed structs and **compression/quantization** for transforms.
+- **Async I/O** (single `io_context` + thread pool) instead of thread-per-client.
+- **Client-side interpolation/extrapolation** for smooth motion under variable latency.
+- **Server-authoritative** mode and basic anti-cheat.
+- **Lighting upgrade**: simple PBR and shadows to improve scene readability.
+
+<WarningBox
+  title="If you are interested in doing something together in this area (as a side project or research collaboration), feel free to reach out!"
+  severity="error"
+/>
 
 export default ({ children }) => (
   <ProjectLayout frontmatter={frontmatter}>{children}</ProjectLayout>
 );
-
-;

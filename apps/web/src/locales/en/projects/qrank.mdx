@@ -1,31 +1,92 @@
 ---
 title: QRank
-description: Project dedicated to developing a multiplayer racing game with advanced graphics.
-tags: ["Multiplayer", "Graphics", "BOOST asio", "OpenGL"]
-status: Maintenance
+description: A dedicated platform for quantum computing challenges — with auto-grading, sandboxed execution, and GPU/cluster backends.
+tags: ["Quantum", "WEB", "Microservices", "GPU"]
+status: IDEA
 ---
 
 import ProjectLayout, {
-  ProjectImage,
-  ProjectTag,
+  GitHubLink,
+  WarningBox,
 } from "../../../components/ProjectLayout";
 
-export const imagesPath = "/src/assets/rtxplore";
+# Overview
 
-## Overview
+QRank is a competitive **quantum computing** platform (under Enhanced) where users solve QC problems and submit code for **automatic grading**. The system targets **containerized execution**, **microservices**, and **GPU/cluster** backends for fast simulation and ML-assisted tasks.
 
-This project explores the possibility of creating a hybrid system that combines the power of classical computing with the unique advantages of quantum computation.
+## What I’m Building
 
-## Technical Details
+- A web app with challenge tracks: **circuits** (OpenQASM/QIR), **variational** (VQE/QAOA), **annealing**, and **hybrid** (classical optimizer + QPU/simulator).
+- A safe, reproducible **runner** that executes user code in jailed containers and returns structured results (scores, plots, logs).
+- A grading pipeline that validates both **correctness** (state fidelities, energy gaps, constraint checks) and **performance** (depth, 2-qubit count, wall time).
+- A content model for **problem statements** (MDX) + **test bundles** (datasets, seeds, reference metrics).
 
-Our architecture is based on the following key components:
+<WarningBox
+  title="This is an early-stage project idea. I am currently searching for collaborators. If you want to participate in the development, please contact me!"
+  severity="warning"
+/>
 
-- Low-latency communication interface between CPU and QPU
-- Quantum memory for storing and manipulating qubits
-- Specialized scheduler for optimal task allocation
+---
+
+# Platform Highlights
+
+- **Multi-language**: Python (Qiskit/Cirq/PennyLane/Braket), C++ (QIR/LLVM), and OpenQASM 3.
+- **Hybrid kernels**: support for classical loops with measure-feedback; optional access to remote QPUs (future).
+- **Artifacts & Replays**: store wavefunction snapshots, counts histograms, and seeds for perfect reproducibility.
+- **Leaderboards**: deterministic scoring; tie-breakers on cost function and resource usage.
+
+## Architecture (proposed)
+
+```text
+Web (React/TS, MDX) ─▶ API Gateway ─▶ Job Queue ─▶ Worker Pool (GPU/CPU)
+                                │                      ├─ simulators (state-vector, tensor-network, stabilizer)
+                                │                      ├─ VQE/QAOA optimizers (Torch/JAX)
+                                └─ Auth/Profiles       └─ graders (metrics, constraints, plots)
+Storage: Postgres (meta) • MinIO/S3 (artifacts) • Redis (queue/cache) • Loki (logs)
+Observability: Prometheus/Grafana • OpenTelemetry
+```
+
+**Execution model**:
+
+- User submits solution → API creează job cu test-bundle imuabil.
+- Dispatcher alege o imagine runner (ex. qrank-runner:python-qiskit) și planifică pe GPU/CPU.
+- Worker rulează testele, emite metrici (fidelity, energy, success prob), artefacte și loguri.
+- Grader agregă și scrie scorul final → leaderboard.
+
+Tech Stack (ideas)
+
+## Tech Stack (ideas)
+
+### Frontend
+
+- React + TypeScript (based on Enhanced)
+- MDX for problem statements
+- Monaco editor for code entry
+- WebGL visualizations (Bloch spheres, histograms)
+- i18n (en/ro)
+- OAuth2 login
+
+### Backend / Services
+
+- API Gateway: FastAPI or NestJS
+- gRPC for service-to-service communication
+- Auth: Keycloak (OIDC) or Auth0
+- Jobs/Queue: Redis/Arq or RabbitMQ; optional Temporal for durable workflows
+- Storage: Postgres (metadata), MinIO/S3 (artifacts), Redis (cache)
+- Observability: Prometheus, Grafana, Loki, OpenTelemetry
+
+### Runners / Simulators
+
+- Python images: Qiskit, Cirq, PennyLane (+ Torch/JAX for VQE)
+- High-performance simulators: qsim, cuQuantum (state-vector / density-matrix), tensornetwork
+- Optional: ingest QIR and pass LLVM to simulators
+
+### Infrastructure
+
+- Docker / Docker Compose for local development
+- Kubernetes for scale (NVIDIA GPU Operator)
+- Nginx or Traefik ingress, cert-manager, ArgoCD (GitOps)
 
 export default ({ children }) => (
   <ProjectLayout frontmatter={frontmatter}>{children}</ProjectLayout>
 );
-
-;
