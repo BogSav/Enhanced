@@ -6,16 +6,18 @@ import {
   Typography,
   Alert,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 
 import ErrorBoundary from "./ErrorBoundary";
 
 type LoadedModule = { default: React.ComponentType<Record<string, unknown>> };
-export type ModulesMap = Record<
-  string,
-  (() => Promise<LoadedModule>) | undefined
->;
+
+// An entry in `modules` can be either a lazy loader or an already-loaded module.
+type ModuleEntry = LoadedModule | (() => Promise<LoadedModule>);
+
+/** Generic map for MDX modules (lazy or eager). */
+export type ModulesMap = Record<string, ModuleEntry | undefined>;
 
 type MDXLoaderProps = {
   slug: string;
@@ -30,8 +32,20 @@ type MDXLoaderProps = {
   errorBoundaryFallback?: React.ReactNode;
 };
 
-// This function is used to dynamically load and render MDX content based on the provided slug and language
-// while asynchronously handling loading and error states.
+// Type guards
+function isLoader(
+  entry: ModuleEntry | undefined
+): entry is () => Promise<LoadedModule> {
+  return typeof entry === "function";
+}
+
+function hasDefault(mod: unknown): mod is LoadedModule {
+  // Avoid `any`: use a partial structural type
+  const maybe = mod as { default?: unknown } | null | undefined;
+  return !!maybe && typeof maybe.default === "function";
+}
+
+// Component: loads and renders MDX based on slug + language.
 export default function MDXLoader({
   slug,
   language,
@@ -47,8 +61,11 @@ export default function MDXLoader({
   > | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Must be declared at component level, not inside the effect.
+  const cancelledRef = useRef(false);
+
   useEffect(() => {
-    let cancelled = false;
+    cancelledRef.current = false;
 
     const load = async (): Promise<void> => {
       try {
@@ -57,25 +74,30 @@ export default function MDXLoader({
         setContent(null);
 
         const langFolder = language.startsWith("ro") ? "ro" : "en";
-        const path = `../locales/${langFolder}/${pathPrefix}${slug}.mdx`;
 
-        const importer = modules[path];
-        if (typeof importer !== "function") {
+        // 1) Lookup by slug (for the eager variant indexed by slug)
+        let entry: ModuleEntry | undefined = modules[slug];
+
+        // 2) Fallback: lookup by literal path (for the lazy-by-path variant)
+        if (!entry) {
+          const path = `../locales/${langFolder}/${pathPrefix}${slug}.mdx`;
+          entry = modules[path];
+        }
+
+        if (!entry) {
           setError(`Content "${slug}" not found`);
-          setLoading(false);
           return;
         }
 
-        // Start dynamic import by calling the importer function
-        const mod = await importer();
+        // Support both modes: eager (direct module) or lazy (loader function).
+        const mod = isLoader(entry) ? await entry() : entry;
 
-        if (cancelled) {
+        if (cancelledRef.current) {
           return;
         }
 
-        if (typeof mod.default === "function") {
+        if (hasDefault(mod)) {
           setContent(() => mod.default);
-          setError(null);
         } else {
           setError(
             `Loaded module for "${slug}" does not contain a default export`
@@ -83,13 +105,10 @@ export default function MDXLoader({
         }
       } catch (err) {
         console.error("Error loading MDX content:", err);
-        setError(
-          `Failed to load content: ${
-            err instanceof Error ? err.message : "Unknown error"
-          }`
-        );
+        const msg = err instanceof Error ? err.message : "Unknown error";
+        setError(`Failed to load content: ${msg}`);
       } finally {
-        if (!cancelled) {
+        if (!cancelledRef.current) {
           setLoading(false);
         }
       }
@@ -98,7 +117,7 @@ export default function MDXLoader({
     void load();
 
     return () => {
-      cancelled = true;
+      cancelledRef.current = true;
     };
   }, [slug, language, modules, pathPrefix]);
 
