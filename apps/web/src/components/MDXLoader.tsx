@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import {
   Box,
   CircularProgress,
@@ -7,12 +6,18 @@ import {
   Typography,
   Alert,
 } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
+
 import ErrorBoundary from "./ErrorBoundary";
 
-type ModulesMap = Record<string, () => Promise<any>>;
+type LoadedModule = { default: React.ComponentType<Record<string, unknown>> };
+export type ModulesMap = Record<
+  string,
+  (() => Promise<LoadedModule>) | undefined
+>;
 
-interface MDXLoaderProps {
+type MDXLoaderProps = {
   slug: string;
   language: string;
   modules: ModulesMap;
@@ -23,7 +28,7 @@ interface MDXLoaderProps {
   /** Wrap rendered MDX in ErrorBoundary */
   useErrorBoundary?: boolean;
   errorBoundaryFallback?: React.ReactNode;
-}
+};
 
 // This function is used to dynamically load and render MDX content based on the provided slug and language
 // while asynchronously handling loading and error states.
@@ -37,7 +42,9 @@ export default function MDXLoader({
   errorBoundaryFallback,
 }: MDXLoaderProps): React.ReactElement {
   const [error, setError] = useState<string | null>(null);
-  const [Content, setContent] = useState<React.ComponentType | null>(null);
+  const [Content, setContent] = useState<React.ComponentType<
+    Record<string, unknown>
+  > | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -53,7 +60,7 @@ export default function MDXLoader({
         const path = `../locales/${langFolder}/${pathPrefix}${slug}.mdx`;
 
         const importer = modules[path];
-        if (!importer) {
+        if (typeof importer !== "function") {
           setError(`Content "${slug}" not found`);
           setLoading(false);
           return;
@@ -65,8 +72,15 @@ export default function MDXLoader({
         if (cancelled) {
           return;
         }
-        setContent(() => (mod as any).default);
-        setError(null);
+
+        if (typeof mod.default === "function") {
+          setContent(() => mod.default);
+          setError(null);
+        } else {
+          setError(
+            `Loaded module for "${slug}" does not contain a default export`
+          );
+        }
       } catch (err) {
         console.error("Error loading MDX content:", err);
         setError(
@@ -75,7 +89,9 @@ export default function MDXLoader({
           }`
         );
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     };
 

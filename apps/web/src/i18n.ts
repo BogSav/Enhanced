@@ -40,7 +40,7 @@ void i18n
       escapeValue: false, // React handles XSS escaping; avoid double escaping
     },
     backend: {
-      loadPath: "/src/locales/{{lng}}/common.json", // Path to translation resources
+      loadPath: `${import.meta.env.BASE_URL}locales/{{lng}}/{{ns}}.json`, // Path to translation resources
       // Future alternative: "/locales/{{lng}}/{{ns}}.json" for multiple namespaces
     },
     // ns: ["common"], // Example explicit namespace definition

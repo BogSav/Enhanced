@@ -11,10 +11,11 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { getGlassStyle } from "./Style";
-import logoImage from "/LogoEnhancedV2.png";
 import { useTranslation } from "react-i18next";
 import { Link as RouterLink } from "react-router-dom";
+
+import logoImage from "/LogoEnhancedV2.png";
+import { getGlassStyle } from "./Style";
 
 export default function Header({
   themeKey,

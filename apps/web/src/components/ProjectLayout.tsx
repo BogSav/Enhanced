@@ -1,3 +1,6 @@
+import CloseIcon from "@mui/icons-material/Close";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import {
   Box,
   Breadcrumbs,
@@ -10,11 +13,8 @@ import {
   Dialog,
   IconButton,
 } from "@mui/material";
-import React from "react";
-import CloseIcon from "@mui/icons-material/Close";
-import GitHubIcon from "@mui/icons-material/GitHub";
-import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { Alert } from "@mui/material";
+import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 
 import type { ReactNode } from "react";
@@ -42,13 +42,19 @@ export function ProjectImage({
 }): React.ReactElement {
   const [open, setOpen] = React.useState(false);
 
-  const handleOpen = React.useCallback(() => setOpen(true), []);
-  const handleClose = React.useCallback(() => setOpen(false), []);
+  const handleOpen = React.useCallback((): void => {
+    setOpen(true);
+  }, []);
+  const handleClose = React.useCallback((): void => {
+    setOpen(false);
+  }, []);
 
   React.useEffect(() => {
     // We add an event listener for keyboard input such that when the dialog is open, pressing Escape closes it
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") handleClose();
+    function onKey(e: KeyboardEvent): void {
+      if (e.key === "Escape") {
+        handleClose();
+      }
     }
 
     if (open) {
@@ -56,7 +62,9 @@ export function ProjectImage({
     }
 
     // We remove the event listener on cleanup
-    return () => document.removeEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+    };
   }, [open, handleClose]);
 
   return (
@@ -109,8 +117,8 @@ export function ProjectImage({
         open={open}
         onClose={handleClose}
         maxWidth={false}
-        PaperProps={{
-          sx: { backgroundColor: "transparent", boxShadow: "none" },
+        slotProps={{
+          paper: { sx: { backgroundColor: "transparent", boxShadow: "none" } },
         }}
       >
         <Box
@@ -217,7 +225,7 @@ export function GitHubLink({
         gap: 1,
       }}
     >
-      <GitHubIcon fontSize={iconSize as any} aria-hidden="true" />
+      <GitHubIcon fontSize={iconSize} aria-hidden="true" />
       <Typography variant="body2">{label}</Typography>
     </Link>
   );

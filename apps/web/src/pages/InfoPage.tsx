@@ -1,5 +1,6 @@
-import MDXLoader from "../components/MDXLoader";
 import { useTranslation } from "react-i18next";
+
+import MDXLoader, { type ModulesMap } from "../components/MDXLoader";
 
 // Prepare modules map and pass to shared MDXLoader - same as in ProjectPage.tsx
 const roPages = import.meta.glob("../locales/ro/legal/*.mdx");
@@ -13,7 +14,7 @@ export default function InfoPage({
   const { i18n } = useTranslation();
   const language = i18n.language;
 
-  const modules = language.startsWith("ro") ? roPages : enPages;
+  const modules = (language.startsWith("ro") ? roPages : enPages) as ModulesMap;
 
   return (
     <MDXLoader

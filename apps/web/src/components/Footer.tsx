@@ -1,7 +1,6 @@
-import React from "react";
 import EmailIcon from "@mui/icons-material/Email";
-import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import GitHubIcon from "@mui/icons-material/GitHub";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import {
   Box,
   Container,
@@ -11,6 +10,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import React from "react";
 
 export default function Footer(): React.ReactElement {
   const year = new Date().getFullYear();

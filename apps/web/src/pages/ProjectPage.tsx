@@ -1,16 +1,9 @@
-import {
-  Box,
-  CircularProgress,
-  Container,
-  Link,
-  Typography,
-  Alert,
-} from "@mui/material";
-import React, { useState, useEffect } from "react";
+import { Container, Link, Typography } from "@mui/material";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, Link as RouterLink } from "react-router-dom";
 
-import MDXLoader from "../components/MDXLoader";
+import MDXLoader, { type ModulesMap } from "../components/MDXLoader";
 
 // Prepare modules map and pass to shared MDXLoader - same as in InfoPage.tsx
 const roModules = import.meta.glob("../locales/ro/projects/*.mdx");
@@ -35,7 +28,9 @@ export default function ProjectPage(): React.ReactElement {
     );
   }
 
-  const modules = language.startsWith("ro") ? roModules : enModules;
+  const modules = (
+    language.startsWith("ro") ? roModules : enModules
+  ) as ModulesMap;
 
   return (
     <MDXLoader

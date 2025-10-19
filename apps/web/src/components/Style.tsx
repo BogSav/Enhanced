@@ -1,5 +1,6 @@
-import { alpha } from "@mui/material/styles";
 import { createTheme } from "@mui/material";
+import { alpha } from "@mui/material/styles";
+
 import type { ThemeKey } from "../App";
 
 /** Dark = inspirat de GitHub/Primer + Linear: fond foarte închis, neutrali reci, accent albastru serios */
@@ -39,7 +40,7 @@ const whiteThemePalette = {
 };
 
 // Glass style (ușor temperat, fără glow agresiv; funcționează pe ambele teme)
-export const getGlassStyle = (themeKey: ThemeKey) => {
+export const getGlassStyle = (themeKey: ThemeKey): Record<string, unknown> => {
   const p = themeKey === "dark" ? darkThemePalette : whiteThemePalette;
   return {
     borderRadius: 999,
@@ -62,7 +63,7 @@ export const getGlassStyle = (themeKey: ThemeKey) => {
   };
 };
 
-export const getTheme = (themeKey: ThemeKey) =>
+export const getTheme = (themeKey: ThemeKey): ReturnType<typeof createTheme> =>
   createTheme({
     palette: {
       mode: themeKey,
