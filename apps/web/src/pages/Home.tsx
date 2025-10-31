@@ -11,9 +11,9 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import ProjectCard from "../components/ProjectCard";
+import { getProjectMetadata } from "../content/projects";
 
 import type { ProjectMetadata } from "../components/ProjectCard";
-import { getProjectMetadata } from "../content/projects";
 
 export default function Home(): React.ReactElement {
   const { t, i18n } = useTranslation();
