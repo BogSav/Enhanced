@@ -2,7 +2,8 @@ import { useTranslation } from "react-i18next";
 
 import MDXLoader, { type ModulesMap } from "../components/MDXLoader";
 
-// Prepare modules map and pass to shared MDXLoader - same as in ProjectPage.tsx
+// Prepare modules map and pass to shared MDXLoader
+// There is no eager loading here, only lazy loading by path
 const roPages = import.meta.glob("../locales/ro/legal/*.mdx");
 const enPages = import.meta.glob("../locales/en/legal/*.mdx");
 

@@ -11,14 +11,15 @@ import { Link as RouterLink } from "react-router-dom";
 
 import ErrorBoundary from "./ErrorBoundary";
 
+// An entry in `modules` can be either a lazy loader (the function returning a promise)
+// or an already-loaded module. For the already-loaded module, I created the LoadedModule type.
 type LoadedModule = { default: React.ComponentType<Record<string, unknown>> };
-
-// An entry in `modules` can be either a lazy loader or an already-loaded module.
 type ModuleEntry = LoadedModule | (() => Promise<LoadedModule>);
 
-/** Generic map for MDX modules (lazy or eager). */
+// Generic map for MDX modules (lazy or eager).
 export type ModulesMap = Record<string, ModuleEntry | undefined>;
 
+// These props should correspond to the frontmatter and structure of your MDX files
 type MDXLoaderProps = {
   slug: string;
   language: string;
@@ -32,16 +33,19 @@ type MDXLoaderProps = {
   errorBoundaryFallback?: React.ReactNode;
 };
 
-// Type guards
+// We use a type guard to distinguish between loader functions and loaded modules.
 function isLoader(
   entry: ModuleEntry | undefined
 ): entry is () => Promise<LoadedModule> {
   return typeof entry === "function";
 }
 
+// Type guard to check if a module has a default export
 function hasDefault(mod: unknown): mod is LoadedModule {
-  // Avoid `any`: use a partial structural type
+  // Cast to a more specific type to check for default export
   const maybe = mod as { default?: unknown } | null | undefined;
+  // Check first that maybe is not null/undefined (by using the bool conversion !!),
+  // then that default exists and is a function
   return !!maybe && typeof maybe.default === "function";
 }
 
@@ -75,27 +79,31 @@ export default function MDXLoader({
 
         const langFolder = language.startsWith("ro") ? "ro" : "en";
 
-        // 1) Lookup by slug (for the eager variant indexed by slug)
+        // Lookup by slug (for the eager variant indexed by slug)
         let entry: ModuleEntry | undefined = modules[slug];
 
-        // 2) Fallback: lookup by literal path (for the lazy-by-path variant)
+        // Fallback: lookup by literal path (for the lazy-by-path variant)
         if (!entry) {
           const path = `../locales/${langFolder}/${pathPrefix}${slug}.mdx`;
           entry = modules[path];
         }
 
+        // If still not found, error out
         if (!entry) {
           setError(`Content "${slug}" not found`);
           return;
         }
 
-        // Support both modes: eager (direct module) or lazy (loader function).
+        // We either have a loader function or an already-loaded module.
+        // We first check which one it is, then load if needed.
         const mod = isLoader(entry) ? await entry() : entry;
 
         if (cancelledRef.current) {
           return;
         }
 
+        // Each MDX module must have a default export (the component itself).
+        // If no default component is detected we error out.
         if (hasDefault(mod)) {
           setContent(() => mod.default);
         } else {
@@ -121,6 +129,7 @@ export default function MDXLoader({
     };
   }, [slug, language, modules, pathPrefix]);
 
+  // If an error occurred, show error message and link back home
   if (error) {
     return (
       <Container>
@@ -137,6 +146,7 @@ export default function MDXLoader({
     );
   }
 
+  // While loading, show a spinner
   if (loading || !Content) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", py: 5 }}>
@@ -145,8 +155,7 @@ export default function MDXLoader({
     );
   }
 
-  const rendered = <Content />;
-
+  // Render the loaded MDX content, optionally wrapped in an ErrorBoundary to catch any rendering errors
   if (useErrorBoundary) {
     return (
       <ErrorBoundary
@@ -156,10 +165,10 @@ export default function MDXLoader({
           )
         }
       >
-        {rendered}
+        <Content />
       </ErrorBoundary>
     );
   }
 
-  return rendered;
+  return <Content />;
 }

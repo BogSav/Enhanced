@@ -13,76 +13,15 @@ import { useTranslation } from "react-i18next";
 import ProjectCard from "../components/ProjectCard";
 
 import type { ProjectMetadata } from "../components/ProjectCard";
-
-// Dynamically load all MDX files from locales folders
-const enModules = import.meta.glob("../locales/en/projects/*.mdx", {
-  eager: true,
-});
-const roModules = import.meta.glob("../locales/ro/projects/*.mdx", {
-  eager: true,
-});
+import { getProjectMetadata } from "../content/projects";
 
 export default function Home(): React.ReactElement {
   const { t, i18n } = useTranslation();
 
-  // Process the imported MDX modules to extract projects metadata
-  // Safely extract frontmatter from an imported MDX module (supports both `module.frontmatter` and `module.default.frontmatter` shapes)
-  function extractFrontmatter(mod: unknown):
-    | {
-        title?: string;
-        description?: string;
-        tags?: string[];
-        status?: string;
-      }
-    | undefined {
-    if (!mod || typeof mod !== "object") {
-      return undefined;
-    }
-    const m = mod as Record<string, unknown>;
-    let maybe: unknown = undefined;
-    if (m.frontmatter) {
-      maybe = m.frontmatter;
-    } else if (m.default && typeof m.default === "object") {
-      const def = m.default as Record<string, unknown>;
-      if (def.frontmatter) {
-        maybe = def.frontmatter;
-      }
-    }
-    if (!maybe || typeof maybe !== "object") {
-      return undefined;
-    }
-    const fm = maybe as Record<string, unknown>;
-    return {
-      title: typeof fm.title === "string" ? fm.title : undefined,
-      description:
-        typeof fm.description === "string" ? fm.description : undefined,
-      tags: Array.isArray(fm.tags)
-        ? fm.tags.filter((x): x is string => typeof x === "string")
-        : undefined,
-      status: typeof fm.status === "string" ? fm.status : undefined,
-    };
-  }
-
-  const projects: ProjectMetadata[] = useMemo(() => {
-    const modules = i18n.language === "ro" ? roModules : enModules;
-
-    return Object.entries(modules).map(([path, module]) => {
-      // Extract slug from the file path
-      const slug = path.split("/").pop()?.replace(".mdx", "") || "";
-
-      // Extract frontmatter metadata safely
-      const fm = extractFrontmatter(module) ?? {};
-
-      // Create the project metadata object based on the frontmatter data and slug
-      return {
-        slug,
-        title: fm.title ?? slug,
-        description: fm.description ?? "",
-        tags: fm.tags ?? [],
-        status: fm.status ?? "",
-      };
-    });
-  }, [i18n.language]);
+  const projects: ProjectMetadata[] = useMemo(
+    () => getProjectMetadata(i18n.language),
+    [i18n.language]
+  );
 
   return (
     <Stack spacing={6}>
