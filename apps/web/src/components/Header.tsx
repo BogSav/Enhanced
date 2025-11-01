@@ -11,7 +11,6 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useTranslation } from "react-i18next";
 import { Link as RouterLink } from "react-router-dom";
 
 import logoImage from "/LogoEnhancedV2.png";
@@ -26,14 +25,11 @@ export default function Header({
   onToggleTheme: () => void;
   onLogoClick?: () => void;
 }): React.ReactElement {
-  // Get the translation function and current language from i18n
-  const { t, i18n } = useTranslation();
+  // English-only UI (i18n removed)
 
   // Get the glass style based on the current theme for the header background
   const glassStyle = getGlassStyle(themeKey);
-  const toggleLanguage = (): void => {
-    void i18n.changeLanguage(i18n.language === "en" ? "ro" : "en");
-  };
+  // Language toggle removed
 
   // Reusable style for the navigation buttons - this is a descriptor compatible with MUI's sx prop
   const chipStyle = {
@@ -82,13 +78,8 @@ export default function Header({
               spacing={0.5}
               sx={{ display: { xs: "none", md: "flex" } }}
             >
-              <Button
-                component={RouterLink}
-                to="/"
-                color="inherit"
-                sx={chipStyle}
-              >
-                {t("header.home")}
+              <Button component={RouterLink} to="/" color="inherit" sx={chipStyle}>
+                Home
               </Button>
               <Button
                 component={RouterLink}
@@ -96,35 +87,15 @@ export default function Header({
                 color="inherit"
                 sx={chipStyle}
               >
-                {t("header.projects")}
+                Projects
               </Button>
-              <Button href="#about" color="inherit" sx={chipStyle}>
-                {t("header.about")}
-              </Button>
-              <Button href="#blogs" color="inherit" sx={chipStyle}>
-                {t("header.blogs")}
-              </Button>
+              <Button href="#about" color="inherit" sx={chipStyle}>About</Button>
+              <Button href="#blogs" color="inherit" sx={chipStyle}>Blogs</Button>
             </Stack>
 
             {/*==========================================================================*/}
-            {/* This stack contains the language toggle, theme switch and GitHub link */}
+            {/* This stack contains the theme switch and GitHub link */}
             <Stack direction="row" alignItems="center" spacing={0.5} pr={1}>
-              {/* This tooltip toggles the language */}
-              <Tooltip
-                title={
-                  i18n.language === "en"
-                    ? t("lang.switchToRo")
-                    : t("lang.switchToEn")
-                }
-              >
-                <IconButton
-                  onClick={toggleLanguage}
-                  size="small"
-                  sx={chipStyle}
-                >
-                  {i18n.language === "en" ? t("lang.ro") : t("lang.en")}
-                </IconButton>
-              </Tooltip>
               {/* This tooltip toggles the theme */}
               <Tooltip
                 title={themeKey === "dark" ? "Light mode" : "Dark mode"}

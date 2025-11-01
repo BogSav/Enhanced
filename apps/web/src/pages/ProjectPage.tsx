@@ -1,6 +1,5 @@
 import { Container, Link, Typography } from "@mui/material";
 import React from "react";
-import { useTranslation } from "react-i18next";
 import { useParams, Link as RouterLink } from "react-router-dom";
 
 import MDXLoader from "../components/MDXLoader";
@@ -8,8 +7,6 @@ import { getProjectModules } from "../content/projects";
 
 export default function ProjectPage(): React.ReactElement {
   const { slug } = useParams<{ slug: string }>();
-  const { i18n } = useTranslation();
-  const language = i18n.language;
 
   if (!slug) {
     return (
@@ -24,12 +21,11 @@ export default function ProjectPage(): React.ReactElement {
     );
   }
 
-  const modules = getProjectModules(language);
+  const modules = getProjectModules();
 
   return (
     <MDXLoader
       slug={slug}
-      language={language}
       modules={modules}
       pathPrefix="projects/"
       useErrorBoundary

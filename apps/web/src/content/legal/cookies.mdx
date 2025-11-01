@@ -1,0 +1,33 @@
+import { Container, Stack, Typography, Link } from "@mui/material";
+
+export default function CookiesPage() {
+  return (
+    <Container sx={{ py: 6 }}>
+      <Stack spacing={2}>
+        <Typography variant="h4" fontWeight={800}>Cookies Policy</Typography>
+        <Typography variant="body2" color="text.secondary">
+          Last updated: October 18, 2025
+        </Typography>
+
+        <Typography>
+          This website does not use cookies and does not employ similar tracking
+          technologies (e.g., pixels, beacons) for analytics, advertising, or profiling.
+        </Typography>
+
+        <Typography variant="h6">Locally saved theme</Typography>
+        <Typography>
+          The theme preference (light/dark) may be stored in the browser's
+          <i> localStorage </i> for your convenience. This is not a cookie,
+          it does not identify users, and it is not transmitted to third-party servers.
+        </Typography>
+
+        <Typography variant="h6">Questions</Typography>
+        <Typography>
+          For any questions, please contact us at&nbsp;
+          <Link href="mailto:contact@enhanced.ro">contact@enhanced.ro</Link>.
+        </Typography>
+      </Stack>
+    </Container>
+
+);
+}

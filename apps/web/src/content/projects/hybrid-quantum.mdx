@@ -1,0 +1,49 @@
+---
+title: Standardized Hybrid Quantum-Classical System - Language and Kernel Execution
+description: This project proposes a fully integrated hybrid quantum-classical computing system, designed to extend the classical execution model with native support for quantum operations.
+tags: ["Research", "Quantum Computing", "Systems", "Kernel"]
+status: Work In Progress
+---
+
+import ProjectLayout, {
+  ProjectImage,
+  ProjectTag,
+  WarningBox,
+} from "../../components/ProjectLayout";
+
+# What I Built
+
+I proposed and prototyped the **first standardized hybrid quantum–classical system** that extends the classical execution model with native quantum routines. The QPU is treated as a **co-processor** (GPU-style), while the OS gains visibility via **two minimal syscalls** for scheduling and synchronization. A small C++ runtime (`libquantx`) encodes quantum programs to binary command buffers and submits them to a kernel driver. A light LLVM pass can inject the syscall markers.
+
+<WarningBox
+  title="Since this project represents my dissertation thesis, I am not able to offer too many technical details. For any questions, please reach out to me directly."
+  severity="warning"
+/>
+
+Main pieces delivered:
+
+- **Kernel-visible execution**: `qpu_fence` and `wait_qpu` syscalls act as boundaries around quantum work.
+- **User-space runtime**: C++ API (allocate/apply/measure/dispatch) that serializes gates into a **QISA** buffer and IOCTL-submits it to `/dev/qpu0`.
+- **Driver path**: minimal **character device** handling buffer submission and synchronization points.
+- **Compiler touchpoint**: optional LLVM pass to emit the syscall markers near dispatch/wait sites; QIR can be used for advanced flows.
+- **Validation**: simulated end-to-end run (Hadamard + measure) showing fences, submission, completion, and wait.
+
+# State of the Art (super short)
+
+This section presents a structured analysis of existing hybrid quantum-classical systems, covering the full abstraction spectrum from high-level programming models to low-level hardware architectures
+
+- **Hardware/Integration**: from monolithic CMOS spin qubits to **chiplet/3D** and board-level hybrids; trend is toward tighter, cryo-proximate control.
+- **Languages/ISAs**: Q#, Quil, OpenQASM 3, QIR; most require **manual quantum–classical coordination**, hence the need for OS-visible execution.
+- **Algorithms/Platforms**: VQE/QAOA, VQLS, QCNNs on frameworks like Qiskit, Cirq, PennyLane, Braket, D-Wave Ocean.
+
+The full state of the art analysis will be part of my dissertation thesis - once complete, I will update this section accordingly and will attach it as a downloadable resource.
+
+# Takeaways
+
+- Keep quantum logic in **user space**; give the OS minimal, explicit **synchronization hooks**.
+- Reuse the **GPU driver pattern** to stay portable while preparing for **real QPUs**.
+- The model is modular: swap simulators/firmware without changing the app or kernel API.
+
+export default ({ children }) => (
+  <ProjectLayout frontmatter={frontmatter}>{children}</ProjectLayout>
+);

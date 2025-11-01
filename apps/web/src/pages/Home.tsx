@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
 
 import ProjectCard from "../components/ProjectCard";
 import AboutMe from "../components/AboutMe";
@@ -21,12 +20,7 @@ import { getProjectMetadata } from "../content/projects";
 import type { ProjectMetadata } from "../components/ProjectCard";
 
 export default function Home(): React.ReactElement {
-  const { t, i18n } = useTranslation();
-
-  const projects: ProjectMetadata[] = useMemo(
-    () => getProjectMetadata(i18n.language),
-    [i18n.language]
-  );
+  const projects: ProjectMetadata[] = useMemo(() => getProjectMetadata(), []);
 
   return (
     <Stack spacing={3}>
@@ -67,22 +61,16 @@ export default function Home(): React.ReactElement {
               <Typography variant="h1" sx={{ color: "secondary.main" }}>
                   Enhanced
               </Typography>
-              <Typography variant="h3">
-                {t("home.title")}
-              </Typography>
+              <Typography variant="h3">Interactive portfolio</Typography>
               <Typography variant="h6" color="text.secondary" maxWidth={800}>
-                {t("home.subtitle")}
+                Projects at the intersection of hardware accelerated computing, artificial intelligence, and quantum computing.
               </Typography>
             </Stack>
 
             {/* Action buttons - projects and contact */}
             <Stack direction="row" spacing={2} sx={{ pt: 3 }}>
-              <Button size="large" variant="contained" href="#projects">
-                {t("home.explore")}
-              </Button>
-              <Button size="large" variant="outlined" href="#contact">
-                {t("home.contact")}
-              </Button>
+              <Button size="large" variant="contained" href="#projects">Explore projects</Button>
+              <Button size="large" variant="outlined" href="#contact">Contact me</Button>
             </Stack>
           </Paper>
         </Grow>
@@ -93,7 +81,7 @@ export default function Home(): React.ReactElement {
       </Section>
 
       {/* Render all the projects using the <ProjectCard /> component inside a consistent Section */}
-      <Section id="projects" title={t("home.proiecte")} index={2}>
+  <Section id="projects" title={"Featured Projects"} index={2}>
         {/* Projects masonry using CSS columns (no extra deps) */}
         <Box
           sx={{
@@ -117,25 +105,22 @@ export default function Home(): React.ReactElement {
       </Section>
 
       {/* Blogs section */}
-      <Section id="blogs" title={t("home.blogsTitle", "From the blog")} index={3}>
+      <Section id="blogs" title={"From the blog"} index={3}>
         <BlogSection />
       </Section>
 
       {/* Contact area - message and mail */}
       <Section index={4}>
         <Box sx={{ textAlign: "center" }}>
-          <Typography
-            variant="h5"
-            sx={{ mb: 2, fontWeight: 700, whiteSpace: "pre-line" }}
-          >
-            {t("home.colaborare")}
+          <Typography variant="h5" sx={{ mb: 2, fontWeight: 700, whiteSpace: "pre-line" }}>
+            {"Open for collaborations & interesting problems.\n Feel free to reach out!"}
           </Typography>
           <Button
             size="large"
             variant="contained"
             href="mailto:bogdansava59@yahoo.com"
           >
-            {t("home.email")}
+            Email me
           </Button>
         </Box>
       </Section>

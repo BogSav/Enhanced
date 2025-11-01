@@ -14,7 +14,6 @@ import {
   Grow,
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
-import { useTranslation } from "react-i18next";
 import { Code, Memory, ShowChart, Public, Bolt } from "@mui/icons-material";
 
 /**
@@ -59,27 +58,17 @@ function useInView<T extends Element>(margin = "0px 0px -20% 0px") {
 type Skill = { label: string; level: number; hint?: string };
 
 export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.ReactElement {
-  const { t } = useTranslation();
   const theme = useTheme();
   const { ref, inView } = useInView<HTMLDivElement>();
 
-  // ======== Content (din i18next cu fallbackuri) ========
-  const title = t("about.title", "About me");
-  const subtitle = t(
-    "about.subtitle",
-    "Engineer blending graphics, low-level systems, and quantum computing."
-  );
-  const bio = t(
-    "about.bio",
-    "I design and build performant software — from CNC toolpath algorithms at ModuleWorks to experimental quantum-classical ideas under the Enhanced label. I love clean APIs, measurable performance, and thoughtful UX."
-  );
+  // ======== English-only content (i18n removed) ========
+  const title = "About me";
+  const subtitle = "Engineer blending graphics, low-level systems, and quantum computing.";
+  const bio = "I design and build performant software — from CNC toolpath algorithms at ModuleWorks to experimental quantum-classical ideas under the Enhanced label. I love clean APIs, measurable performance, and thoughtful UX.";
 
   // Use Vite's base URL so the path works in dev and when deployed under a subpath
   const avatarSrc = `${import.meta.env.BASE_URL}ProfilePic.jpg`;
 
-  // Skills (0..100). Poți muta în i18n: about.skills = [{label,level,hint}, ...]
-  // The translation may be missing or not an array; guard against that at runtime.
-  const skillsFromI18n = t("about.skills", { returnObjects: true }) as unknown;
   const defaultSkills: Skill[] = [
     { label: "C++20/23 • toolchains", level: 92, hint: "CMake, clang-cl, MSVC, presets" },
     { label: "GPU & Graphics", level: 88, hint: "DX12, compute, RT, pipelines" },
@@ -87,15 +76,12 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
     { label: "TypeScript/React", level: 84, hint: "MUI, Vite, SSR/CSR patterns" },
     { label: "Quantum (QC/QML)", level: 70, hint: "Hybrid architectures, oracles" },
   ];
-
-  const skills: Skill[] = Array.isArray(skillsFromI18n)
-    ? (skillsFromI18n as Skill[])
-    : defaultSkills;
+  const skills: Skill[] = defaultSkills;
 
   // “Stats” – inspirat din profil (poți adapta din i18n: about.stats.*)
-  const statYears = useCountUp(Number(t("about.stats.years", "5")), 1000, inView);
-  const statProjects = useCountUp(Number(t("about.stats.projects", "25")), 1200, inView);
-  const statTalks = useCountUp(Number(t("about.stats.talks", "6")), 1000, inView);
+  const statYears = useCountUp(5, 1000, inView);
+  const statProjects = useCountUp(25, 1200, inView);
+  const statTalks = useCountUp(6, 1000, inView);
 
   // Un mic “radar” SVG minimalist (fără deps) — se animă pe intrare
   const radarValues = [0.92, 0.88, 0.86, 0.84, 0.7]; // corespunde cu skills
@@ -160,9 +146,9 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
               flexWrap: "wrap",
             }}
           >
-            <Chip icon={<Code />} label={t("about.tags.code", "Systems & Graphics")} />
-            <Chip icon={<Memory />} label={t("about.tags.quantum", "Quantum-curious")} variant="outlined" />
-            <Chip icon={<Public />} label={t("about.tags.open", "Open-source")} variant="outlined" />
+            <Chip icon={<Code />} label={"Systems & Graphics"} />
+            <Chip icon={<Memory />} label={"Quantum-curious"} variant="outlined" />
+            <Chip icon={<Public />} label={"Open-source"} variant="outlined" />
           </Stack>
         </Box>
       </Stack>
@@ -187,7 +173,7 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
         {/* Stats */}
         <Stack flex={1} spacing={2}>
           <Typography variant="h5" sx={{ fontWeight: 800 }}>
-            {t("about.stats.title", "Snapshot")}
+            {"Snapshot"}
           </Typography>
 
           <Box
@@ -217,7 +203,7 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
             >
               <Stack direction="row" spacing={1} alignItems="center" sx={{ justifyContent: { xs: "center", md: "flex-start" } }}>
                 <Bolt fontSize="small" />
-                <Typography variant="overline">{t("about.stats.yearsLabel", "Years exp.")}</Typography>
+                <Typography variant="overline">Years exp.</Typography>
               </Stack>
               <Typography variant="h3" sx={{ fontWeight: 800, lineHeight: 1 }}>
                 {statYears}
@@ -239,7 +225,7 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
             >
               <Stack direction="row" spacing={1} alignItems="center" sx={{ justifyContent: { xs: "center", md: "flex-start" } }}>
                 <ShowChart fontSize="small" />
-                <Typography variant="overline">{t("about.stats.projectsLabel", "Projects")}</Typography>
+                <Typography variant="overline">Projects</Typography>
               </Stack>
               <Typography variant="h3" sx={{ fontWeight: 800, lineHeight: 1 }}>
                 {statProjects}
@@ -261,7 +247,7 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
             >
               <Stack direction="row" spacing={1} alignItems="center" sx={{ justifyContent: { xs: "center", md: "flex-start" } }}>
                 <Public fontSize="small" />
-                <Typography variant="overline">{t("about.stats.talksLabel", "Talks/Posts")}</Typography>
+                <Typography variant="overline">Talks/Posts</Typography>
               </Stack>
               <Typography variant="h3" sx={{ fontWeight: 800, lineHeight: 1 }}>
                 {statTalks}
@@ -272,7 +258,7 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
           {/* Skill bars */}
           <Box sx={{ mt: 2 }}>
             <Typography variant="subtitle1" sx={{ mb: 1.5, fontWeight: 700 }}>
-              {t("about.skillsTitle", "Core skills")}
+              {"Core skills"}
             </Typography>
 
             <Stack spacing={1.2}>
@@ -319,10 +305,10 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
           }}
         >
           <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
-            {t("about.radarTitle", "Tech focus")}
+            {"Tech focus"}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {t("about.radarHint", "Higher = deeper involvement right now")}
+            {"Higher = deeper involvement right now"}
           </Typography>
 
           <Box
@@ -401,7 +387,7 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
       <Divider sx={{ my: { xs: 3, md: 5 } }} />
       <Box>
         <Typography variant="h5" sx={{ fontWeight: 800, mb: 2 }}>
-          {t("about.highlightsTitle", "Recent highlights")}
+          {"Recent highlights"}
         </Typography>
 
         <Stack
@@ -411,35 +397,26 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
         >
           <Paper sx={{ p: 2.5, borderRadius: 3 }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-              {t("about.highlight1.title", "CNC deburring & links")}
+              {"CNC deburring & links"}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {t(
-                "about.highlight1.desc",
-                "Worked on robust clearance and deburring settings (UI + core), focusing on correctness and DX for complex toolpaths."
-              )}
+              {"Worked on robust clearance and deburring settings (UI + core), focusing on correctness and DX for complex toolpaths."}
             </Typography>
           </Paper>
           <Paper sx={{ p: 2.5, borderRadius: 3 }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-              {t("about.highlight2.title", "RTXplore engine")}
+              {"RTXplore engine"}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {t(
-                "about.highlight2.desc",
-                "Exploring a high-performance open engine with ray tracing and compute-heavy pipelines."
-              )}
+              {"Exploring a high-performance open engine with ray tracing and compute-heavy pipelines."}
             </Typography>
           </Paper>
           <Paper sx={{ p: 2.5, borderRadius: 3 }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-              {t("about.highlight3.title", "Hybrid quantum-classical")}
+              {"Hybrid quantum-classical"}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {t(
-                "about.highlight3.desc",
-                "Designing an OS/ISA concept to orchestrate quantum instructions alongside classical workloads."
-              )}
+              {"Designing an OS/ISA concept to orchestrate quantum instructions alongside classical workloads."}
             </Typography>
           </Paper>
         </Stack>

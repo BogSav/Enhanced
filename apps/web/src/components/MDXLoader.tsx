@@ -22,7 +22,6 @@ export type ModulesMap = Record<string, ModuleEntry | undefined>;
 // These props should correspond to the frontmatter and structure of your MDX files
 type MDXLoaderProps = {
   slug: string;
-  language: string;
   modules: ModulesMap;
   /** optional subfolder inside locales e.g. "legal/" */
   pathPrefix?: string;
@@ -52,7 +51,6 @@ function hasDefault(mod: unknown): mod is LoadedModule {
 // Component: loads and renders MDX based on slug + language.
 export default function MDXLoader({
   slug,
-  language,
   modules,
   pathPrefix = "",
   errorTitle = "Content not available",
@@ -77,14 +75,12 @@ export default function MDXLoader({
         setError(null);
         setContent(null);
 
-        const langFolder = language.startsWith("ro") ? "ro" : "en";
-
         // Lookup by slug (for the eager variant indexed by slug)
         let entry: ModuleEntry | undefined = modules[slug];
 
         // Fallback: lookup by literal path (for the lazy-by-path variant)
         if (!entry) {
-          const path = `../locales/${langFolder}/${pathPrefix}${slug}.mdx`;
+          const path = `../content/${pathPrefix}${slug}.mdx`;
           entry = modules[path];
         }
 
@@ -127,7 +123,7 @@ export default function MDXLoader({
     return () => {
       cancelledRef.current = true;
     };
-  }, [slug, language, modules, pathPrefix]);
+  }, [slug, modules, pathPrefix]);
 
   // If an error occurred, show error message and link back home
   if (error) {
