@@ -55,11 +55,7 @@ export const getGlassStyle = (themeKey: ThemeKey): Record<string, unknown> => {
       p.primary,
       0.12
     )}, ${alpha(p.secondary, 0.08)})`,
-    backdropFilter: "saturate(160%) blur(14px)",
-    boxShadow:
-      themeKey === "dark"
-        ? "0 8px 28px rgba(2,6,23,.40)" // mai “tight” pe dark
-        : "0 6px 24px rgba(0,0,0,.08)",
+    backdropFilter: "saturate(160%) blur(14px)"
   };
 };
 
@@ -141,7 +137,10 @@ export const getTheme = (themeKey: ThemeKey): ReturnType<typeof createTheme> =>
     },
     components: {
       MuiPaper: {
-        styleOverrides: { root: { boxShadow: "0 10px 30px rgba(0,0,0,0.08)" } },
+        styleOverrides: { root: { boxShadow: `0 10px 30px ${alpha(
+          themeKey === "light" ? whiteThemePalette.textPrimary : darkThemePalette.textPrimary,
+          0.08
+        )}` } },
       },
       MuiCard: { styleOverrides: { root: { borderRadius: 20 } } },
     },

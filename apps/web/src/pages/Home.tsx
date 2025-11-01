@@ -6,11 +6,16 @@ import {
   Paper,
   Stack,
   Typography,
+  Grow,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import ProjectCard from "../components/ProjectCard";
+import AboutMe from "../components/AboutMe";
+import Section from "../components/Section";
+import BlogSection from "../components/BlogSection";
 import { getProjectMetadata } from "../content/projects";
 
 import type { ProjectMetadata } from "../components/ProjectCard";
@@ -24,57 +29,71 @@ export default function Home(): React.ReactElement {
   );
 
   return (
-    <Stack spacing={6}>
-      {/* First part of the home page - Hero section */}
+    <Stack spacing={3}>
+      {/* First part of the home page - Hero section (animated) */}
       <Container maxWidth="lg" sx={{ pt: { xs: 0, md: 2 } }}>
-        <Paper
-          elevation={0}
-          sx={{
-            p: { xs: 3, md: 6 },
-            borderRadius: 4,
-            background: (t) =>
-              t.palette.mode === "dark"
-                ? "radial-gradient(1000px 500px at 0% 0%, rgba(56,189,248,.15), transparent), radial-gradient(800px 400px at 100% 0%, rgba(167,139,250,.12), transparent)"
-                : "radial-gradient(1000px 500px at 0% 0%, rgba(14,165,233,.12), transparent), radial-gradient(800px 400px at 100% 0%, rgba(124,58,237,.10), transparent)",
-          }}
-        >
-          {/* Title, description and tags */}
-          <Stack spacing={2}>
-            <Chip
-              label="Portfolio & Lab"
-              color="primary"
-              variant="outlined"
-              sx={{ alignSelf: "flex-start" }}
-            />
-            <Typography variant="h2">
-              <Box component="span" sx={{ color: "secondary.main" }}>
-                Enhanced
-              </Box>{" "}
-              - {t("home.title")}
-            </Typography>
-            <Typography variant="h6" color="text.secondary" maxWidth={800}>
-              {t("home.subtitle")}
-            </Typography>
-          </Stack>
+        <Grow in timeout={500} style={{ transformOrigin: "top center", transitionDelay: `0ms` }}>
+          <Paper
+            elevation={0}
+            sx={{
+              p: { xs: 3, md: 6 },
+              borderRadius: 4,
+              background: (t) =>
+                    t.palette.mode === "dark"
+                      ? `radial-gradient(1000px 500px at 0% 0%, ${alpha(
+                          t.palette.primary.main,
+                          0.15
+                        )}, transparent), radial-gradient(800px 400px at 100% 0%, ${alpha(
+                          t.palette.secondary.main,
+                          0.12
+                        )}, transparent)`
+                      : `radial-gradient(1000px 500px at 0% 0%, ${alpha(
+                          t.palette.primary.main,
+                          0.12
+                        )}, transparent), radial-gradient(800px 400px at 100% 0%, ${alpha(
+                          t.palette.secondary.main,
+                          0.10
+                        )}, transparent)`,
+            }}
+          >
+            {/* Title, description and tags */}
+            <Stack spacing={2}>
+              <Chip
+                label="Portfolio & Lab"
+                color="primary"
+                variant="outlined"
+                sx={{ alignSelf: "flex-start" }}
+              />
+              <Typography variant="h1" sx={{ color: "secondary.main" }}>
+                  Enhanced
+              </Typography>
+              <Typography variant="h3">
+                {t("home.title")}
+              </Typography>
+              <Typography variant="h6" color="text.secondary" maxWidth={800}>
+                {t("home.subtitle")}
+              </Typography>
+            </Stack>
 
-          {/* Action buttons - projects and contact */}
-          <Stack direction="row" spacing={2} sx={{ pt: 3 }}>
-            <Button size="large" variant="contained" href="#projects">
-              {t("home.explore")}
-            </Button>
-            <Button size="large" variant="outlined" href="#contact">
-              {t("home.contact")}
-            </Button>
-          </Stack>
-        </Paper>
+            {/* Action buttons - projects and contact */}
+            <Stack direction="row" spacing={2} sx={{ pt: 3 }}>
+              <Button size="large" variant="contained" href="#projects">
+                {t("home.explore")}
+              </Button>
+              <Button size="large" variant="outlined" href="#contact">
+                {t("home.contact")}
+              </Button>
+            </Stack>
+          </Paper>
+        </Grow>
       </Container>
 
-      {/* Render all the projects using the <ProjectCard /> component */}
-      <Box id="projects">
-        <Typography variant="h4" sx={{ mb: 2, fontWeight: 800 }}>
-          {t("home.proiecte")}
-        </Typography>
+      <Section id="about" index={1}>
+        <AboutMe boxed={false} />
+      </Section>
 
+      {/* Render all the projects using the <ProjectCard /> component inside a consistent Section */}
+      <Section id="projects" title={t("home.proiecte")} index={2}>
         {/* Projects masonry using CSS columns (no extra deps) */}
         <Box
           sx={{
@@ -95,27 +114,31 @@ export default function Home(): React.ReactElement {
             </Box>
           ))}
         </Box>
-      </Box>
+      </Section>
+
+      {/* Blogs section */}
+      <Section id="blogs" title={t("home.blogsTitle", "From the blog")} index={3}>
+        <BlogSection />
+      </Section>
 
       {/* Contact area - message and mail */}
-      <Paper
-        elevation={0}
-        sx={{ p: { xs: 3, md: 5 }, borderRadius: 4, textAlign: "center" }}
-      >
-        <Typography
-          variant="h5"
-          sx={{ mb: 2, fontWeight: 700, whiteSpace: "pre-line" }}
-        >
-          {t("home.colaborare")}
-        </Typography>
-        <Button
-          size="large"
-          variant="contained"
-          href="mailto:bogdansava59@yahoo.com"
-        >
-          {t("home.email")}
-        </Button>
-      </Paper>
+      <Section index={4}>
+        <Box sx={{ textAlign: "center" }}>
+          <Typography
+            variant="h5"
+            sx={{ mb: 2, fontWeight: 700, whiteSpace: "pre-line" }}
+          >
+            {t("home.colaborare")}
+          </Typography>
+          <Button
+            size="large"
+            variant="contained"
+            href="mailto:bogdansava59@yahoo.com"
+          >
+            {t("home.email")}
+          </Button>
+        </Box>
+      </Section>
     </Stack>
   );
 }

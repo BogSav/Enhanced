@@ -20,4 +20,23 @@
     "colaborare": "Deschis pentru colaborări și probleme interesante.\n Nu ezitați să mă contactați!",
     "email": "Trimite-mi un mail"
   }
+  ,
+  "about": {
+    "title": "Despre mine",
+    "subtitle": "Inginer între grafică performantă, sisteme low-level și calcul cuantic.",
+    "bio": "Construiesc software performant — de la algoritmi de prelucrare CNC la idei hibride cuantic-clasice sub labelul Enhanced.",
+    "tags": { "code": "Sisteme & Grafică", "quantum": "Interesat de quantum", "open": "Open-source" },
+    "stats": { "title": "Instantaneu", "years": "5", "projects": "25", "talks": "6", "yearsLabel": "Ani experiență", "projectsLabel": "Proiecte", "talksLabel": "Prezentări/Postări" },
+    "skillsTitle": "Competențe de bază",
+    "radarTitle": "Focus tehnic",
+    "radarHint": "Mai sus = implicare mai mare în prezent",
+    "highlightsTitle": "Repere recente",
+    "highlight1": { "title": "Deburring & linkuri CNC", "desc": "Setări robuste de clearance și deburring (UI + core)." },
+    "highlight2": { "title": "RTXplore engine", "desc": "Motor performant cu ray tracing și pipeline-uri compute-intense." },
+    "highlight3": { "title": "Hibrid cuantic-clasic", "desc": "Proiectare OS/ISA pentru a orchestra instrucțiuni cuantice alături de workload-uri clasice." }
+  },
+  "blogs": {
+    "title": "De pe blog",
+    "browse": "Vezi postările"
+  }
 }

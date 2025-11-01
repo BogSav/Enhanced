@@ -98,6 +98,9 @@ export default function Header({
               >
                 {t("header.projects")}
               </Button>
+              <Button href="#about" color="inherit" sx={chipStyle}>
+                {t("header.about")}
+              </Button>
               <Button href="#blogs" color="inherit" sx={chipStyle}>
                 {t("header.blogs")}
               </Button>

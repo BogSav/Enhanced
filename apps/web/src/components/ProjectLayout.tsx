@@ -140,8 +140,8 @@ export function ProjectImage({
               top: 8,
               right: 8,
               color: "white",
-              bgcolor: "rgba(0,0,0,0.4)",
-              "&:hover": { bgcolor: "rgba(0,0,0,0.6)" },
+              bgcolor: (t) => alpha(t.palette.common.black, 0.4),
+              "&:hover": { bgcolor: (t) => alpha(t.palette.common.black, 0.6) },
             }}
           >
             <CloseIcon />
@@ -169,7 +169,7 @@ export function ProjectImage({
                 mt: 1,
                 color: "common.white",
                 textAlign: "center",
-                textShadow: "0 1px 4px rgba(0,0,0,0.8)",
+                textShadow: (t) => `0 1px 4px ${alpha(t.palette.common.black, 0.8)}`,
                 maxWidth: "90vw",
               }}
             >
