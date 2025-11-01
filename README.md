@@ -24,11 +24,14 @@ Inside `apps/web`, the current structure is:
 
 - `components/` — reusable UI elements (Header, Footer, ProjectCard, MDXProvider, ErrorBoundary)
 - `pages/` — route-level views (Home, ProjectPage, NotFound)
-- `locales/` — translation resources (en/, ro/ with common.json + MDX content)
+- `content/` — English-only content:
+   - MDX pages under `content/projects/` and `content/legal/`
+   - `ui.toml` for UI text (labels, headings, messages)
+   - `about.toml` for About Me data (stats, skills, radar, highlights)
+- UI copy is centralized in `apps/web/src/content/ui.toml` and About Me data in `apps/web/src/content/about.toml` so you can edit content without touching code.
 - `assets/` — static resources (images, icons)
 - `App.tsx` — root component with routing logic
 - `main.tsx` — React app entry point and DOM mounting
-- `i18n.ts` — i18next initialization and configuration
 - `index.css` / `App.css` — global and component-level styles
 - `vite-env.d.ts` — ambient type declarations for Vite + MDX
 
@@ -52,7 +55,7 @@ For this project I used the following technologies:
 - **TypeScript**: Used as main development lannguage; offers incremental project build (`tsc -b`) that runs before production bundling to surface type errors early.
 - **Vite**: Development server with fast cold starts and HMR; production bundler producing optimized ESM output; `@vitejs/plugin-react` enables fast refresh + JSX transform.
 - **Material UI (v7) + Icons**: Design system, accessible component primitives, theme customization (palette/typography/spacing), icon set via `@mui/icons-material` for consistent visual language.
-- **i18next** (browser language detector + HTTP backend): Centralized translation management; auto‑detects user locale; backend adapter pre‑configured for future server‑served resource loading.
+- (Previously used) i18n removed — project is now English-only for simplicity.
 - **MDX Toolchain**: `@mdx-js/react` plus remark/rehype plugins (frontmatter, GFM, syntax highlighting) to author hybrid content (blog posts, project pages) with metadata (title, date, tags).
 - **ESLint + typescript-eslint**: Linting pipeline enforcing consistency, best practices, and preventing common React/TypeScript pitfalls (`npm run lint`).
 - **Docker and Compose**: Containerizes the frontend for parity between local and deployed environments; image can be promoted without rebuild drift. Also it orchestrates development (live reload mount) vs production (immutable build) profiles.

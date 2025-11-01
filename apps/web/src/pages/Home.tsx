@@ -16,6 +16,7 @@ import AboutMe from "../components/AboutMe";
 import Section from "../components/Section";
 import BlogSection from "../components/BlogSection";
 import { getProjectMetadata } from "../content/projects";
+import ui from "../content/uiText";
 
 import type { ProjectMetadata } from "../components/ProjectCard";
 
@@ -53,7 +54,7 @@ export default function Home(): React.ReactElement {
             {/* Title, description and tags */}
             <Stack spacing={2}>
               <Chip
-                label="Portfolio & Lab"
+                label={ui.home.badge}
                 color="primary"
                 variant="outlined"
                 sx={{ alignSelf: "flex-start" }}
@@ -61,16 +62,16 @@ export default function Home(): React.ReactElement {
               <Typography variant="h1" sx={{ color: "secondary.main" }}>
                   Enhanced
               </Typography>
-              <Typography variant="h3">Interactive portfolio</Typography>
+              <Typography variant="h3">{ui.home.title}</Typography>
               <Typography variant="h6" color="text.secondary" maxWidth={800}>
-                Projects at the intersection of hardware accelerated computing, artificial intelligence, and quantum computing.
+                {ui.home.subtitle}
               </Typography>
             </Stack>
 
             {/* Action buttons - projects and contact */}
             <Stack direction="row" spacing={2} sx={{ pt: 3 }}>
-              <Button size="large" variant="contained" href="#projects">Explore projects</Button>
-              <Button size="large" variant="outlined" href="#contact">Contact me</Button>
+              <Button size="large" variant="contained" href="#projects">{ui.home.ctaExplore}</Button>
+              <Button size="large" variant="outlined" href="#contact">{ui.home.ctaContact}</Button>
             </Stack>
           </Paper>
         </Grow>
@@ -81,7 +82,7 @@ export default function Home(): React.ReactElement {
       </Section>
 
       {/* Render all the projects using the <ProjectCard /> component inside a consistent Section */}
-  <Section id="projects" title={"Featured Projects"} index={2}>
+  <Section id="projects" title={ui.home.projectsTitle} index={2}>
         {/* Projects masonry using CSS columns (no extra deps) */}
         <Box
           sx={{
@@ -105,7 +106,7 @@ export default function Home(): React.ReactElement {
       </Section>
 
       {/* Blogs section */}
-      <Section id="blogs" title={"From the blog"} index={3}>
+  <Section id="blogs" title={ui.home.blogsTitle} index={3}>
         <BlogSection />
       </Section>
 
@@ -113,14 +114,14 @@ export default function Home(): React.ReactElement {
       <Section index={4}>
         <Box sx={{ textAlign: "center" }}>
           <Typography variant="h5" sx={{ mb: 2, fontWeight: 700, whiteSpace: "pre-line" }}>
-            {"Open for collaborations & interesting problems.\n Feel free to reach out!"}
+            {ui.home.collab}
           </Typography>
           <Button
             size="large"
             variant="contained"
             href="mailto:bogdansava59@yahoo.com"
           >
-            Email me
+            {ui.home.emailButton}
           </Button>
         </Box>
       </Section>

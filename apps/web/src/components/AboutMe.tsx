@@ -15,6 +15,8 @@ import {
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { Code, Memory, ShowChart, Public, Bolt } from "@mui/icons-material";
+import ui from "../content/uiText";
+import about from "../content/aboutData";
 
 /**
  * Mic utilitar pentru counters animate (0 -> target) atunci când intră în viewport.
@@ -61,30 +63,23 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
   const theme = useTheme();
   const { ref, inView } = useInView<HTMLDivElement>();
 
-  // ======== English-only content (i18n removed) ========
-  const title = "About me";
-  const subtitle = "Engineer blending graphics, low-level systems, and quantum computing.";
-  const bio = "I design and build performant software — from CNC toolpath algorithms at ModuleWorks to experimental quantum-classical ideas under the Enhanced label. I love clean APIs, measurable performance, and thoughtful UX.";
+  // ======== Content from TOML ========
+  const title = ui.about.title;
+  const subtitle = ui.about.subtitle;
+  const bio = ui.about.bio;
 
   // Use Vite's base URL so the path works in dev and when deployed under a subpath
   const avatarSrc = `${import.meta.env.BASE_URL}ProfilePic.jpg`;
 
-  const defaultSkills: Skill[] = [
-    { label: "C++20/23 • toolchains", level: 92, hint: "CMake, clang-cl, MSVC, presets" },
-    { label: "GPU & Graphics", level: 88, hint: "DX12, compute, RT, pipelines" },
-    { label: "Algorithms & CNC", level: 86, hint: "Links, deburring, geometry" },
-    { label: "TypeScript/React", level: 84, hint: "MUI, Vite, SSR/CSR patterns" },
-    { label: "Quantum (QC/QML)", level: 70, hint: "Hybrid architectures, oracles" },
-  ];
-  const skills: Skill[] = defaultSkills;
+  const skills: Skill[] = about.skills as Skill[];
 
   // “Stats” – inspirat din profil (poți adapta din i18n: about.stats.*)
-  const statYears = useCountUp(5, 1000, inView);
-  const statProjects = useCountUp(25, 1200, inView);
-  const statTalks = useCountUp(6, 1000, inView);
+  const statYears = useCountUp(about.stats.years, 1000, inView);
+  const statProjects = useCountUp(about.stats.projects, 1200, inView);
+  const statTalks = useCountUp(about.stats.talks, 1000, inView);
 
   // Un mic “radar” SVG minimalist (fără deps) — se animă pe intrare
-  const radarValues = [0.92, 0.88, 0.86, 0.84, 0.7]; // corespunde cu skills
+  const radarValues = about.radar.values; // corresponds to radar labels
   const radarAnimated = radarValues.map((v) => (inView ? v : 0));
 
   // extract the inner content so we can render it either inside the local Paper (boxed)
@@ -146,9 +141,9 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
               flexWrap: "wrap",
             }}
           >
-            <Chip icon={<Code />} label={"Systems & Graphics"} />
-            <Chip icon={<Memory />} label={"Quantum-curious"} variant="outlined" />
-            <Chip icon={<Public />} label={"Open-source"} variant="outlined" />
+            <Chip icon={<Code />} label={ui.about.code} />
+            <Chip icon={<Memory />} label={ui.about.quantum} variant="outlined" />
+            <Chip icon={<Public />} label={ui.about.open} variant="outlined" />
           </Stack>
         </Box>
       </Stack>
@@ -173,7 +168,7 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
         {/* Stats */}
         <Stack flex={1} spacing={2}>
           <Typography variant="h5" sx={{ fontWeight: 800 }}>
-            {"Snapshot"}
+            {ui.about.statsTitle}
           </Typography>
 
           <Box
@@ -203,7 +198,7 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
             >
               <Stack direction="row" spacing={1} alignItems="center" sx={{ justifyContent: { xs: "center", md: "flex-start" } }}>
                 <Bolt fontSize="small" />
-                <Typography variant="overline">Years exp.</Typography>
+                <Typography variant="overline">{ui.about.yearsLabel}</Typography>
               </Stack>
               <Typography variant="h3" sx={{ fontWeight: 800, lineHeight: 1 }}>
                 {statYears}
@@ -225,7 +220,7 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
             >
               <Stack direction="row" spacing={1} alignItems="center" sx={{ justifyContent: { xs: "center", md: "flex-start" } }}>
                 <ShowChart fontSize="small" />
-                <Typography variant="overline">Projects</Typography>
+                <Typography variant="overline">{ui.about.projectsLabel}</Typography>
               </Stack>
               <Typography variant="h3" sx={{ fontWeight: 800, lineHeight: 1 }}>
                 {statProjects}
@@ -247,7 +242,7 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
             >
               <Stack direction="row" spacing={1} alignItems="center" sx={{ justifyContent: { xs: "center", md: "flex-start" } }}>
                 <Public fontSize="small" />
-                <Typography variant="overline">Talks/Posts</Typography>
+                <Typography variant="overline">{ui.about.talksLabel}</Typography>
               </Stack>
               <Typography variant="h3" sx={{ fontWeight: 800, lineHeight: 1 }}>
                 {statTalks}
@@ -258,7 +253,7 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
           {/* Skill bars */}
           <Box sx={{ mt: 2 }}>
             <Typography variant="subtitle1" sx={{ mb: 1.5, fontWeight: 700 }}>
-              {"Core skills"}
+              {ui.about.skillsTitle}
             </Typography>
 
             <Stack spacing={1.2}>
@@ -305,10 +300,10 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
           }}
         >
           <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
-            {"Tech focus"}
+            {ui.about.radarTitle}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {"Higher = deeper involvement right now"}
+            {ui.about.radarHint}
           </Typography>
 
           <Box
@@ -340,7 +335,7 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
 
               {/* polygon (animated by recompute) */}
               {(() => {
-                const labels = ["C++/Tooling", "Graphics", "CNC/Algo", "Web/TS", "Quantum"];
+                const labels = about.radar.labels;
                 const pts = radarAnimated.map((v, i) => {
                   const angle = (-90 + i * (360 / radarAnimated.length)) * (Math.PI / 180);
                   const r = 110 * v;
@@ -383,44 +378,31 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
         </Paper>
       </Stack>
 
-      {/* Highlights */}
-      <Divider sx={{ my: { xs: 3, md: 5 } }} />
-      <Box>
-        <Typography variant="h5" sx={{ fontWeight: 800, mb: 2 }}>
-          {"Recent highlights"}
-        </Typography>
+      
+        {/* Highlights */}
+        <Divider sx={{ my: { xs: 3, md: 5 } }} />
+        <Box>
+          <Typography variant="h5" sx={{ fontWeight: 800, mb: 2 }}>
+            {ui.about.highlightsTitle}
+          </Typography>
 
-        <Stack
-          direction={{ xs: "column", md: "row" }}
-          spacing={2}
-          sx={{ "& > *": { flex: 1 } }}
-        >
-          <Paper sx={{ p: 2.5, borderRadius: 3 }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-              {"CNC deburring & links"}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {"Worked on robust clearance and deburring settings (UI + core), focusing on correctness and DX for complex toolpaths."}
-            </Typography>
-          </Paper>
-          <Paper sx={{ p: 2.5, borderRadius: 3 }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-              {"RTXplore engine"}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {"Exploring a high-performance open engine with ray tracing and compute-heavy pipelines."}
-            </Typography>
-          </Paper>
-          <Paper sx={{ p: 2.5, borderRadius: 3 }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-              {"Hybrid quantum-classical"}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {"Designing an OS/ISA concept to orchestrate quantum instructions alongside classical workloads."}
-            </Typography>
-          </Paper>
-        </Stack>
-      </Box>
+          <Stack
+            direction={{ xs: "column", md: "row" }}
+            spacing={2}
+            sx={{ "& > *": { flex: 1 } }}
+          >
+            {about.highlights.map((h, idx) => (
+              <Paper key={idx} sx={{ p: 2.5, borderRadius: 3 }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                  {h.title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {h.desc}
+                </Typography>
+              </Paper>
+            ))}
+          </Stack>
+        </Box>
     </>
   );
 

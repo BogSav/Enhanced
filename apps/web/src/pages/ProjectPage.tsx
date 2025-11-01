@@ -4,6 +4,7 @@ import { useParams, Link as RouterLink } from "react-router-dom";
 
 import MDXLoader from "../components/MDXLoader";
 import { getProjectModules } from "../content/projects";
+import ui from "../content/uiText";
 
 export default function ProjectPage(): React.ReactElement {
   const { slug } = useParams<{ slug: string }>();
@@ -11,12 +12,8 @@ export default function ProjectPage(): React.ReactElement {
   if (!slug) {
     return (
       <Container>
-        <Typography variant="h4" sx={{ mb: 2 }}>
-          Project not found
-        </Typography>
-        <Link component={RouterLink} to="/">
-          Back to Home
-        </Link>
+        <Typography variant="h4" sx={{ mb: 2 }}>{ui.projectPage.notFoundTitle}</Typography>
+        <Link component={RouterLink} to="/">{ui.projectPage.backHome}</Link>
       </Container>
     );
   }
@@ -29,9 +26,7 @@ export default function ProjectPage(): React.ReactElement {
       modules={modules}
       pathPrefix="projects/"
       useErrorBoundary
-      errorBoundaryFallback={
-        <Typography>Failed to render project content</Typography>
-      }
+      errorBoundaryFallback={<Typography>{ui.mdxLoader.errorRenderFallback}</Typography>}
     />
   );
 }

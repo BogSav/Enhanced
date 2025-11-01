@@ -10,6 +10,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 
 import ErrorBoundary from "./ErrorBoundary";
+import ui from "../content/uiText";
 
 // An entry in `modules` can be either a lazy loader (the function returning a promise)
 // or an already-loaded module. For the already-loaded module, I created the LoadedModule type.
@@ -53,7 +54,7 @@ export default function MDXLoader({
   slug,
   modules,
   pathPrefix = "",
-  errorTitle = "Content not available",
+  errorTitle = ui.mdxLoader.errorTitleDefault,
   useErrorBoundary = false,
   errorBoundaryFallback,
 }: MDXLoaderProps): React.ReactElement {
@@ -136,7 +137,7 @@ export default function MDXLoader({
           {errorTitle}
         </Typography>
         <Link component={RouterLink} to="/">
-          Back to Home
+          {ui.mdxLoader.backHome}
         </Link>
       </Container>
     );
@@ -157,7 +158,7 @@ export default function MDXLoader({
       <ErrorBoundary
         fallback={
           errorBoundaryFallback ?? (
-            <Typography>Failed to render content</Typography>
+            <Typography>{ui.mdxLoader.errorRenderFallback}</Typography>
           )
         }
       >

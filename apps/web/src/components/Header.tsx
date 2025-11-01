@@ -15,6 +15,7 @@ import { Link as RouterLink } from "react-router-dom";
 
 import logoImage from "/LogoEnhancedV2.png";
 import { getGlassStyle } from "./Style";
+import ui from "../content/uiText";
 
 export default function Header({
   themeKey,
@@ -79,7 +80,7 @@ export default function Header({
               sx={{ display: { xs: "none", md: "flex" } }}
             >
               <Button component={RouterLink} to="/" color="inherit" sx={chipStyle}>
-                Home
+                {ui.header.home}
               </Button>
               <Button
                 component={RouterLink}
@@ -87,20 +88,17 @@ export default function Header({
                 color="inherit"
                 sx={chipStyle}
               >
-                Projects
+                {ui.header.projects}
               </Button>
-              <Button href="#about" color="inherit" sx={chipStyle}>About</Button>
-              <Button href="#blogs" color="inherit" sx={chipStyle}>Blogs</Button>
+              <Button href="#about" color="inherit" sx={chipStyle}>{ui.header.about}</Button>
+              <Button href="#blogs" color="inherit" sx={chipStyle}>{ui.header.blogs}</Button>
             </Stack>
 
             {/*==========================================================================*/}
             {/* This stack contains the theme switch and GitHub link */}
             <Stack direction="row" alignItems="center" spacing={0.5} pr={1}>
               {/* This tooltip toggles the theme */}
-              <Tooltip
-                title={themeKey === "dark" ? "Light mode" : "Dark mode"}
-                arrow
-              >
+              <Tooltip title={themeKey === "dark" ? ui.header.lightTooltip : ui.header.darkTooltip} arrow>
                 <IconButton
                   onClick={onToggleTheme}
                   color="inherit"

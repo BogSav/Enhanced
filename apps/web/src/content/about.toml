@@ -1,0 +1,49 @@
+# Centralized content for the About Me section
+
+[stats]
+years = 5
+projects = 25
+talks = 6
+
+# List of core skills displayed with progress bars
+[[skills]]
+label = "C++20/23 • toolchains"
+level = 92
+hint = "CMake, clang-cl, MSVC, presets"
+
+[[skills]]
+label = "GPU & Graphics"
+level = 88
+hint = "DX12, compute, RT, pipelines"
+
+[[skills]]
+label = "Algorithms & CNC"
+level = 86
+hint = "Links, deburring, geometry"
+
+[[skills]]
+label = "TypeScript/React"
+level = 84
+hint = "MUI, Vite, SSR/CSR patterns"
+
+[[skills]]
+label = "Quantum (QC/QML)"
+level = 70
+hint = "Hybrid architectures, oracles"
+
+[radar]
+labels = ["C++/Tooling", "Graphics", "CNC/Algo", "Web/TS", "Quantum"]
+values = [0.92, 0.88, 0.86, 0.84, 0.7]
+
+# Recent highlights (any number)
+[[highlights]]
+title = "CNC deburring & links"
+desc = "Worked on robust clearance and deburring settings (UI + core), focusing on correctness and DX for complex toolpaths."
+
+[[highlights]]
+title = "RTXplore engine"
+desc = "Exploring a high-performance open engine with ray tracing and compute-heavy pipelines."
+
+[[highlights]]
+title = "Hybrid quantum-classical"
+desc = "Designing an OS/ISA concept to orchestrate quantum instructions alongside classical workloads."

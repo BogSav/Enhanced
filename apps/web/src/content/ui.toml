@@ -1,0 +1,71 @@
+[header]
+home = "Home"
+projects = "Projects"
+about = "About"
+blogs = "Blogs"
+# Tooltip labels for theme toggle
+lightTooltip = "Light mode"
+darkTooltip = "Dark mode"
+
+[home]
+badge = "Portfolio & Lab"
+title = "Interactive portfolio"
+subtitle = "Projects at the intersection of hardware accelerated computing, artificial intelligence, and quantum computing."
+ctaExplore = "Explore projects"
+ctaContact = "Contact me"
+projectsTitle = "Featured Projects"
+blogsTitle = "From the blog"
+collab = "Open for collaborations & interesting problems.\n Feel free to reach out!"
+emailButton = "Email me"
+
+[blog]
+title = "From the blog"
+subtitle = "Short summaries of recent posts will appear here. For now, visit the blog index to see older posts."
+cta = "Browse posts"
+
+[about]
+title = "About me"
+subtitle = "Engineer blending graphics, low-level systems, and quantum computing."
+bio = "I design and build performant software — from CNC toolpath algorithms at ModuleWorks to experimental quantum-classical ideas under the Enhanced label. I love clean APIs, measurable performance, and thoughtful UX."
+# Badge labels
+code = "Systems & Graphics"
+quantum = "Quantum-curious"
+open = "Open-source"
+# Stats
+statsTitle = "Snapshot"
+years = 5
+projects = 25
+talks = 6
+yearsLabel = "Years exp."
+projectsLabel = "Projects"
+talksLabel = "Talks/Posts"
+# Skills
+skillsTitle = "Core skills"
+# Radar
+radarTitle = "Tech focus"
+radarHint = "Higher = deeper involvement right now"
+# Highlights
+highlightsTitle = "Recent highlights"
+highlight1Title = "CNC deburring & links"
+highlight1Desc = "Worked on robust clearance and deburring settings (UI + core), focusing on correctness and DX for complex toolpaths."
+highlight2Title = "RTXplore engine"
+highlight2Desc = "Exploring a high-performance open engine with ray tracing and compute-heavy pipelines."
+highlight3Title = "Hybrid quantum-classical"
+highlight3Desc = "Designing an OS/ISA concept to orchestrate quantum instructions alongside classical workloads."
+
+[notFound]
+code = "404"
+message = "The page you’re looking for doesn’t exist."
+backHome = "Go Home"
+
+[infoPage]
+errorTitle = "Page not available"
+
+[projectPage]
+notFoundTitle = "Project not found"
+backHome = "Back to Home"
+
+[mdxLoader]
+errorTitleDefault = "Content not available"
+backHome = "Back to Home"
+errorRenderFallback = "Failed to render content"
