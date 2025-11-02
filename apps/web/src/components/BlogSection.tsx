@@ -1,5 +1,6 @@
-import React from "react";
 import { Box, Button, Stack, Typography } from "@mui/material";
+import React from "react";
+
 import ui from "../content/parsers/UiTomlParser";
 
 export default function BlogSection(): React.ReactElement {

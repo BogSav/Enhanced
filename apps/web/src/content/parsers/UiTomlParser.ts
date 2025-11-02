@@ -1,7 +1,7 @@
 import { parse } from "toml";
 
 // Import TOML file as raw string via Vite's ?raw import
-// eslint-disable-next-line import/no-unresolved
+
 import raw from "../toml/ui.toml?raw";
 
 export type UI = {
@@ -52,7 +52,12 @@ export type UI = {
   };
 };
 
-const parsed = parse(raw) as any;
+// Type guard helper to check if a value is a non-null object
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+const parsed = parse(raw);
 
 // sensible defaults so consumers across the app don't need to guard
 const ui: UI = {
@@ -104,77 +109,124 @@ const ui: UI = {
 };
 
 // Validate and copy values from parsed TOML into our typed UI object
-if (parsed && typeof parsed === "object") {
-  const p: any = parsed;
+if (isObject(parsed)) {
+  const p = parsed;
 
-  if (p.header && typeof p.header === "object") {
-    if (typeof p.header.home === "string") ui.header.home = p.header.home;
-    if (typeof p.header.projects === "string")
-      ui.header.projects = p.header.projects;
-    if (typeof p.header.about === "string") ui.header.about = p.header.about;
-    if (typeof p.header.blogs === "string") ui.header.blogs = p.header.blogs;
-    if (typeof p.header.lightTooltip === "string")
-      ui.header.lightTooltip = p.header.lightTooltip;
-    if (typeof p.header.darkTooltip === "string")
-      ui.header.darkTooltip = p.header.darkTooltip;
+  if (isObject(p.header)) {
+    const header = p.header;
+    if (typeof header.home === "string") {
+      ui.header.home = header.home;
+    }
+    if (typeof header.projects === "string") {
+      ui.header.projects = header.projects;
+    }
+    if (typeof header.about === "string") {
+      ui.header.about = header.about;
+    }
+    if (typeof header.blogs === "string") {
+      ui.header.blogs = header.blogs;
+    }
+    if (typeof header.lightTooltip === "string") {
+      ui.header.lightTooltip = header.lightTooltip;
+    }
+    if (typeof header.darkTooltip === "string") {
+      ui.header.darkTooltip = header.darkTooltip;
+    }
   }
 
-  if (p.home && typeof p.home === "object") {
+  if (isObject(p.home)) {
     const h = p.home;
-    if (typeof h.badge === "string") ui.home.badge = h.badge;
-    if (typeof h.title === "string") ui.home.title = h.title;
-    if (typeof h.subtitle === "string") ui.home.subtitle = h.subtitle;
-    if (typeof h.ctaExplore === "string") ui.home.ctaExplore = h.ctaExplore;
-    if (typeof h.ctaContact === "string") ui.home.ctaContact = h.ctaContact;
+    if (typeof h.badge === "string") {
+      ui.home.badge = h.badge;
+    }
+    if (typeof h.title === "string") {
+      ui.home.title = h.title;
+    }
+    if (typeof h.subtitle === "string") {
+      ui.home.subtitle = h.subtitle;
+    }
+    if (typeof h.ctaExplore === "string") {
+      ui.home.ctaExplore = h.ctaExplore;
+    }
+    if (typeof h.ctaContact === "string") {
+      ui.home.ctaContact = h.ctaContact;
+    }
   }
 
-  if (p.projects && typeof p.projects === "object") {
-    if (typeof p.projects.title === "string")
-      ui.projects.title = p.projects.title;
-    if (typeof p.projects.subtitle === "string")
-      ui.projects.subtitle = p.projects.subtitle;
+  if (isObject(p.projects)) {
+    const projects = p.projects;
+    if (typeof projects.title === "string") {
+      ui.projects.title = projects.title;
+    }
+    if (typeof projects.subtitle === "string") {
+      ui.projects.subtitle = projects.subtitle;
+    }
   }
 
-  if (p.blog && typeof p.blog === "object") {
-    if (typeof p.blog.title === "string") ui.blog.title = p.blog.title;
-    if (typeof p.blog.subtitle === "string") ui.blog.subtitle = p.blog.subtitle;
-    if (typeof p.blog.cta === "string") ui.blog.cta = p.blog.cta;
+  if (isObject(p.blog)) {
+    const blog = p.blog;
+    if (typeof blog.title === "string") {
+      ui.blog.title = blog.title;
+    }
+    if (typeof blog.subtitle === "string") {
+      ui.blog.subtitle = blog.subtitle;
+    }
+    if (typeof blog.cta === "string") {
+      ui.blog.cta = blog.cta;
+    }
   }
 
-  if (p.contact && typeof p.contact === "object") {
-    if (typeof p.contact.collab === "string")
-      ui.contact.collab = p.contact.collab;
-    if (typeof p.contact.emailButton === "string")
-      ui.contact.emailButton = p.contact.emailButton;
+  if (isObject(p.contact)) {
+    const contact = p.contact;
+    if (typeof contact.collab === "string") {
+      ui.contact.collab = contact.collab;
+    }
+    if (typeof contact.emailButton === "string") {
+      ui.contact.emailButton = contact.emailButton;
+    }
   }
 
-  if (p.notFound && typeof p.notFound === "object") {
-    if (typeof p.notFound.code === "string") ui.notFound.code = p.notFound.code;
-    if (typeof p.notFound.message === "string")
-      ui.notFound.message = p.notFound.message;
-    if (typeof p.notFound.backHome === "string")
-      ui.notFound.backHome = p.notFound.backHome;
+  if (isObject(p.notFound)) {
+    const notFound = p.notFound;
+    if (typeof notFound.code === "string") {
+      ui.notFound.code = notFound.code;
+    }
+    if (typeof notFound.message === "string") {
+      ui.notFound.message = notFound.message;
+    }
+    if (typeof notFound.backHome === "string") {
+      ui.notFound.backHome = notFound.backHome;
+    }
   }
 
-  if (p.infoPage && typeof p.infoPage === "object") {
-    if (typeof p.infoPage.errorTitle === "string")
-      ui.infoPage.errorTitle = p.infoPage.errorTitle;
+  if (isObject(p.infoPage)) {
+    const infoPage = p.infoPage;
+    if (typeof infoPage.errorTitle === "string") {
+      ui.infoPage.errorTitle = infoPage.errorTitle;
+    }
   }
 
-  if (p.projectPage && typeof p.projectPage === "object") {
-    if (typeof p.projectPage.notFoundTitle === "string")
-      ui.projectPage.notFoundTitle = p.projectPage.notFoundTitle;
-    if (typeof p.projectPage.backHome === "string")
-      ui.projectPage.backHome = p.projectPage.backHome;
+  if (isObject(p.projectPage)) {
+    const projectPage = p.projectPage;
+    if (typeof projectPage.notFoundTitle === "string") {
+      ui.projectPage.notFoundTitle = projectPage.notFoundTitle;
+    }
+    if (typeof projectPage.backHome === "string") {
+      ui.projectPage.backHome = projectPage.backHome;
+    }
   }
 
-  if (p.mdxLoader && typeof p.mdxLoader === "object") {
-    if (typeof p.mdxLoader.errorTitleDefault === "string")
-      ui.mdxLoader.errorTitleDefault = p.mdxLoader.errorTitleDefault;
-    if (typeof p.mdxLoader.backHome === "string")
-      ui.mdxLoader.backHome = p.mdxLoader.backHome;
-    if (typeof p.mdxLoader.errorRenderFallback === "string")
-      ui.mdxLoader.errorRenderFallback = p.mdxLoader.errorRenderFallback;
+  if (isObject(p.mdxLoader)) {
+    const mdxLoader = p.mdxLoader;
+    if (typeof mdxLoader.errorTitleDefault === "string") {
+      ui.mdxLoader.errorTitleDefault = mdxLoader.errorTitleDefault;
+    }
+    if (typeof mdxLoader.backHome === "string") {
+      ui.mdxLoader.backHome = mdxLoader.backHome;
+    }
+    if (typeof mdxLoader.errorRenderFallback === "string") {
+      ui.mdxLoader.errorRenderFallback = mdxLoader.errorRenderFallback;
+    }
   }
 }
 

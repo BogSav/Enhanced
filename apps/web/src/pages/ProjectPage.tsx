@@ -3,8 +3,8 @@ import React from "react";
 import { useParams, Link as RouterLink } from "react-router-dom";
 
 import MDXLoader from "../components/MDXLoader";
-import { getProjectModules } from "../content/ProjectsLoader";
 import ui from "../content/parsers/UiTomlParser";
+import { getProjectModules } from "../content/ProjectsLoader";
 
 export default function ProjectPage(): React.ReactElement {
   const { slug } = useParams<{ slug: string }>();

@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
+import type { RefObject } from "react";
+
 export type UseInViewOptions = {
   /** IntersectionObserver root margin, e.g. "0px 0px -20% 0px" */
   rootMargin?: string;
@@ -13,25 +15,35 @@ export type UseInViewOptions = {
  * Tiny IntersectionObserver hook to detect when an element enters the viewport.
  * Defaults are tuned for section reveals: triggers a bit before full visibility and only once.
  */
-export function useInView<T extends Element = Element>(
-  { rootMargin = "0px 0px -15% 0px", threshold = 0.15, once = true }: UseInViewOptions = {}
-) {
+export function useInView<T extends Element = Element>({
+  rootMargin = "0px 0px -15% 0px",
+  threshold = 0.15,
+  once = true,
+}: UseInViewOptions = {}): { ref: RefObject<T | null>; inView: boolean } {
   const ref = useRef<T | null>(null);
   const [inView, setInView] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el) {
+      return;
+    }
 
     let didUnmount = false;
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            if (!didUnmount) setInView(true);
-            if (once) observer.unobserve(entry.target);
+            if (!didUnmount) {
+              setInView(true);
+            }
+            if (once) {
+              observer.unobserve(entry.target);
+            }
           } else if (!once) {
-            if (!didUnmount) setInView(false);
+            if (!didUnmount) {
+              setInView(false);
+            }
           }
         });
       },
@@ -45,5 +57,5 @@ export function useInView<T extends Element = Element>(
     };
   }, [rootMargin, threshold, once]);
 
-  return { ref, inView } as const;
+  return { ref, inView };
 }

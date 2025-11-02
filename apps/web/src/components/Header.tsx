@@ -15,7 +15,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import logoImage from "/LogoEnhancedV2.png";
 import ui from "../content/parsers/UiTomlParser";
-import { getGlassStyle } from "./Utility";
+
+import { getGlassStyle } from "./ComponentUtilities";
 
 export default function Header({
   themeKey,
@@ -33,22 +34,29 @@ export default function Header({
   const location = useLocation();
   const navigate = useNavigate();
 
-  const scrollToId = (id?: string) => {
-    if (!id) return;
+  const scrollToId = (id?: string): void => {
+    if (!id) {
+      return;
+    }
     const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
 
-  const go = (hash?: string) => {
+  const go = (hash?: string): void => {
     // If already on home, just scroll
     if (location.pathname === "/") {
       scrollToId(hash);
       return;
     }
     // navigate to home with hash then try to scroll after a short delay
-    navigate(hash ? `/#${hash}` : `/`);
+    // navigate may return a Promise in some router implementations; explicitly ignore it
+    void navigate(hash ? `/#${hash}` : `/`);
     // allow the route to render
-    setTimeout(() => scrollToId(hash), 120);
+    setTimeout(() => {
+      scrollToId(hash);
+    }, 120);
   };
 
   // Reusable style for the navigation buttons - this is a descriptor compatible with MUI's sx prop
@@ -99,28 +107,36 @@ export default function Header({
               sx={{ display: { xs: "none", md: "flex" } }}
             >
               <Button
-                onClick={() => go(undefined)}
+                onClick={() => {
+                  go(undefined);
+                }}
                 color="inherit"
                 sx={chipStyle}
               >
                 {ui.header.home}
               </Button>
               <Button
-                onClick={() => go("about")}
+                onClick={() => {
+                  go("about");
+                }}
                 color="inherit"
                 sx={chipStyle}
               >
                 {ui.header.about}
               </Button>
               <Button
-                onClick={() => go("projects")}
+                onClick={() => {
+                  go("projects");
+                }}
                 color="inherit"
                 sx={chipStyle}
               >
                 {ui.header.projects}
               </Button>
               <Button
-                onClick={() => go("blogs")}
+                onClick={() => {
+                  go("blogs");
+                }}
                 color="inherit"
                 sx={chipStyle}
               >

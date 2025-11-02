@@ -11,12 +11,12 @@ import {
 import { alpha } from "@mui/material/styles";
 import { useMemo } from "react";
 
-import ProjectCard from "../components/ProjectCard";
 import AboutMe from "../components/AboutMe";
-import Section from "../components/Section";
 import BlogSection from "../components/BlogSection";
-import { getProjectMetadata } from "../content/ProjectsLoader";
+import ProjectCard from "../components/ProjectCard";
+import Section from "../components/Section";
 import ui from "../content/parsers/UiTomlParser";
+import { getProjectMetadata } from "../content/ProjectsLoader";
 
 import type { ProjectMetadata } from "../components/ProjectCard";
 

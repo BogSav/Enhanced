@@ -9,9 +9,10 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 
-import ErrorBoundary from "./ErrorBoundary";
 import ui from "../content/parsers/UiTomlParser";
-import { isLoader, hasDefault } from "./Utility";
+
+import { isLoader, hasDefault } from "./ComponentUtilities";
+import ErrorBoundary from "./ErrorBoundary";
 
 // An entry in `modules` can be either a lazy loader (the function returning a promise)
 // or an already-loaded module. For the already-loaded module, I created the LoadedModule type.

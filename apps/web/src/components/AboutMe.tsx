@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   Avatar,
   Box,
@@ -14,10 +13,14 @@ import {
   Grow,
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
-import { useInView } from "../hooks/useInView";
-import { StatCard, getIconComponent, LinkedinLink } from "./Utility";
+import * as React from "react";
 
 import about from "../content/parsers/AboutTomlParser";
+import { useInView } from "../hooks/useInView";
+
+import { StatCard, LinkedinLink } from "./CommonComponents";
+import { getIconComponent } from "./IconHelpers";
+
 import type {
   Skill,
   Stat,
@@ -116,7 +119,7 @@ export default function AboutMe(): React.ReactElement {
                   const icon = getIconComponent(c.icon);
                   return (
                     <Chip
-                      key={`${c.label}-${idx}`}
+                      key={`${c.label}-${String(idx)}`}
                       icon={icon}
                       label={c.label}
                       variant={c.variant as "filled" | "outlined"}
@@ -169,7 +172,7 @@ export default function AboutMe(): React.ReactElement {
           >
             {stats.map((s, idx) => (
               <StatCard
-                key={`${s.title}-${idx}`}
+                key={`${s.title}-${String(idx)}`}
                 title={s.title}
                 emoji={s.emoji}
                 value={s.value}
@@ -327,7 +330,7 @@ export default function AboutMe(): React.ReactElement {
                     {/* labels around */}
                     {pts.map(([x, y], i) => (
                       <text
-                        key={`l${i}`}
+                        key={`l${String(i)}`}
                         x={x}
                         y={y}
                         dx={x < 130 ? -8 : 8}

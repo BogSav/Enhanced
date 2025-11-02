@@ -2,10 +2,13 @@ import { ThemeProvider, CssBaseline, Container, Box } from "@mui/material";
 import { useMemo, useState, lazy, Suspense } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 
+import {
+  getFromLocalStorage,
+  setToLocalStorage,
+} from "./components/ComponentUtilities";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import { getTheme } from "./components/Style";
-import { getFromLocalStorage, setToLocalStorage } from "./components/Utility";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 

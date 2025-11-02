@@ -1,7 +1,7 @@
 import { parse } from "toml";
 
 // Import TOML file as raw string via Vite's ?raw import
-// eslint-disable-next-line import/no-unresolved
+
 import raw from "../toml/about.toml?raw";
 
 export type Skill = { label: string; level: number; hint?: string };
@@ -32,7 +32,12 @@ export type AboutData = {
   chips: Chip[];
 };
 
-const parsed = parse(raw) as any;
+// Type guard helper to check if a value is a non-null object
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+const parsed = parse(raw);
 
 // sensible defaults so consumers don't need to provide fallbacks
 const about: AboutData = {
@@ -58,51 +63,68 @@ const about: AboutData = {
 };
 
 // Top-level strings (optional)
-if (parsed && typeof parsed === "object") {
-  const p: any = parsed;
-  if (typeof p.title === "string") about.title = p.title;
-  if (typeof p.subtitle === "string") about.subtitle = p.subtitle;
-  if (typeof p.bio === "string") about.bio = p.bio;
-  if (typeof p.statsTitle === "string") about.statsTitle = p.statsTitle;
-  if (typeof p.skillsTitle === "string") about.skillsTitle = p.skillsTitle;
-  if (typeof p.skillsSubtitle === "string")
+if (isObject(parsed)) {
+  const p = parsed;
+  if (typeof p.title === "string") {
+    about.title = p.title;
+  }
+  if (typeof p.subtitle === "string") {
+    about.subtitle = p.subtitle;
+  }
+  if (typeof p.bio === "string") {
+    about.bio = p.bio;
+  }
+  if (typeof p.statsTitle === "string") {
+    about.statsTitle = p.statsTitle;
+  }
+  if (typeof p.skillsTitle === "string") {
+    about.skillsTitle = p.skillsTitle;
+  }
+  if (typeof p.skillsSubtitle === "string") {
     about.skillsSubtitle = p.skillsSubtitle;
-  if (typeof p.radarTitle === "string") about.radarTitle = p.radarTitle;
-  if (typeof p.radarHint === "string") about.radarHint = p.radarHint;
-  if (typeof p.highlightsTitle === "string")
+  }
+  if (typeof p.radarTitle === "string") {
+    about.radarTitle = p.radarTitle;
+  }
+  if (typeof p.radarHint === "string") {
+    about.radarHint = p.radarHint;
+  }
+  if (typeof p.highlightsTitle === "string") {
     about.highlightsTitle = p.highlightsTitle;
+  }
+
+  // Stats: expect the modern array schema ([[stats]])
+  if (Array.isArray(p.stats)) {
+    about.stats = p.stats as Stat[];
+  }
+
+  // Skills
+  if (Array.isArray(p.skills)) {
+    about.skills = p.skills as Skill[];
+  }
+
+  // Radar
+  if (isObject(p.radar)) {
+    const radar = p.radar;
+    about.radar = {
+      labels: Array.isArray(radar.labels) ? (radar.labels as string[]) : [],
+      values: Array.isArray(radar.values) ? (radar.values as number[]) : [],
+    };
+  }
+
+  // Highlights
+  if (Array.isArray(p.highlights)) {
+    about.highlights = p.highlights as { title: string; desc: string }[];
+  }
+
+  // Chips (optional)
+  if (Array.isArray(p.chips)) {
+    about.chips = p.chips as {
+      label: string;
+      icon?: string;
+      variant?: "filled" | "outlined";
+    }[];
+  }
 }
-
-// Stats: expect the modern array schema ([[stats]])
-if (Array.isArray(parsed.stats)) {
-  about.stats = parsed.stats as Stat[];
-}
-
-// Skills
-if (Array.isArray(parsed.skills)) about.skills = parsed.skills as Skill[];
-
-// Radar
-if (parsed.radar && typeof parsed.radar === "object") {
-  about.radar = {
-    labels: Array.isArray(parsed.radar.labels)
-      ? (parsed.radar.labels as string[])
-      : [],
-    values: Array.isArray(parsed.radar.values)
-      ? (parsed.radar.values as number[])
-      : [],
-  };
-}
-
-// Highlights
-if (Array.isArray(parsed.highlights))
-  about.highlights = parsed.highlights as { title: string; desc: string }[];
-
-// Chips (optional)
-if (Array.isArray(parsed.chips))
-  about.chips = parsed.chips as {
-    label: string;
-    icon?: string;
-    variant?: "filled" | "outlined";
-  }[];
 
 export default about;
