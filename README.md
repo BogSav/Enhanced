@@ -1,7 +1,5 @@
 # Enhanced
 
-## Introduction
-
 Enhanced is a personal platform that acts as an interactive project portfolio and (future) blog hub. It began as a purely static frontend focused on showcasing programming skills, but the layout and repository are intentionally prepared for expansion into a microservice-based system. At present only the web application (apps/web) is active; the API layer (apps/api) is a placeholder for future dynamic capabilities like content management, authentication, analytics, and authoring tools.
 
 ## Architecture & Project Structure
@@ -18,34 +16,7 @@ The repository follows a workspace-style layout to keep future services isolated
 └─ (Dockerfile[s])        One per service
 ```
 
-Inside `apps/web`, the current structure is:
-
-**Source files (`src/`)**:
-
-- `components/` — reusable UI elements (Header, Footer, ProjectCard, MDXProvider, ErrorBoundary)
-- `pages/` — route-level views (Home, ProjectPage, NotFound)
-- `content/` — English-only content:
-   - MDX pages under `content/projects/` and `content/legal/`
-   - `ui.toml` for UI text (labels, headings, messages)
-   - `about.toml` for About Me data (stats, skills, radar, highlights)
-- UI copy is centralized in `apps/web/src/content/ui.toml` and About Me data in `apps/web/src/content/about.toml` so you can edit content without touching code.
-- `assets/` — static resources (images, icons)
-- `App.tsx` — root component with routing logic
-- `main.tsx` — React app entry point and DOM mounting
-- `index.css` / `App.css` — global and component-level styles
-- `vite-env.d.ts` — ambient type declarations for Vite + MDX
-
-**Configuration files**:
-
-- `package.json` — dependencies, scripts, Node.js engine requirements
-- `vite.config.ts` — build tool configuration (React, MDX, dev server)
-- `tsconfig.json` / `tsconfig.app.json` / `tsconfig.node.json` — TypeScript compilation settings
-- `eslint.config.js` — linting rules and code quality enforcement
-- `index.html` — HTML shell and app entry point
-- `Dockerfile` / `Dockerfile.dev` — containerization for prod/dev environments
-- `nginx.conf` / `nginx.app.conf` — web server configuration for production
-
-This separation keeps presentation, routing, content, and configuration understandable and allows an eventual API service to plug in without restructuring the frontend.
+This structure keeps presentation, routing, content, and configuration understandable and allows an eventual API service to plug in without restructuring the frontend.
 
 ## Technologies
 
@@ -60,6 +31,7 @@ For this project I used the following technologies:
 - **ESLint + typescript-eslint**: Linting pipeline enforcing consistency, best practices, and preventing common React/TypeScript pitfalls (`npm run lint`).
 - **Docker and Compose**: Containerizes the frontend for parity between local and deployed environments; image can be promoted without rebuild drift. Also it orchestrates development (live reload mount) vs production (immutable build) profiles.
 - **Nginx** (production testing / proxy layer): Serves the built static assets and can act as a reverse proxy entry point once backend services are introduced (planned integration).
+- **TOML**: Used to centralized all the text across the site. This makes updating the information much easier by changing everything from one place.
 
 ## Development & Commands
 
@@ -101,13 +73,6 @@ docker compose --profile prod up --build web
 ```
 
 The production image performs the TypeScript project build (`tsc -b`) and Vite production bundling inside the container, then Nginx serves the static assets on http://localhost:80.
-
-### 4. Troubleshooting tips
-
-- Port 5173 already in use → stop previous dev session (`docker compose down`) or change Vite port via env `VITE_PORT` and map it in `docker-compose.yml`.
-- Changes not reflecting → ensure the file is within a mounted path (`src`, `public`, `index.html`). Non‑mounted additions require rebuilding or adding a new volume mapping.
-- Lint auto‑fix didn’t persist → confirm you used `web-lint-fix` (the read‑only lint service cannot write changes) and that Git shows modifications.
-- Permission issues on Windows → Git line‑ending conversions can affect container caching; set `core.autocrlf=input` for consistent LF inside containers if needed.
 
 # Future Work
 
