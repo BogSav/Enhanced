@@ -17,6 +17,7 @@ export type UI = {
     badge: string;
     title: string;
     subtitle: string;
+    summary: string;
     ctaExplore: string;
     ctaContact: string;
   };
@@ -73,6 +74,7 @@ const ui: UI = {
     badge: "",
     title: "",
     subtitle: "",
+    summary: "",
     ctaExplore: "",
     ctaContact: "",
   },
@@ -144,6 +146,9 @@ if (isObject(parsed)) {
     }
     if (typeof h.subtitle === "string") {
       ui.home.subtitle = h.subtitle;
+    }
+    if (typeof h.summary === "string") {
+      ui.home.summary = h.summary;
     }
     if (typeof h.ctaExplore === "string") {
       ui.home.ctaExplore = h.ctaExplore;

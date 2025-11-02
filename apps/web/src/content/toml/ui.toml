@@ -9,10 +9,12 @@ blogs = "Blogs"
 lightTooltip = "Light mode"
 darkTooltip = "Dark mode"
 
+# The elements under following section correspond to the Hero section of the home page
 [home]
 badge = "Portfolio & Lab"
-title = "Interactive portfolio"
-subtitle = "Welcome to my personal website! Here, I showcase projects at the intersection of hardware accelerated computing, artificial intelligence, and quantum computing."
+title = "Enhanced"
+subtitle = "Interactive portfolio"
+summary = "Welcome to my personal website! Here, I showcase projects at the intersection of hardware accelerated computing, artificial intelligence, and quantum computing."
 ctaExplore = "Explore projects"
 ctaContact = "Contact me"
 
@@ -31,7 +33,7 @@ emailButton = "Email me"
 
 [notFound]
 code = "404"
-message = "The page you’re looking for doesn’t exist."
+message = "The page you're looking for doesn't exist."
 backHome = "Go Home"
 
 [infoPage]

@@ -80,7 +80,7 @@ export function ProjectImage({
           alt={alt ?? "project image"}
           onClick={handleOpen}
           sx={{
-            width: "60%",
+            width: { xs: "90%", md: "60%" },
             height: "auto",
             maxHeight: 600,
             objectFit: "cover",
@@ -169,7 +169,8 @@ export function ProjectImage({
                 mt: 1,
                 color: "common.white",
                 textAlign: "center",
-                textShadow: (t) => `0 1px 4px ${alpha(t.palette.common.black, 0.8)}`,
+                textShadow: (t) =>
+                  `0 1px 4px ${alpha(t.palette.common.black, 0.8)}`,
                 maxWidth: "90vw",
               }}
             >

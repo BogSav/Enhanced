@@ -1,4 +1,4 @@
-import { Container, Paper, Typography, Box, Grow } from "@mui/material";
+import { Container, Paper, Typography, Box, Fade } from "@mui/material";
 import React from "react";
 
 import type { SxProps, Theme } from "@mui/material";
@@ -19,13 +19,10 @@ export default function Section({
   return (
     <Container id={id} maxWidth="lg">
       <Box sx={{ py: { xs: 2, md: 4 } }}>
-        <Grow
+        <Fade
           in
           timeout={500}
-          style={{
-            transformOrigin: "top center",
-            transitionDelay: `${String(index * 150)}ms`,
-          }}
+          style={{ transitionDelay: `${String(index * 150)}ms` }}
         >
           <Paper
             elevation={0}
@@ -39,7 +36,7 @@ export default function Section({
 
             {children}
           </Paper>
-        </Grow>
+        </Fade>
       </Box>
     </Container>
   );

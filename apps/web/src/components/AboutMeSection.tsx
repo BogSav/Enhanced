@@ -10,7 +10,6 @@ import {
   Typography,
   useTheme,
   Fade,
-  Grow,
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import * as React from "react";
@@ -27,8 +26,9 @@ import type {
   Highlight,
   Chip as ChipType,
 } from "../content/parsers/AboutTomlParser";
+import Section from "./Section";
 
-export default function AboutMe(): React.ReactElement {
+export default function AboutMeSection(): React.ReactElement {
   const theme = useTheme();
   const { ref, inView } = useInView<HTMLDivElement>();
 
@@ -39,16 +39,22 @@ export default function AboutMe(): React.ReactElement {
   const skills: Skill[] = about.skills;
   const stats: Stat[] = about.stats;
   const chips: ChipType[] = about.chips;
+
   // A small minimalist "radar" SVG (no deps) — animates on entry
   const radarValues: number[] = about.radar.values; // corresponds to radar labels
   const radarAnimated = radarValues.map((v) => (inView ? v : 0));
 
   const avatarSrc = `${import.meta.env.BASE_URL}ProfilePic.jpg`;
+  const avatarSrcSet = [
+    `${import.meta.env.BASE_URL}ProfilePic-88.jpg 88w`,
+    `${import.meta.env.BASE_URL}ProfilePic-176.jpg 176w`,
+    `${import.meta.env.BASE_URL}ProfilePic-320.jpg 320w`,
+  ].join(", ");
 
   // extract the inner content so we can render it either inside the local Paper (boxed)
   // or as raw content (when a parent Section provides the Paper).
   const inner = (
-    <>
+    <Section id="about" index={1}>
       {/* Header: avatar + title + tagline */}
       <Stack
         direction={{ xs: "column", md: "row" }}
@@ -56,20 +62,35 @@ export default function AboutMe(): React.ReactElement {
         alignItems="center"
         justifyContent="center"
       >
-        {/* Avatar with border and shadow */}
-        <Grow in={inView} timeout={700}>
-          <Avatar
-            src={avatarSrc}
-            alt="Profile"
-            sx={(t) => ({
-              width: { xs: "5.5rem", md: "10rem" },
-              height: { xs: "5.5rem", md: "10rem" },
-              border: `0.2rem solid ${t.palette.divider}`,
-              boxShadow: 3,
-              flexShrink: 0,
-            })}
-          />
-        </Grow>
+        {/* Avatar with border and shadow - no animation to prevent compositing blur */}
+        <Avatar
+          src={avatarSrc}
+          alt="Profile"
+          slotProps={{
+            img: {
+              loading: "eager",
+              decoding: "async",
+              fetchPriority: "high",
+              srcSet: avatarSrcSet,
+              sizes: "(min-width: 900px) 160px, 88px",
+              style: {
+                objectFit: "cover",
+                imageRendering: "-webkit-optimize-contrast",
+              },
+            },
+          }}
+          sx={(t) => ({
+            width: { xs: 88, md: 160 },
+            height: { xs: 88, md: 160 },
+            border: `0.2rem solid ${t.palette.divider}`,
+            boxShadow: 3,
+            flexShrink: 0,
+            // Force GPU rendering with sharp text/image hints
+            backfaceVisibility: "hidden",
+            transform: "translateZ(0)",
+            WebkitFontSmoothing: "subpixel-antialiased",
+          })}
+        />
 
         {/* Title, subtitle, and chips */}
         <Box
@@ -143,7 +164,7 @@ export default function AboutMe(): React.ReactElement {
           </Typography>
         </Fade>
         <LinkedinLink
-          url="https://www.linkedin.com/in/your-profile"
+          url="https://www.linkedin.com/in/bogdan-sava-613212177"
           label="Check my Linkedin"
           iconSize="medium"
         />
@@ -374,7 +395,7 @@ export default function AboutMe(): React.ReactElement {
           ))}
         </Stack>
       </Box>
-    </>
+    </Section>
   );
 
   return (
