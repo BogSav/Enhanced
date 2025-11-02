@@ -1,33 +1,37 @@
-import { Container, Stack, Typography, Link } from "@mui/material";
+---
+title: Cookies and local storage
+updated: 2025-11-02
+---
 
-export default function CookiesPage() {
-  return (
-    <Container sx={{ py: 6 }}>
-      <Stack spacing={2}>
-        <Typography variant="h4" fontWeight={800}>Cookies Policy</Typography>
-        <Typography variant="body2" color="text.secondary">
-          Last updated: October 18, 2025
-        </Typography>
+# Cookies and local storage
 
-        <Typography>
-          This website does not use cookies and does not employ similar tracking
-          technologies (e.g., pixels, beacons) for analytics, advertising, or profiling.
-        </Typography>
+Last updated: November 2, 2025
 
-        <Typography variant="h6">Locally saved theme</Typography>
-        <Typography>
-          The theme preference (light/dark) may be stored in the browser's
-          <i> localStorage </i> for your convenience. This is not a cookie,
-          it does not identify users, and it is not transmitted to third-party servers.
-        </Typography>
+This website is a static site built with React and Vite and served as static assets. We do not use cookies for analytics, advertising, or user tracking, and most pages load without setting any cookies. We only remember your UI preferences using your browser's local storage. Local storage is not a cookie, is not sent to any server, and does not identify you.
 
-        <Typography variant="h6">Questions</Typography>
-        <Typography>
-          For any questions, please contact us at&nbsp;
-          <Link href="mailto:contact@enhanced.ro">contact@enhanced.ro</Link>.
-        </Typography>
-      </Stack>
-    </Container>
+## Required
 
-);
-}
+We do not set any required cookies to operate basic site features. The only persistence we use is a small local storage entry to remember your theme preference so the site opens in the same appearance you selected last time.
+
+- Key: `enhanced.theme`
+- Values: `"light"` or `"dark"`
+- Scope: stored only in your browser; never transmitted
+- Purpose: remember visual theme
+
+## Hosting and operational logs
+
+Our hosting/CDN may keep short-lived server logs (for example, IP address, user agent, requested URL) to operate the service and protect against abuse. These logs do not place cookies in your browser and are handled according to the hosting provider's policies.
+
+## What we don't use
+
+- No analytics cookies
+- No advertising or tracking cookies
+- No third-party social or profiling pixels
+
+## Your choices
+
+- Use the theme toggle in the site header to switch between light and dark.
+- Clear the saved theme at any time by clearing site data (local storage) in your browser, or use private browsing.
+- You can also block cookies in your browser settings. This site does not rely on cookies to function.
+
+For more details about how we handle data, see our [Privacy Statement](/privacy).
