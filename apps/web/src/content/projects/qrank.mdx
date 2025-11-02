@@ -2,7 +2,7 @@
 title: QRank
 description: A dedicated platform for quantum computing challenges — with auto-grading, sandboxed execution, and GPU/cluster backends.
 tags: ["Quantum", "WEB", "Microservices", "GPU"]
-status: IDEA
+status: DEFINITION
 ---
 
 import ProjectLayout, {
@@ -10,16 +10,23 @@ import ProjectLayout, {
   WarningBox,
 } from "../../components/ProjectLayout";
 
-# Overview
+**QRank** will be a competitive quantum computing platform (under the label Enhanced)
+where users solve QC problems and submit code for automatic grading (similar to HackerRank or LeetCode, but quantum).
 
-QRank is a competitive **quantum computing** platform (under Enhanced) where users solve QC problems and submit code for **automatic grading**. The system targets **containerized execution**, **microservices**, and **GPU/cluster** backends for fast simulation and ML-assisted tasks.
+# What I'm Building
 
-## What I’m Building
+A system that targets containerized execution, microservices, and GPU/cluster backends for fast simulation and ML-assisted tasks.
 
-- A web app with challenge tracks: **circuits** (OpenQASM/QIR), **variational** (VQE/QAOA), **annealing**, and **hybrid** (classical optimizer + QPU/simulator).
-- A safe, reproducible **runner** that executes user code in jailed containers and returns structured results (scores, plots, logs).
-- A grading pipeline that validates both **correctness** (state fidelities, energy gaps, constraint checks) and **performance** (depth, 2-qubit count, wall time).
-- A content model for **problem statements** (MDX) + **test bundles** (datasets, seeds, reference metrics).
+The main components will include:
+
+- A web app with challenge tracks:
+  - **quantum circuits** (OpenQASM/QIR),
+  - **variational algorithms** (VQE/QAOA),
+  - **quantum annealing**
+  - **hybrid computing** (classical optimizer + QPU/simulator).
+- A safe, reproducible runner that executes user code in jailed containers and returns structured results (scores, plots, logs).
+- A grading pipeline that validates both correctness (state fidelities, energy gaps, constraint checks) and performance (depth, 2-qubit count, wall time).
+- A content model for problem statements (MDX) + test bundles (datasets, seeds, reference metrics).
 
 <WarningBox
   title="This is an early-stage project idea. I am currently searching for collaborators. If you want to participate in the development, please contact me!"
@@ -30,12 +37,16 @@ QRank is a competitive **quantum computing** platform (under Enhanced) where use
 
 # Platform Highlights
 
+The platform should provide at least the following features:
+
 - **Multi-language**: Python (Qiskit/Cirq/PennyLane/Braket), C++ (QIR/LLVM), and OpenQASM 3.
 - **Hybrid kernels**: support for classical loops with measure-feedback; optional access to remote QPUs (future).
 - **Artifacts & Replays**: store wavefunction snapshots, counts histograms, and seeds for perfect reproducibility.
 - **Leaderboards**: deterministic scoring; tie-breakers on cost function and resource usage.
 
 ## Architecture (proposed)
+
+Currently, the architecture is **undecided**, but I am considering the following design:
 
 ```text
 Web (React/TS, MDX) ─▶ API Gateway ─▶ Job Queue ─▶ Worker Pool (GPU/CPU)
@@ -53,9 +64,10 @@ Observability: Prometheus/Grafana • OpenTelemetry
 - Worker rulează testele, emite metrici (fidelity, energy, success prob), artefacte și loguri.
 - Grader agregă și scrie scorul final → leaderboard.
 
-Tech Stack (ideas)
-
 ## Tech Stack (ideas)
+
+Below I gatherred some technologies that could be used to build QRank (of course these will get probably changed during development
+and after a realist analysis of the scaling of the project):
 
 ### Frontend
 
@@ -63,7 +75,6 @@ Tech Stack (ideas)
 - MDX for problem statements
 - Monaco editor for code entry
 - WebGL visualizations (Bloch spheres, histograms)
-- i18n (en/ro)
 - OAuth2 login
 
 ### Backend / Services

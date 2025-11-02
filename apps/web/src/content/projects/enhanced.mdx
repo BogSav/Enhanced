@@ -1,7 +1,7 @@
 ---
 title: Enhanced
 description: Interactive portfolio showcasing my projects with rich media and dynamic content.
-tags: ["React", "WEB", "TypeScript", "MDX"]
+tags: ["WEB", "React", "TypeScript", "MDX", "TOML"]
 status: DONE
 ---
 
@@ -11,9 +11,9 @@ import ProjectLayout, {
   GitHubLink,
 } from "../../components/ProjectLayout";
 
-# Introduction
+**Enhanced** is a personal platform that acts as an interactive project portfolio and (future) blog hub.
 
-Enhanced is actually this platform; a personal platform that acts as an interactive project portfolio and (future) blog hub.
+# What I built
 
 It began as a purely static frontend focused on showcasing programming skills, but the layout and repository are intentionally prepared for expansion into a microservice-based system. At present only the web application (apps/web) is active; the API layer (apps/api) is a placeholder for future dynamic capabilities like content management, authentication, analytics, and authoring tools.
 
@@ -21,23 +21,58 @@ For more technical infomation I suggest taking a look at my repository:
 
 <GitHubLink
   url="https://github.com/BogSav/Enhanced"
-  label="You can find the project on my github here."
+  label="GitHub repository for Enhanced project"
   iconSize="large"
 />
 
+---
+
 # Technologies
 
-For this project I used the following technologies:
+The stack is organized around a fast developer experience, robust typing, and an author-first content workflow. Below the technologies are grouped so you can quickly see how each area maps to the site.
 
-- **React 19**: Core UI library for the single‑page application; functional components + hooks, **React Router** integration for client routing, future‑ready for streaming/concurrent features.
-- **TypeScript**: Used as main development lannguage; offers incremental project build (`tsc -b`) that runs before production bundling to surface type errors early.
-- **Vite**: Development server with fast cold starts and HMR; production bundler producing optimized ESM output; `@vitejs/plugin-react` enables fast refresh + JSX transform.
-- **Material UI (v7) + Icons**: Design system, accessible component primitives, theme customization (palette/typography/spacing), icon set via `@mui/icons-material` for consistent visual language.
-- **i18next** (browser language detector + HTTP backend): Centralized translation management; auto‑detects user locale; backend adapter pre‑configured for future server‑served resource loading.
-- **MDX Toolchain**: `@mdx-js/react` plus remark/rehype plugins (frontmatter, GFM, syntax highlighting) to author hybrid content (blog posts, project pages) with metadata (title, date, tags).
-- **ESLint + typescript-eslint**: Linting pipeline enforcing consistency, best practices, and preventing common React/TypeScript pitfalls (`npm run lint`).
-- **Docker and Compose**: Containerizes the frontend for parity between local and deployed environments; image can be promoted without rebuild drift. Also it orchestrates development (live reload mount) vs production (immutable build) profiles.
-- **Nginx** (production testing / proxy layer): Serves the built static assets and can act as a reverse proxy entry point once backend services are introduced (planned integration).
+## Framework & UI
+
+Core building blocks for the app's structure and look — components, routing, and theming that shape the UX.
+
+- **React 19** — Provides the single-page application shell, component model, and client routing used across the site. Examples: the global `Header`/`Footer` components and the per-project UI in `src/components/ProjectCard.tsx` and `ProjectLayout` are built with React patterns and hooks.
+- **TypeScript** — Types for props, state and utilities make refactors safer and improve DX (the repo runs incremental builds with `tsc -b` during CI to catch issues early). You can see strong typing in the `src/components` and `src/hooks` code.
+- **Material UI (v7) + Icons** — The visual system, theming and accessible primitives power cards, dialogs and responsive layout. The theme is applied globally so elements like the project grid and buttons have a consistent look.
+
+## Content & Authoring
+
+Where content is authored and structured — MDX for rich pages and TOML for deterministic metadata/configuration.
+
+- **MDX toolchain** — Project pages and other rich content live as MDX files (`src/content/projects/*.mdx`), letting authors compose markdown with React components (the `MDXLoader` and `ProjectLayout` wrap that content). This is how project descriptions, images and embedded components are authored.
+- **TOML-driven content & config** — TOML is used for structured metadata and UI configuration (see `src/content/toml/about.toml` and `src/content/toml/ui.toml`). The codebase includes dedicated parsers (`src/content/parsers/AboutTomlParser.ts`, `UiTomlParser.ts`) so non-developers can update content or UI options without touching TypeScript—examples on the site include the About section data and site UI tweaks driven from TOML.
+
+## Tooling & DX
+
+Developer-facing tools that speed up iteration, enforce quality, and make builds predictable.
+
+- **Vite** — Fast dev server with HMR for quick feedback while editing pages and components. The production build emits optimized ESM bundles used by the deployed static site.
+- **ESLint + typescript-eslint** — Enforces project conventions and prevents common React/TS mistakes; run as part of local workflows and CI (`npm run lint`).
+
+---
+
+# Deployment & Serving
+
+Packaging, hosting and the deployment pipeline — how builds move from local development to a live site and how we validate them.
+
+## Hosting & Serving
+
+Overview: how the built site is served and how environment parity is preserved between development and production.
+
+- **Docker & Docker Compose** — Used for reproducible local environments and for producing the immutable production build image. Compose profiles support a live-reload development profile (fast authoring) and a production profile that mirrors what gets deployed.
+- **Nginx** — Employed in production testing to serve the static build and to exercise reverse-proxy configurations before they reach the hosted environment.
+- **Render (hosting)** — The site is hosted entirely on Render: static builds and any required web services are deployed there for production traffic and staging deployments.
+- **Hostinger (DNS & domain)** — Domain registration and DNS records are managed through Hostinger; DNS is pointed at Render for production traffic and HTTP(S) delivery.
+
+## CI & Deployment
+
+This part is still in progress: building a GitHub Actions pipeline with smoke tests — linting, unit tests, a deploy-test step that validates a production-like deploy, and other lightweight smoke checks. Workflows run on GitHub Actions and are exercised with a self-hosted local runner for faster feedback.
+
+---
 
 # Future Work
 

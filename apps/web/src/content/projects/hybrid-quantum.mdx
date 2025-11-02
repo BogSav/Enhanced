@@ -11,16 +11,18 @@ import ProjectLayout, {
   WarningBox,
 } from "../../components/ProjectLayout";
 
-# What I Built
+I proposed and prototyped one of the **first standardized hybrid quantum-classical systems** that extends the classical execution model with native quantum routines.
 
-I proposed and prototyped the **first standardized hybrid quantum–classical system** that extends the classical execution model with native quantum routines. The QPU is treated as a **co-processor** (GPU-style), while the OS gains visibility via **two minimal syscalls** for scheduling and synchronization. A small C++ runtime (`libquantx`) encodes quantum programs to binary command buffers and submits them to a kernel driver. A light LLVM pass can inject the syscall markers.
+# What I'm Building
+
+The QPU is treated as a co-processor (GPU-style), while the OS gains visibility via **minimal syscalls** for scheduling and synchronization. A small C++ runtime (`libquantx`) encodes quantum programs to binary command buffers and submits them to a kernel driver. A light LLVM pass can inject the syscall markers.
 
 <WarningBox
   title="Since this project represents my dissertation thesis, I am not able to offer too many technical details. For any questions, please reach out to me directly."
   severity="warning"
 />
 
-Main pieces delivered:
+Below are some of the key design elements that will be delivered once the project is done:
 
 - **Kernel-visible execution**: `qpu_fence` and `wait_qpu` syscalls act as boundaries around quantum work.
 - **User-space runtime**: C++ API (allocate/apply/measure/dispatch) that serializes gates into a **QISA** buffer and IOCTL-submits it to `/dev/qpu0`.

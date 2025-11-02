@@ -15,19 +15,35 @@ import ProjectLayout, {
 export const imagesPath = "/assets/rtxplore";
 export const imagesComparisonPath = "/assets/rtxplore/Comp";
 
+**RTXplore** started as my bachelor thesis: a graphics engine that integrates both rasterization and ray tracing.
+
 # What I Built
 
-I designed and implemented a small graphics engine that mixes **rasterization** and **ray tracing** under a single architecture: one scene, two complete pipelines, shared resource management, and comparable visual stages.
+The goal was to render the same complex scene with both rendering techniques and compare visual quality and performance. This was primarily an educational project: I wanted to understand how both systems really work and what trade‑offs they impose. The engine runs a single scene across two complete pipelines with shared resource management so comparisons are apples‑to‑apples.
 
-The key focus areas (implemented):
+The **scene** features:
 
-- **Engine infrastructure** with DX12 and Windows API: window swapchain, resource views (RTV/DSV/CBV/SRV/UAV), PSO + Root Signatures, shader compilation in HLSL.
-- **Scene content pipeline**: procedural terrain + water, skybox and fog to exercise all stages.
-- **Rasterization system**: tessellation/displacement, normal mapping, texture arrays and PCF shadow mapping pass.
-- **Ray tracing system**: TLAS/BLAS, shader tables, closest-hit/any-hit/miss + **procedural** primitives via AABBs and an Intersection Shader.
-- **Reflections & refractions**: dynamic cubemap with geometric correction (raster) and recursive rays (RT).
-- **CPU–GPU sync and profiling**: Nsight Graphics & Aftermath; tests on RTX 4070 (5888 CUDA, 46 RT cores, 12 GB, 504 GB/s).
-- **Effect parity**: identical scene & materials to expose visual and performance trade-offs across both pipelines.
+- Procedural terrain generated with fractal fBm over 2D Simplex noise.
+- Water with two animated wave scales: small ripples and large swells.
+- A dynamic skybox for image‑based lighting cues.
+- Texturing via a dedicated loader, normal mapping and displacement mapping; distance-based tessellation to keep near detail while reducing far‑field cost.
+
+How each **pipeline** handles water and optics:
+
+- **Ray tracing**: large waves are modeled via an Intersection Shader over procedural AABB primitives; reflections and refractions come from recursive rays.
+- **Rasterization**: large waves are produced through displacement/tessellation; reflections and refractions use dynamic cube mapping with geometric corrections.
+- Both paths render dynamic shadows: shadow rays in RT; **shadow mapping** in rasterization.
+- **Frustum culling** to optimize rendering by excluding non-visible objects - of course only in rasterization.
+
+Lighting uses a **Blinn-Phong model** with a **Schlick approximation** for Fresnel, implemented symmetrically across both pipelines for visual parity.
+
+## Architecture highlights
+
+- DirectX 12 on Windows: swapchain, resource views (RTV/DSV/CBV/SRV/UAV), Pipeline State Objects and Root Signatures.
+- Acceleration structures: BLAS/TLAS with shader tables for ray tracing (closest-hit/any-hit/miss).
+- **Custom math library** as a wrapper over DirectX SIMD types.
+- Systems for object generation, texture loading, dynamic cube mapping and shadow mapping.
+- Keyboard and mouse controls through a simple input manager.
 
 <GitHubLink
   url="https://github.com/BogSav/RTXplore"
@@ -42,11 +58,14 @@ The key focus areas (implemented):
 Let's jump straight into the visual results achieved in this projects (since that's the main point of a graphics engine).
 In a further section I will show you the direct comparison between ray tracing and rasterization for the same scene and materials.
 
-## The Scene
+## Rasterization
 
-- Example of real-time water caustics (reflexions and refractions) using rasterization. The
-  reflection of the skybox on the water’s surface can be observed in the distance, while the
-  refracted rocks from the lake’s bottom can be seen up close.
+Below is a image showcasing a part of the scene redered with rasterization. The
+reflection of the skybox on the water's surface can be observed in the distance, while the
+refracted rocks from the lake's bottom can be seen up close. These is what I call water caustics.
+
+You can also observe the small scale waves generatesd via displacement mapping and a part of the mountains generated
+with the procedural terrain system.
 
 <ProjectImage
   src={`${imagesPath}/RasterizationReflexionsRefractions.png`}
@@ -54,16 +73,16 @@ In a further section I will show you the direct comparison between ray tracing a
   caption="Water caustics using rasterization."
 />
 
-## Ray Tracing Effects
+## Ray Tracing
 
-In ray tracing, the process of achieving reflections and refractions is straightforward and
+In ray tracing, the process of achieving visual effects is more straightforward and
 natural, based on a technique called recursive ray tracing. When an intersection is reported
 to a closest hit shader the reflection and refraction vectors are calculated within
 the shader. Rays are then launched into the scene in the directions of these vectors.
 These rays return the captured colors, which are then combined with diffuse lighting and
 shadowing.
 
-- Example of reflections using ray tracing; the water surface accurately reflects the skybox and
+- Example of reflections using ray tracing and no waves; the water surface accurately reflects the skybox and
   surrounding environment with correct perspective and angle-of-incidence effects.
 
 <ProjectImage
@@ -72,7 +91,7 @@ shadowing.
   caption="Example of reflections using ray tracing."
 />
 
-- Example of refractions using ray tracing; the water surface accurately refracts the rocks
+- Example of refractions using ray tracing with both small scale waves and big scale waves; the water surface accurately refracts the rocks
   at the bottom of the lake, bending light according to Snell's law and preserving shoreline geometry.
 
 <ProjectImage
@@ -122,12 +141,6 @@ to screen and lighting.
   caption="Refractions comparisson."
 />
 
-Key takeaways:
-
-- rasterization wins for throughput and predictable cost; great for live interaction and broad hardware.
-- RT wins for correctness of reflection/refraction at grazing angles, edge cases, and multi-bounce paths.
-- My engine lets you toggle the pipeline while keeping the same scene and materials, so differences are visible—not theoretical.
-
 ## Performance Comparison
 
 To analyze the performance of my rendering engine, I utilized NVIDIA’s debugging and
@@ -159,30 +172,39 @@ at one specific timestamp."
   caption="Ray tracing profiling"
 />
 
-## Some Real Performance Metrics
+### Performance Metrics
 
-- **Rasterization**
+I am aware that the two systems are fundamentally different and that direct comparisons are not always fair. But still,
+you can see the numbers below as highlights of each system's performance in my specific implementation, and not as
+a comparisson of the technologies in general.
 
-Finally, I assessed the framerate, which is heavily influenced by the graphics card
-driver and refers to the number of Frames per Second (FPSs) displayed. The tests and
-metrics were obtained using Game Ready Driver version 555.99 for the NVIDIA RTX 4070 graphics card.
-With dynamic cube map updates occurring in every frame, an average
-framerate of 1700 ± 10% FPS was achieved. When the dynamic cube map was updated
-every 0.1 seconds, the framerate increased to 3300 ± 15% FPS.
+- **Rasterization** - I assessed the framerate, which is heavily influenced by the graphics card
+  driver and refers to the number of Frames per Second (FPSs) displayed. The tests and
+  metrics were obtained using Game Ready Driver version 555.99 for the NVIDIA RTX 4070 graphics card.
+  With dynamic cube map updates occurring in every frame, an average
+  framerate of 1700 ± 10% FPS was achieved. When the dynamic cube map was updated
+  every 0.1 seconds, the framerate increased to 3300 ± 15% FPS.
 
-- **Ray Tracing**
+- **Ray Tracing** - Regarding framerate, I achieved approximately 230 FPS ± 30%. This framerate
+  can vary drastically depending on the camera’s position. If the camera is very close to
+  an object, the BVH traversal heuristic algorithms can more efficiently find the intersected
+  geometry compared to when the camera views the entire scene. This efficiency arises
+  because closer objects result in shorter traversal paths within the BVH, reducing the
+  computational load. Conversely, viewing the entire scene involves more extensive BVH
+  traversal, increasing the rendering time.
 
-Regarding framerate, I achieved approximately 230 FPS ± 30%. This framerate
-can vary drastically depending on the camera’s position. If the camera is very close to
-an object, the BVH traversal heuristic algorithms can more efficiently find the intersected
-geometry compared to when the camera views the entire scene. This efficiency arises
-because closer objects result in shorter traversal paths within the BVH, reducing the
-computational load. Conversely, viewing the entire scene involves more extensive BVH
-traversal, increasing the rendering time.
+### Key Takeaways
+
+- Rasterization wins for throughput and predictable cost; great for live interaction and broad hardware.
+- RT wins for correctness of reflection/refraction at grazing angles, edge cases, and multi-bounce paths.
+- My engine lets you toggle the pipeline while keeping the same scene and materials, so differences are visible—not theoretical.
 
 ---
 
 # Technical Highlights
+
+In this section I will highligh some of the technical aspects of the engine, such as how I got to generate the terrain, how the
+shadow map works, how I implemented the intersection shader for the procedural water and how reflections and refractions are handled in both pipelines.
 
 ## Procedural Terrain (Height Map)
 
@@ -196,9 +218,9 @@ traversal, increasing the rendering time.
   caption="Fractal fBm (Simplex) height generation → chunked mesh + AABB per chunk for frustum culling."
 />
 
-## Water: Small vs Large Waves
+## Water: Small and Large Scale Waves
 
-- Tessellation/domain stage computes displaced positions and TBN; pixel stage applies normal/diffuse sampling (terrain uses arrays with height-based blending; water uses uniform color + normal).
+Tessellation/domain stage computes displaced positions and TBN matrix; pixel stage applies normal/diffuse sampling (terrain uses arrays with height-based blending; water uses uniform color + normal).
 
 <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
   <ProjectImage
@@ -224,9 +246,9 @@ traversal, increasing the rendering time.
   caption="Depth-only pass + PCF; separate PSO and biasing tuned for mountainous terrain."
 />
 
-## Ray–Surface Intersection (Procedural)
+## Ray-Surface Intersection (Procedural)
 
-- Procedural water in RT uses **AABB primitives** and an **Intersection Shader** to compute the exact displaced hit before closest-hit shading.
+Procedural water in RT uses **AABB primitives** and an **Intersection Shader** to compute the exact displaced hit before closest-hit shading.
 
 <ProjectImage
   src={`${imagesPath}/IntersectionShader2.png`}
@@ -249,9 +271,10 @@ traversal, increasing the rendering time.
 - Add shader hot swapping in debug and shader precompiling in release, for faster iteration times.
 - Integrate additional global illumination effects, such as ambient occlusion and soft shadows.
 - Explore hybrid rendering techniques that combine the strengths of both rasterization and ray tracing - such as deferred hybrid path tracing.
+- Add support for TOML based settings and scene description to make it easier to configure and extend the engine.
 
 <WarningBox
-  title="If you are interested in doing something together in this area (as a side project or research collaboration), feel free to reach out!"
+  title="For those who got to the end of this page: if you are interested in doing something together in this area (as a side project or research collaboration), feel free to reach out!"
   severity="error"
 />
 

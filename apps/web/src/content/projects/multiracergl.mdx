@@ -1,7 +1,7 @@
 ---
 title: MultiRacerGL
 description: Minimal racing game in OpenGL with a custom multiplayer server built on Boost.Asio.
-tags: ["OpenGL", "C++", "Boost.Asio", "Multiplayer", "CMake"]
+tags: ["OpenGL", "C++", "Boost.Asio", "Multiplayer", "Multithreading"]
 status: Maintenance
 ---
 
@@ -10,19 +10,21 @@ import ProjectLayout, {
   GitHubLink,
 } from "../../components/ProjectLayout";
 
-# Overview
+**MultiRacerGL** is one of my first 3D projects: a racing game written with **OpenGL**,
+using the UNSTPB - Automatic Controle and Computer Science Faculty's graphics engine - available [here](https://github.com/UPB-Graphics/gfx-framework),
+to which I added a separate **multiplayer** component built on **Boost.Asio**.
 
-MultiRacerGL is one of my first 3D projects: a **racing** game written in **OpenGL** with a small custom engine for model/texture loading and a separate **multiplayer** component built on **Boost.Asio**. The codebase is split into two projects: `Game/` (client) and `Server/` (TCP server), orchestrated with **CMake**.
+# What I Built
 
-## What I Built
+The codebase is split into two projects: `Game/` (client) and `Server/` (TCP server), orchestrated with **CMake**.
 
-- **OpenGL renderer**: basic lighting (diffuse/specular), **model loading** and **texture loading**, and a **procedurally generated track**.
-- **Real-time multiplayer**: a standalone **Boost.Asio (TCP)** server handling concurrent connections and synchronizing every player’s transform.
+- **OpenGL renderer**: basic lighting models (diffuse/specular) and a procedurally generated track.
+- **Real-time multiplayer**: a standalone **Boost.Asio (TCP)** server handling concurrent connections and synchronizing every player's transform.
 - **Thread-safe session state**: a shared data structure (positions, velocities, IDs) updated by network threads and safely read by the renderer.
 - **Serialization**: simple packet serialization (built as an experiment to learn the mechanism; can be replaced with a compact binary protocol).
 - **Threading model**:
-  - Client: one thread for **rendering** and one for **network I/O**.
-  - Server: **one thread per client** (easy to reason about; great for a first iteration).
+  - **Client**: one thread for rendering and one for network I/O.
+  - **Server**: one thread per client (easy to reason about; great for a first iteration).
 
 <GitHubLink
   url="https://github.com/BogSav/MultiRacerGL"
@@ -30,18 +32,29 @@ MultiRacerGL is one of my first 3D projects: a **racing** game written in **Open
   iconSize="large"
 />
 
+<WarningBox
+  title="This is an old project of mine, just for a fun side project. The code is not actively maintained, but feel free to check it out!"
+  severity="warning"
+/>
+
 ---
 
 # Technical Stuff
 
-## Rendering (client)
+In this section I will go through the technical details of both the rendering and multiplayer components.
+
+## Scene Rendering
+
+Here are the main rendering features implemented in the game:
 
 - **OpenGL core** with VAO/VBO/IBO and straightforward vertex/fragment shaders.
-- **Lighting**: classic Phong/Blinn–Phong highlights for readable materials.
+- **Lighting**: classic Phong/Blinn-Phong highlights for readable materials.
 - **Model & texture loading**: utility modules to bring in meshes and textures cleanly.
 - **Track generation**: procedural vertices/normals/UVs for a race track (extensible to banked segments).
 
 ## Multiplayer Architecture
+
+The multiplayer system is based on a client-server model using Boost.Asio for networking. Below are the key components:
 
 - **Server (Boost.Asio, TCP)**
 
@@ -55,11 +68,8 @@ MultiRacerGL is one of my first 3D projects: a **racing** game written in **Open
 
 > The per-client-thread server is intentionally simple and clear. A future step is moving to **asynchronous I/O** with a shared `io_context` and a small thread pool.
 
-## Tech Stack (concise)
-
-- **C++ / C / GLSL**, **OpenGL**, **Boost.Asio**, **CMake**
-- Classic **std::thread** + synchronization primitives
-- Lightweight, custom **serialization** for proof-of-concept
+In the nearest future, I plan to improve the project by.........refactoioring the entire project.
+Currently it's in a bad state, made only to run. But since it has potential, I want to make it cleaner and more modular.
 
 ---
 
