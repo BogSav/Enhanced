@@ -1,6 +1,5 @@
 import { Stack } from "@mui/material";
-import { useMemo } from "react";
-
+import { useEffect, useState } from "react";
 
 import AboutMeSection from "../components/AboutMeSection";
 import BlogSection from "../components/BlogSection";
@@ -12,7 +11,11 @@ import { getProjectMetadata } from "../content/ProjectsLoader";
 import type { ProjectMetadata } from "../components/ProjectCard";
 
 export default function Home(): React.ReactElement {
-  const projects: ProjectMetadata[] = useMemo(() => getProjectMetadata(), []);
+  const [projects, setProjects] = useState<ProjectMetadata[]>([]);
+
+  useEffect(() => {
+    getProjectMetadata().then(setProjects);
+  }, []);
 
   return (
     <Stack spacing={3}>

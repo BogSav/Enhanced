@@ -48,11 +48,15 @@ export default defineConfig({
         manualChunks: {
           // Separate React and React DOM into their own chunk
           "react-vendor": ["react", "react-dom", "react-router-dom"],
-          // Material-UI core components
-          "mui-core": ["@mui/material", "@mui/lab"],
-          // Material-UI styling and icons
+          // Material-UI core components together with Emotion (they're tightly coupled)
+          "mui-core": [
+            "@mui/material",
+            "@mui/lab",
+            "@emotion/react",
+            "@emotion/styled",
+          ],
+          // Material-UI icons (large and can be separate)
           "mui-icons": ["@mui/icons-material"],
-          emotion: ["@emotion/react", "@emotion/styled"],
           // MDX and related plugins
           mdx: ["@mdx-js/react"],
         },

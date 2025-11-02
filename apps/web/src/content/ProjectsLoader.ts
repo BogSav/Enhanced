@@ -13,16 +13,7 @@ export type ProjectFrontmatter = {
   status?: string;
 };
 
-// Import all MDX files with their frontmatter eagerly to extract metadata
-const projectModules = import.meta.glob<{ frontmatter?: ProjectFrontmatter }>(
-  "../content/projects/*.mdx",
-  {
-    eager: true,
-    import: "frontmatter",
-  }
-);
-
-// Lazy loaders for the full MDX components (for rendering on ProjectPage)
+// Lazy loaders for the full MDX components - single source of truth
 const lazyModules = import.meta.glob("../content/projects/*.mdx");
 
 function slugFromPath(path: string): string {
@@ -30,20 +21,36 @@ function slugFromPath(path: string): string {
   return file.replace(/\.mdx$/i, "");
 }
 
-// Extract project metadata from frontmatter for displaying the project cards
-export function getProjectMetadata(): ProjectMetadata[] {
-  return Object.entries(projectModules).map(([path, fmUnknown]) => {
-    const slug = slugFromPath(path);
-    const fm = (fmUnknown ?? {}) as ProjectFrontmatter;
+// Cache for loaded frontmatter to avoid multiple dynamic imports
+let metadataCache: ProjectMetadata[] | null = null;
 
-    return {
-      slug,
-      title: fm.title ?? slug,
-      description: fm.description ?? "",
-      tags: Array.isArray(fm.tags) ? fm.tags.slice() : [],
-      status: fm.status ?? "",
-    } satisfies ProjectMetadata;
-  });
+// Extract project metadata from frontmatter for displaying the project cards
+// This now loads frontmatter dynamically on first call, then caches the result
+export async function getProjectMetadata(): Promise<ProjectMetadata[]> {
+  if (metadataCache) {
+    return metadataCache;
+  }
+
+  const metadataPromises = Object.entries(lazyModules).map(
+    async ([path, loader]) => {
+      const slug = slugFromPath(path);
+
+      // Load the module to access frontmatter
+      const module = (await loader()) as { frontmatter?: ProjectFrontmatter };
+      const fm = module.frontmatter ?? {};
+
+      return {
+        slug,
+        title: fm.title ?? slug,
+        description: fm.description ?? "",
+        tags: Array.isArray(fm.tags) ? fm.tags.slice() : [],
+        status: fm.status ?? "",
+      } satisfies ProjectMetadata;
+    }
+  );
+
+  metadataCache = await Promise.all(metadataPromises);
+  return metadataCache;
 }
 
 // Build a ModulesMap keyed by slug -> lazy loader function
