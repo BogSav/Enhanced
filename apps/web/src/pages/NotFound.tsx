@@ -1,6 +1,6 @@
 import { Button, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import ui from "../content/parsers/HomeTomlParser";
+import ui from "../content/parsers/UiTomlParser";
 
 export default function NotFound(): React.ReactElement {
   return (

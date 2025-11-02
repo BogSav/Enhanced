@@ -4,7 +4,7 @@ import { useParams, Link as RouterLink } from "react-router-dom";
 
 import MDXLoader from "../components/MDXLoader";
 import { getProjectModules } from "../content/ProjectsLoader";
-import ui from "../content/parsers/HomeTomlParser";
+import ui from "../content/parsers/UiTomlParser";
 
 export default function ProjectPage(): React.ReactElement {
   const { slug } = useParams<{ slug: string }>();

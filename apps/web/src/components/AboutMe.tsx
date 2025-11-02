@@ -181,8 +181,13 @@ export default function AboutMe(): React.ReactElement {
 
           {/* Skill bars */}
           <Box sx={{ mt: 2 }}>
-            <Typography variant="h5" sx={{ mb: 1.5, fontWeight: 700 }}>
-              {about.skillsTitle}
+            <Typography variant="h5">{about.skillsTitle}</Typography>
+            <Typography
+              variant="subtitle2"
+              color="text.secondary"
+              sx={{ mb: 1.5, fontWeight: 700 }}
+            >
+              {about.skillsSubtitle}
             </Typography>
 
             <Stack spacing={1.2}>
@@ -242,11 +247,11 @@ export default function AboutMe(): React.ReactElement {
           {/* Radar polygon */}
           <Box
             sx={{
-              mt: 2,
+              mt: 7,
               display: "grid",
               placeItems: "center",
               // keep it within viewport width on phones; square via aspect-ratio
-              width: { xs: "min(80vw, 16rem)", md: "18rem" },
+              width: { xs: "min(80vw, 17rem)", md: "17rem" },
               aspectRatio: "1 / 1",
             }}
           >

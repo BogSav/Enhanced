@@ -11,10 +11,10 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import logoImage from "/LogoEnhancedV2.png";
-import ui from "../content/parsers/HomeTomlParser";
+import ui from "../content/parsers/UiTomlParser";
 import { getGlassStyle } from "./Utility";
 
 export default function Header({
@@ -26,11 +26,30 @@ export default function Header({
   onToggleTheme: () => void;
   onLogoClick?: () => void;
 }): React.ReactElement {
-  // English-only UI (i18n removed)
-
   // Get the glass style based on the current theme for the header background
   const glassStyle = getGlassStyle(themeKey);
-  // Language toggle removed
+
+  // Router helpers so header buttons can navigate to sections from any route
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const scrollToId = (id?: string) => {
+    if (!id) return;
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const go = (hash?: string) => {
+    // If already on home, just scroll
+    if (location.pathname === "/") {
+      scrollToId(hash);
+      return;
+    }
+    // navigate to home with hash then try to scroll after a short delay
+    navigate(hash ? `/#${hash}` : `/`);
+    // allow the route to render
+    setTimeout(() => scrollToId(hash), 120);
+  };
 
   // Reusable style for the navigation buttons - this is a descriptor compatible with MUI's sx prop
   const chipStyle = {
@@ -72,7 +91,7 @@ export default function Header({
             </Stack>
 
             {/*==========================================================================*/}
-            {/* This stack contains the navigation links: HomePage, Projects, Blogs */}
+            {/* This stack contains the navigation links: HomePage, About Me, Projects, Blogs */}
             <Stack
               direction="row"
               alignItems="center"
@@ -80,25 +99,31 @@ export default function Header({
               sx={{ display: { xs: "none", md: "flex" } }}
             >
               <Button
-                component={RouterLink}
-                to="/"
+                onClick={() => go(undefined)}
                 color="inherit"
                 sx={chipStyle}
               >
                 {ui.header.home}
               </Button>
               <Button
-                component={RouterLink}
-                to="/#projects"
+                onClick={() => go("about")}
+                color="inherit"
+                sx={chipStyle}
+              >
+                {ui.header.about}
+              </Button>
+              <Button
+                onClick={() => go("projects")}
                 color="inherit"
                 sx={chipStyle}
               >
                 {ui.header.projects}
               </Button>
-              <Button href="#about" color="inherit" sx={chipStyle}>
-                {ui.header.about}
-              </Button>
-              <Button href="#blogs" color="inherit" sx={chipStyle}>
+              <Button
+                onClick={() => go("blogs")}
+                color="inherit"
+                sx={chipStyle}
+              >
                 {ui.header.blogs}
               </Button>
             </Stack>

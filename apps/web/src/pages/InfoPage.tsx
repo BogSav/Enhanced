@@ -1,5 +1,5 @@
 import MDXLoader, { type ModulesMap } from "../components/MDXLoader";
-import ui from "../content/parsers/HomeTomlParser";
+import ui from "../content/parsers/UiTomlParser";
 
 // English-only legal pages
 const legalPages = import.meta.glob("../content/legal/*.mdx");

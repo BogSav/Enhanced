@@ -21,6 +21,7 @@ export type AboutData = {
   // Section titles and hints
   statsTitle: string;
   skillsTitle: string;
+  skillsSubtitle: string;
   radarTitle: string;
   radarHint: string;
   highlightsTitle: string;
@@ -41,6 +42,7 @@ const about: AboutData = {
   bio: "I design and build performant software — from CNC toolpath algorithms at ModuleWorks to experimental quantum-classical ideas under the Enhanced label. I love clean APIs, measurable performance, and thoughtful UX.",
   statsTitle: "Snapshot",
   skillsTitle: "Core skills",
+  skillsSubtitle: "Proficiency levels (out of 100) in various domains",
   radarTitle: "Tech focus",
   radarHint: "Higher = deeper involvement right now",
   highlightsTitle: "Recent highlights",
@@ -63,6 +65,8 @@ if (parsed && typeof parsed === "object") {
   if (typeof p.bio === "string") about.bio = p.bio;
   if (typeof p.statsTitle === "string") about.statsTitle = p.statsTitle;
   if (typeof p.skillsTitle === "string") about.skillsTitle = p.skillsTitle;
+  if (typeof p.skillsSubtitle === "string")
+    about.skillsSubtitle = p.skillsSubtitle;
   if (typeof p.radarTitle === "string") about.radarTitle = p.radarTitle;
   if (typeof p.radarHint === "string") about.radarHint = p.radarHint;
   if (typeof p.highlightsTitle === "string")

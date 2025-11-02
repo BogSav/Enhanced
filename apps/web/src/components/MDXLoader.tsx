@@ -10,7 +10,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 
 import ErrorBoundary from "./ErrorBoundary";
-import ui from "../content/parsers/HomeTomlParser";
+import ui from "../content/parsers/UiTomlParser";
 import { isLoader, hasDefault } from "./Utility";
 
 // An entry in `modules` can be either a lazy loader (the function returning a promise)

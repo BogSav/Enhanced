@@ -1,16 +1,17 @@
 import React from "react";
 import { Box, Button, Stack, Typography } from "@mui/material";
-import ui from "../content/parsers/HomeTomlParser";
+import ui from "../content/parsers/UiTomlParser";
 
 export default function BlogSection(): React.ReactElement {
   return (
     <Box id="blogs">
       <Stack spacing={2}>
-        <Typography variant="h5" sx={{ fontWeight: 700 }}>
-          {ui.blog.title}
+        {/*Temporary placeholder until blogs are added*/}
+        <Typography variant="h5" color="text.secondary">
+          Coming soon...
         </Typography>
-        <Typography color="text.secondary">{ui.blog.subtitle}</Typography>
 
+        <Typography color="text.secondary">{ui.blog.subtitle}</Typography>
         <Stack direction="row" spacing={2} sx={{ pt: 1 }}>
           <Button variant="contained" href="/blog">
             {ui.blog.cta}

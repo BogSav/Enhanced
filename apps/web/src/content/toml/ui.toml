@@ -3,7 +3,7 @@
 [header]
 home = "Home"
 projects = "Projects"
-about = "About"
+about = "About Me"
 blogs = "Blogs"
 # Tooltip labels for theme toggle
 lightTooltip = "Light mode"
@@ -12,19 +12,22 @@ darkTooltip = "Dark mode"
 [home]
 badge = "Portfolio & Lab"
 title = "Interactive portfolio"
-subtitle = "Projects at the intersection of hardware accelerated computing, artificial intelligence, and quantum computing."
+subtitle = "Welcome to my personal website! Here, I showcase projects at the intersection of hardware accelerated computing, artificial intelligence, and quantum computing."
 ctaExplore = "Explore projects"
 ctaContact = "Contact me"
-projectsTitle = "Featured Projects"
-blogsTitle = "Blogs"
-collab = "Open for collaborations & interesting problems.\n Feel free to reach out!"
-emailButton = "Email me"
+
+[projects]
+title = "Featured Projects"
+subtitle = "These are some of the key projects I've worked on. You can explore them by clicking on them."
 
 [blog]
-title = "Available soon..."
+title = "Blogs"
 subtitle = "Here will be a collection of articles and posts about my work, experiments, and thoughts on technology. I am currently working on it."
-cta = "Browse posts"
+cta = "Browse blogs"
 
+[contact]
+collab = "Open for collaborations & interesting problems.\n Feel free to reach out!"
+emailButton = "Email me"
 
 [notFound]
 code = "404"

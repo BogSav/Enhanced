@@ -2,7 +2,7 @@ import { parse } from "toml";
 
 // Import TOML file as raw string via Vite's ?raw import
 // eslint-disable-next-line import/no-unresolved
-import raw from "../toml/home.toml?raw";
+import raw from "../toml/ui.toml?raw";
 
 export type UI = {
   header: {
@@ -19,15 +19,19 @@ export type UI = {
     subtitle: string;
     ctaExplore: string;
     ctaContact: string;
-    projectsTitle: string;
-    blogsTitle: string;
-    collab: string;
-    emailButton: string;
+  };
+  projects: {
+    title: string;
+    subtitle: string;
   };
   blog: {
     title: string;
     subtitle: string;
     cta: string;
+  };
+  contact: {
+    collab: string;
+    emailButton: string;
   };
   notFound: {
     code: string;
@@ -66,15 +70,19 @@ const ui: UI = {
     subtitle: "",
     ctaExplore: "",
     ctaContact: "",
-    projectsTitle: "",
-    blogsTitle: "",
-    collab: "",
-    emailButton: "",
+  },
+  projects: {
+    title: "",
+    subtitle: "",
   },
   blog: {
     title: "",
     subtitle: "",
     cta: "",
+  },
+  contact: {
+    collab: "",
+    emailButton: "",
   },
   notFound: {
     code: "404",
@@ -118,17 +126,26 @@ if (parsed && typeof parsed === "object") {
     if (typeof h.subtitle === "string") ui.home.subtitle = h.subtitle;
     if (typeof h.ctaExplore === "string") ui.home.ctaExplore = h.ctaExplore;
     if (typeof h.ctaContact === "string") ui.home.ctaContact = h.ctaContact;
-    if (typeof h.projectsTitle === "string")
-      ui.home.projectsTitle = h.projectsTitle;
-    if (typeof h.blogsTitle === "string") ui.home.blogsTitle = h.blogsTitle;
-    if (typeof h.collab === "string") ui.home.collab = h.collab;
-    if (typeof h.emailButton === "string") ui.home.emailButton = h.emailButton;
+  }
+
+  if (p.projects && typeof p.projects === "object") {
+    if (typeof p.projects.title === "string")
+      ui.projects.title = p.projects.title;
+    if (typeof p.projects.subtitle === "string")
+      ui.projects.subtitle = p.projects.subtitle;
   }
 
   if (p.blog && typeof p.blog === "object") {
     if (typeof p.blog.title === "string") ui.blog.title = p.blog.title;
     if (typeof p.blog.subtitle === "string") ui.blog.subtitle = p.blog.subtitle;
     if (typeof p.blog.cta === "string") ui.blog.cta = p.blog.cta;
+  }
+
+  if (p.contact && typeof p.contact === "object") {
+    if (typeof p.contact.collab === "string")
+      ui.contact.collab = p.contact.collab;
+    if (typeof p.contact.emailButton === "string")
+      ui.contact.emailButton = p.contact.emailButton;
   }
 
   if (p.notFound && typeof p.notFound === "object") {

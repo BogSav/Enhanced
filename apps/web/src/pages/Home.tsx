@@ -16,7 +16,7 @@ import AboutMe from "../components/AboutMe";
 import Section from "../components/Section";
 import BlogSection from "../components/BlogSection";
 import { getProjectMetadata } from "../content/ProjectsLoader";
-import ui from "../content/parsers/HomeTomlParser";
+import ui from "../content/parsers/UiTomlParser";
 
 import type { ProjectMetadata } from "../components/ProjectCard";
 
@@ -100,7 +100,10 @@ export default function Home(): React.ReactElement {
       </Section>
 
       {/* Render all the projects using the <ProjectCard /> component inside a consistent Section */}
-      <Section id="projects" title={ui.home.projectsTitle} index={2}>
+      <Section id="projects" title={ui.projects.title} index={2}>
+        <Typography color="text.secondary" sx={{ mb: 3 }}>
+          {ui.projects.subtitle}
+        </Typography>
         {/* Projects masonry using CSS columns (no extra deps) */}
         <Box
           sx={{
@@ -124,7 +127,7 @@ export default function Home(): React.ReactElement {
       </Section>
 
       {/* Blogs section */}
-      <Section id="blogs" title={ui.home.blogsTitle} index={3}>
+      <Section id="blogs" title={ui.blog.title} index={3}>
         <BlogSection />
       </Section>
 
@@ -135,14 +138,14 @@ export default function Home(): React.ReactElement {
             variant="h5"
             sx={{ mb: 2, fontWeight: 700, whiteSpace: "pre-line" }}
           >
-            {ui.home.collab}
+            {ui.contact.collab}
           </Typography>
           <Button
             size="large"
             variant="contained"
             href="mailto:bogdansava59@yahoo.com"
           >
-            {ui.home.emailButton}
+            {ui.contact.emailButton}
           </Button>
         </Box>
       </Section>

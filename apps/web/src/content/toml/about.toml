@@ -3,16 +3,19 @@
 # Top-level text for the About section
 title = "About me"
 subtitle = "Engineer blending graphics, low-level systems, and quantum computing."
-bio = "I design and build performant software — from CNC toolpath algorithms at ModuleWorks to experimental quantum-classical ideas under the Enhanced label. I love clean APIs, measurable performance, and thoughtful UX."
+bio = "I'm Bogdan Sava — a Computer Science graduate and currently a second-year Master’s student in Quantum Computing. I work as a C++ Software Developer III at ModuleWorks. I have nearly four years of professional experience, and I’ve been programming since the 10th grade. I enjoy experimenting across the breadth of computer science and blending it with adjacent fields — you can see this best in my Projects section."
+
 
 # Section titles and hints (used within AboutMe only)
 statsTitle = "Snapshot"
 skillsTitle = "Core skills"
-radarTitle = "Tech focus"
+skillsSubtitle = "Proficiency levels (out of 100) in my domains of expertise"
+radarTitle = "Programming languages & Tech focus"
 radarHint = "Higher = deeper involvement right now"
 highlightsTitle = "Recent highlights"
 
-## Optional chips displayed near the header
+
+# Tag chips displayed near the header
 [[chips]]
 label = "Systems & Architectures"
 icon = "code"
@@ -29,7 +32,7 @@ icon = "public"
 variant = "outlined"
 
 
-# Below are all the stats displayed in the snapshot section
+# Below are all the cards displayed in the snapshot section
 [[stats]]
 title = "Years of experience"
 value = 4
@@ -40,24 +43,20 @@ title = "Projects"
 value = 6
 emoji = "📈"
 
-[[stats]]
-title = "Prezentări"
-value = 6
-emoji = "🌍"
 
 # List of core skills displayed with progress bars
 [[skills]]
-label = "C/C++ and Toolchains"
+label = "C/C++ - Toolchains, Multithreading, Performance"
 level = 90
 hint = "CMake, clang, MSVC"
 
 [[skills]]
-label = "GPU & Graphics"
+label = "GPU & Graphics - RayTracing, DX12, OpenGL"
 level = 70
 hint = "DX12, RayTracing, OpenGL"
 
 [[skills]]
-label = "Rust & Systems Programming"
+label = "Hardware & Systems - Architectures, Kernel, Embedded"
 level = 20
 hint = "Rust, low-level systems"
 
@@ -72,23 +71,27 @@ level = 70
 hint = "Hybrid architectures, Quantum algorithms"
 
 [[skills]]
-label = "Artificial Intelligence & ML"
+label = "AI & ML - Transformers, SEAL, TensorFlow"
 level = 60
 hint = "Transformers, SEAL, TensorFlow"
 
-[radar]
-labels = ["C++/Tooling", "Graphics", "CNC/Algo", "Web/TS", "Quantum"]
-values = [0.92, 0.88, 0.86, 0.84, 0.5]
 
-# Recent highlights (any number)
+# Data for the radar chart - labels and corresponding values
+# simply stored as arrays for easy parsing
+[radar]
+labels = ["C++/Tooling", "Python", "TypeScript/JS", "Quantum", "Rust"]
+values = [0.95, 0.80, 0.5, 0.6, 0.2]
+
+
+# Recent highlights - dispalyed at the buttom of the About Me section
 [[highlights]]
-title = "CNC deburring & links"
-desc = "Worked on robust clearance and deburring settings (UI + core), focusing on correctness and DX for complex toolpaths."
+title = "Supervised a bachelor thesis"
+desc = "In 2025 I was the official supervisor for a bachelor student at the UNSTPB - Automatic Control and Computer Science faculty, in collaboration with ModuleWorks."
 
 [[highlights]]
 title = "RTXplore engine"
-desc = "Exploring a high-performance open engine with ray tracing and compute-heavy pipelines."
+desc = "For my bachelor thesis I designed and implemented a real-time graphics engine, combining rasterization and raytracing techniques, using DirectX 12 and HLSL."
 
 [[highlights]]
-title = "Hybrid quantum-classical"
-desc = "Designing an OS/ISA concept to orchestrate quantum instructions alongside classical workloads."
+title = "Hybrid quantum-classical system"
+desc = "My future disertation thesis will focus on design one of the first standardized hybrid quantum-classical systems, combining classical compute with quantum accelerators."
