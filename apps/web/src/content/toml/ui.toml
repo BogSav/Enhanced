@@ -31,6 +31,10 @@ cta = "Browse blogs"
 collab = "Open for collaborations & interesting problems.\n Feel free to reach out!"
 emailButton = "Email me"
 
+[footer]
+copyright = "All rights reserved."
+location = "Bucharest, RO"
+
 [notFound]
 code = "404"
 message = "The page you're looking for doesn't exist."

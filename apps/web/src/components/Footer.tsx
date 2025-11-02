@@ -12,9 +12,9 @@ import {
 } from "@mui/material";
 import React from "react";
 
-export default function Footer(): React.ReactElement {
-  const year = new Date().getFullYear();
+import ui from "../content/parsers/UiTomlParser";
 
+export default function Footer(): React.ReactElement {
   return (
     <Box
       component="footer"
@@ -39,10 +39,10 @@ export default function Footer(): React.ReactElement {
               Enhanced
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              © 2019–{year} Bogdan S. Code: MIT · Content: CC BY-NC 4.0
+              {ui.footer.copyright}
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              Bucharest, RO
+              {ui.footer.location}
             </Typography>
           </Box>
 

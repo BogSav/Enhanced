@@ -37,7 +37,7 @@ function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
 
-const parsed = parse(raw);
+const parsed: unknown = parse(raw);
 
 // sensible defaults so consumers don't need to provide fallbacks
 const about: AboutData = {

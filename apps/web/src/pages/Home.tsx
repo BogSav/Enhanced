@@ -1,13 +1,13 @@
 import { Stack } from "@mui/material";
 import { useMemo } from "react";
 
-import { getProjectMetadata } from "../content/ProjectsLoader";
 
-import HeroSection from "../components/HeroSection";
 import AboutMeSection from "../components/AboutMeSection";
-import ProjectsSection from "../components/ProjectsSection";
 import BlogSection from "../components/BlogSection";
 import ContactSection from "../components/ContactSection";
+import HeroSection from "../components/HeroSection";
+import ProjectsSection from "../components/ProjectsSection";
+import { getProjectMetadata } from "../content/ProjectsLoader";
 
 import type { ProjectMetadata } from "../components/ProjectCard";
 

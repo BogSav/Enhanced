@@ -1,9 +1,9 @@
-import Section from "../components/Section";
-import ProjectCard from "../components/ProjectCard";
-
 import { Box, Typography } from "@mui/material";
 
+import ProjectCard from "../components/ProjectCard";
+import Section from "../components/Section";
 import ui from "../content/parsers/UiTomlParser";
+
 import type { ProjectMetadata } from "../components/ProjectCard";
 
 export default function ProjectsSection({
@@ -24,7 +24,7 @@ export default function ProjectsSection({
           columnGap: 4,
         }}
       >
-        {(projects || []).map((p) => (
+        {projects.map((p) => (
           <Box
             key={p.slug}
             sx={{

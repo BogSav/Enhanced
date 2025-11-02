@@ -1,14 +1,6 @@
+import { Box, Button, Typography } from "@mui/material";
+
 import Section from "../components/Section";
-import {
-  Box,
-  Button,
-  Chip,
-  Container,
-  Paper,
-  Stack,
-  Typography,
-  Grow,
-} from "@mui/material";
 import ui from "../content/parsers/UiTomlParser";
 
 export default function ContactSection(): React.ReactElement {

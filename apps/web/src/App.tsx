@@ -21,7 +21,7 @@ const InfoPage = lazy(() => import("./pages/InfoPage"));
 export default function App(): React.ReactElement {
   // We create a react state to hold the current theme key and initialize it from localStorage
   const [themeKey, keyThemeSetter] = useState<ThemeKey>(() =>
-    getFromLocalStorage<ThemeKey>(THEME_KEY, "dark")
+    getFromLocalStorage<ThemeKey>(THEME_KEY, "light")
   );
 
   // Function to toggle between light and dark themes and save preference to localStorage

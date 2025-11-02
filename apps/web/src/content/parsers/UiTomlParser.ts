@@ -34,6 +34,10 @@ export type UI = {
     collab: string;
     emailButton: string;
   };
+  footer: {
+    copyright: string;
+    location: string;
+  };
   notFound: {
     code: string;
     message: string;
@@ -58,7 +62,7 @@ function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
 
-const parsed = parse(raw);
+const parsed: unknown = parse(raw);
 
 // sensible defaults so consumers across the app don't need to guard
 const ui: UI = {
@@ -90,6 +94,10 @@ const ui: UI = {
   contact: {
     collab: "",
     emailButton: "",
+  },
+  footer: {
+    copyright: "Enhanced. All rights reserved.",
+    location: "Bucharest, RO",
   },
   notFound: {
     code: "404",
@@ -188,6 +196,16 @@ if (isObject(parsed)) {
     }
     if (typeof contact.emailButton === "string") {
       ui.contact.emailButton = contact.emailButton;
+    }
+  }
+
+  if (isObject(p.footer)) {
+    const footer = p.footer;
+    if (typeof footer.copyright === "string") {
+      ui.footer.copyright = footer.copyright;
+    }
+    if (typeof footer.location === "string") {
+      ui.footer.location = footer.location;
     }
   }
 

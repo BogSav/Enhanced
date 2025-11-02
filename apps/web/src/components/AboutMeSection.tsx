@@ -19,6 +19,8 @@ import { useInView } from "../hooks/useInView";
 
 import { StatCard, LinkedinLink } from "./CommonComponents";
 import { getIconComponent } from "./IconHelpers";
+import Section from "./Section";
+
 
 import type {
   Skill,
@@ -26,7 +28,6 @@ import type {
   Highlight,
   Chip as ChipType,
 } from "../content/parsers/AboutTomlParser";
-import Section from "./Section";
 
 export default function AboutMeSection(): React.ReactElement {
   const theme = useTheme();
