@@ -3,27 +3,27 @@ import { alpha } from "@mui/material/styles";
 
 import type { ThemeKey } from "../App";
 
-/** Dark = inspirat de GitHub/Primer + Linear: fond foarte închis, neutrali reci, accent albastru serios */
+/** Dark = inspired by GitHub/Primer + Linear: very dark background, cool neutrals, strong blue accent */
 const darkThemePalette = {
   primary: "#2563EB", // blue 600 (accent) – call-to-action
-  primaryContrast: "#FFFFFF", // text pe butoane primare
+  primaryContrast: "#FFFFFF", // text on primary buttons
   secondary: "#5E6AD2", // indigo “Linear Magic Blue”
   secondaryContrast: "#FFFFFF",
   background: "#0D1117", // near-black (GitHub dark family)
-  surface: "#111827", // slate 900-ish, pentru carduri/panouri
-  accent: "#60A5FA", // albastru mai deschis pt. iconițe/chips
-  accentContrast: "#0B1220", // pentru icon pe accent deschis (dacă ai badge-uri)
-  border: "#1F2937", // slate 800 – delimitări discrete
-  textPrimary: "#E6EDF3", // text principal pe dark
-  textSecondary: "#9BA3AF", // text secundar pe dark
+  surface: "#111827", // slate 900-ish, for cards/panels
+  accent: "#60A5FA", // lighter blue for icons/chips
+  accentContrast: "#0B1220", // for icon on light accent (e.g., badges)
+  border: "#1F2937", // slate 800 – subtle borders
+  textPrimary: "#E6EDF3", // primary text on dark
+  textSecondary: "#9BA3AF", // secondary text on dark
   error: "#EF4444",
   warning: "#F59E0B",
   success: "#22C55E",
 };
 
-/** Light = inspirat de Stripe/Primer: fond aproape alb-albăstrui, text aproape-negru, accent albastru */
+/** Light = inspired by Stripe/Primer: near-white background, near-black text, blue accent */
 const whiteThemePalette = {
-  primary: "#2563EB", // menține identitatea butoanelor
+  primary: "#2563EB", // keeps button identity
   primaryContrast: "#FFFFFF",
   secondary: "#5E6AD2",
   secondaryContrast: "#FFFFFF",
@@ -32,31 +32,11 @@ const whiteThemePalette = {
   accent: "#2563EB",
   accentContrast: "#FFFFFF",
   border: "#E5E7EB", // gray-300
-  textPrimary: "#0B1220", // aproape-negru, citibil
+  textPrimary: "#0B1220", // near-black, readable
   textSecondary: "#475569", // slate 600
   error: "#E11D48",
   warning: "#F59E0B",
   success: "#22C55E",
-};
-
-// Glass style (ușor temperat, fără glow agresiv; funcționează pe ambele teme)
-export const getGlassStyle = (themeKey: ThemeKey): Record<string, unknown> => {
-  const p = themeKey === "dark" ? darkThemePalette : whiteThemePalette;
-  return {
-    borderRadius: 999,
-    px: 1,
-    py: 0.75,
-    border: `1px solid ${alpha(
-      themeKey === "dark" ? p.textSecondary : "#1F2937",
-      themeKey === "dark" ? 0.18 : 0.1
-    )}`,
-    bgcolor: alpha(themeKey === "dark" ? p.surface : p.background, 0.72),
-    backgroundImage: `linear-gradient(135deg, ${alpha(
-      p.primary,
-      0.12
-    )}, ${alpha(p.secondary, 0.08)})`,
-    backdropFilter: "saturate(160%) blur(14px)"
-  };
 };
 
 export const getTheme = (themeKey: ThemeKey): ReturnType<typeof createTheme> =>
@@ -137,10 +117,16 @@ export const getTheme = (themeKey: ThemeKey): ReturnType<typeof createTheme> =>
     },
     components: {
       MuiPaper: {
-        styleOverrides: { root: { boxShadow: `0 10px 30px ${alpha(
-          themeKey === "light" ? whiteThemePalette.textPrimary : darkThemePalette.textPrimary,
-          0.08
-        )}` } },
+        styleOverrides: {
+          root: {
+            boxShadow: `0 10px 30px ${alpha(
+              themeKey === "light"
+                ? whiteThemePalette.textPrimary
+                : darkThemePalette.textPrimary,
+              0.08
+            )}`,
+          },
+        },
       },
       MuiCard: { styleOverrides: { root: { borderRadius: 20 } } },
     },

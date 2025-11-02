@@ -1,3 +1,5 @@
+# Centralized UI text content in TOML format for Home page
+
 [header]
 home = "Home"
 projects = "Projects"

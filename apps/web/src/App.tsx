@@ -5,6 +5,7 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import { getTheme } from "./components/Style";
+import { getFromLocalStorage, setToLocalStorage } from "./components/Utility";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 
@@ -14,25 +15,10 @@ const THEME_KEY = "enhanced.theme";
 const ProjectPage = lazy(() => import("./pages/ProjectPage"));
 const InfoPage = lazy(() => import("./pages/InfoPage"));
 
-// Try to read the saved theme from localStorage
-function getInitialThemeKey(): ThemeKey {
-  if (typeof window !== "undefined") {
-    try {
-      const savedThemeKey = localStorage.getItem(THEME_KEY) as ThemeKey | null;
-      if (savedThemeKey === "light" || savedThemeKey === "dark") {
-        return savedThemeKey;
-      }
-    } catch {
-      // We ignore errors reading localStorage and simply fallback to the default theme: dark
-    }
-  }
-  return "dark";
-}
-
 export default function App(): React.ReactElement {
   // We create a react state to hold the current theme key and initialize it from localStorage
   const [themeKey, keyThemeSetter] = useState<ThemeKey>(() =>
-    getInitialThemeKey()
+    getFromLocalStorage<ThemeKey>(THEME_KEY, "dark")
   );
 
   // Function to toggle between light and dark themes and save preference to localStorage
@@ -40,7 +26,7 @@ export default function App(): React.ReactElement {
   const toggleTheme = (): void => {
     keyThemeSetter((prevThemeKey) => {
       const nextThemeKey = prevThemeKey === "light" ? "dark" : "light";
-      localStorage.setItem(THEME_KEY, nextThemeKey);
+      setToLocalStorage(THEME_KEY, nextThemeKey);
       return nextThemeKey;
     });
   };

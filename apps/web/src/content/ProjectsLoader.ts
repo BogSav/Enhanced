@@ -33,7 +33,7 @@ export function getProjectMetadata(): ProjectMetadata[] {
   return Object.entries(frontmatterAll).map(([path, fmUnknown]) => {
     const slug = slugFromPath(path);
     const fm = (fmUnknown ?? {}) as ProjectFrontmatter;
-    
+
     return {
       slug,
       title: fm.title ?? slug,
@@ -48,7 +48,7 @@ export function getProjectMetadata(): ProjectMetadata[] {
 export function getProjectModules(): ModulesMap {
   const dict = modulesLazy;
   const out: ModulesMap = {};
-  
+
   for (const [path, loader] of Object.entries(dict)) {
     const slug = slugFromPath(path);
     out[slug] = loader as ModulesMap[string];

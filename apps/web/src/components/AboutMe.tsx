@@ -14,124 +14,53 @@ import {
   Grow,
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
-import { Code, Memory, Public } from "@mui/icons-material";
-import about from "../content/aboutData";
-
-/**
- * Mic utilitar pentru counters animate (0 -> target) atunci când intră în viewport.
- */
-function useCountUp(target: number, durationMs = 1200, start = false) {
-  const [value, setValue] = React.useState(0);
-  React.useEffect(() => {
-    if (!start) return;
-    let raf = 0;
-    const t0 = performance.now();
-    const tick = (t: number) => {
-      const p = Math.min(1, (t - t0) / durationMs);
-      const eased = 1 - Math.pow(1 - p, 3); // easeOutCubic
-      setValue(Math.round(target * eased));
-      if (p < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [target, durationMs, start]);
-  return value;
-}
-
 import { useInView } from "../hooks/useInView";
+import { StatCard, getIconComponent, LinkedinLink } from "./Utility";
 
-type Skill = { label: string; level: number; hint?: string };
-
-// Card individual pentru un item din stats (emoji + titlu + counter animat)
-function StatCard({
-  title,
-  value,
-  emoji,
-  start,
-  index,
-}: {
-  title: string;
-  value: number;
-  emoji?: string;
-  start: boolean;
-  index: number;
-}) {
-  const count = useCountUp(value, 900 + index * 120, start);
-  return (
-    <Paper
-      sx={{
-        p: 2.5,
-        borderRadius: 3,
-        height: "80%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: { xs: "center", md: "center" },
-        textAlign: { xs: "center", md: "center" },
-        justifyContent: "center",
-        minHeight: { xs: "4.5rem", md: "auto" },
-      }}
-    >
-      <Typography variant="body1" align="center" sx={{ p: 1 }}>
-        {emoji ? (
-          <Box
-            component="span"
-            aria-hidden
-            sx={{ fontSize: 18, lineHeight: 1 }}
-          >
-            {emoji}
-          </Box>
-        ) : null}
-        {title}
-      </Typography>
-      <Typography variant="h4" sx={{ fontWeight: 700, lineHeight: 1 }}>
-        {count}
-      </Typography>
-    </Paper>
-  );
-}
+import about from "../content/parsers/AboutTomlParser";
+import type {
+  Skill,
+  Stat,
+  Highlight,
+  Chip as ChipType,
+} from "../content/parsers/AboutTomlParser";
 
 export default function AboutMe(): React.ReactElement {
   const theme = useTheme();
   const { ref, inView } = useInView<HTMLDivElement>();
 
-  // ======== Content from TOML ========
-  const title = about.title ?? "About me";
-  const subtitle = about.subtitle ?? "";
-  const bio = about.bio ?? "";
-
-  // Use Vite's base URL so the path works in dev and when deployed under a subpath
-  const avatarSrc = `${import.meta.env.BASE_URL}ProfilePic.jpg`;
-
-  const skills: Skill[] = about.skills as Skill[];
-
-  // Stats list (from TOML): title/value/emoji and any count
-  type Stat = { title: string; value: number; emoji?: string };
-  const stats = about.stats as Stat[];
-
-  // Un mic “radar” SVG minimalist (fără deps) — se animă pe intrare
-  const radarValues = about.radar.values; // corresponds to radar labels
+  // Extract content from TOML files (parser provides sensible defaults)
+  const title: string = about.title;
+  const subtitle: string = about.subtitle;
+  const bio: string = about.bio;
+  const skills: Skill[] = about.skills;
+  const stats: Stat[] = about.stats;
+  const chips: ChipType[] = about.chips;
+  // A small minimalist "radar" SVG (no deps) — animates on entry
+  const radarValues: number[] = about.radar.values; // corresponds to radar labels
   const radarAnimated = radarValues.map((v) => (inView ? v : 0));
+
+  const avatarSrc = `${import.meta.env.BASE_URL}ProfilePic.jpg`;
 
   // extract the inner content so we can render it either inside the local Paper (boxed)
   // or as raw content (when a parent Section provides the Paper).
   const inner = (
     <>
-      {/* Header: avatar + titlu + tagline */}
+      {/* Header: avatar + title + tagline */}
       <Stack
         direction={{ xs: "column", md: "row" }}
         spacing={{ xs: 2, md: 6 }}
         alignItems="center"
         justifyContent="center"
       >
+        {/* Avatar with border and shadow */}
         <Grow in={inView} timeout={700}>
           <Avatar
             src={avatarSrc}
             alt="Profile"
             sx={(t) => ({
-              // responsive rem-based sizes (rem is relative to root font-size)
               width: { xs: "5.5rem", md: "10rem" },
               height: { xs: "5.5rem", md: "10rem" },
-              // use rem for border thickness and theme divider color
               border: `0.2rem solid ${t.palette.divider}`,
               boxShadow: 3,
               flexShrink: 0,
@@ -139,6 +68,7 @@ export default function AboutMe(): React.ReactElement {
           />
         </Grow>
 
+        {/* Title, subtitle, and chips */}
         <Box
           sx={{
             width: { xs: "100%", md: "auto" },
@@ -170,6 +100,7 @@ export default function AboutMe(): React.ReactElement {
             </Typography>
           </Fade>
 
+          {/* Tag chips */}
           <Stack
             direction="row"
             spacing={1}
@@ -180,61 +111,39 @@ export default function AboutMe(): React.ReactElement {
               gap: 1.5,
             }}
           >
-            {about.chips && about.chips.length > 0 ? (
-              about.chips.map((c, idx) => {
-                const icon = (() => {
-                  switch ((c.icon || "").toLowerCase()) {
-                    case "code":
-                      return <Code />;
-                    case "memory":
-                      return <Memory />;
-                    case "public":
-                      return <Public />;
-                    default:
-                      return undefined;
-                  }
-                })();
-                const variant =
-                  c.variant === "outlined" ? "outlined" : "filled";
-                return (
-                  <Chip
-                    key={`${c.label}-${idx}`}
-                    icon={icon}
-                    label={c.label}
-                    variant={variant as any}
-                  />
-                );
-              })
-            ) : (
-              <>
-                <Chip icon={<Code />} label="Systems & Graphics" />
-                <Chip
-                  icon={<Memory />}
-                  label="Quantum-curious"
-                  variant="outlined"
-                />
-                <Chip
-                  icon={<Public />}
-                  label="Open-source"
-                  variant="outlined"
-                />
-              </>
-            )}
+            {chips.length > 0
+              ? chips.map((c: ChipType, idx: number) => {
+                  const icon = getIconComponent(c.icon);
+                  return (
+                    <Chip
+                      key={`${c.label}-${idx}`}
+                      icon={icon}
+                      label={c.label}
+                      variant={c.variant as "filled" | "outlined"}
+                    />
+                  );
+                })
+              : null}
           </Stack>
         </Box>
       </Stack>
 
-      {/* Bio */}
+      {/* Bio - (short summary - descriptive subtitle) */}
       <Box sx={{ mt: 4 }}>
         <Fade in={inView} timeout={900}>
           <Typography
             variant="body1"
             color="text.secondary"
-            sx={{ maxWidth: { xs: "100%", md: "56rem" } }}
+            sx={{ maxWidth: { xs: "100%", md: "56rem" }, mb: 2 }}
           >
             {bio}
           </Typography>
         </Fade>
+        <LinkedinLink
+          url="https://www.linkedin.com/in/your-profile"
+          label="Check my Linkedin"
+          iconSize="medium"
+        />
       </Box>
 
       <Divider sx={{ my: { xs: 3, md: 5 } }} />
@@ -244,7 +153,7 @@ export default function AboutMe(): React.ReactElement {
         {/* Stats */}
         <Stack flex={1} spacing={2}>
           <Typography variant="h5" sx={{ fontWeight: 800 }}>
-            {about.statsTitle ?? "Snapshot"}
+            {about.statsTitle}
           </Typography>
 
           <Box
@@ -272,8 +181,8 @@ export default function AboutMe(): React.ReactElement {
 
           {/* Skill bars */}
           <Box sx={{ mt: 2 }}>
-            <Typography variant="subtitle1" sx={{ mb: 1.5, fontWeight: 700 }}>
-              {about.skillsTitle ?? "Core skills"}
+            <Typography variant="h5" sx={{ mb: 1.5, fontWeight: 700 }}>
+              {about.skillsTitle}
             </Typography>
 
             <Stack spacing={1.2}>
@@ -324,12 +233,13 @@ export default function AboutMe(): React.ReactElement {
           }}
         >
           <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
-            {about.radarTitle ?? "Tech focus"}
+            {about.radarTitle}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {about.radarHint ?? "Higher = deeper involvement right now"}
+            {about.radarHint}
           </Typography>
 
+          {/* Radar polygon */}
           <Box
             sx={{
               mt: 2,
@@ -359,7 +269,7 @@ export default function AboutMe(): React.ReactElement {
                   strokeDasharray="4 6"
                 />
               ))}
-              {/* axes */}
+              {/* axes - X and Y */}
               <line
                 x1="130"
                 y1="10"
@@ -380,6 +290,10 @@ export default function AboutMe(): React.ReactElement {
               {/* polygon (animated by recompute) */}
               {(() => {
                 const labels = about.radar.labels;
+
+                // For each value, we compute an initial position on the unit circle
+                // (all the values are equidistributed based on the number of labels)
+                // and then displace them using the value scaled to the radar radius
                 const pts = radarAnimated.map((v, i) => {
                   const angle =
                     (-90 + i * (360 / radarAnimated.length)) * (Math.PI / 180);
@@ -432,7 +346,7 @@ export default function AboutMe(): React.ReactElement {
       <Divider sx={{ my: { xs: 3, md: 5 } }} />
       <Box>
         <Typography variant="h5" sx={{ fontWeight: 800, mb: 2 }}>
-          {about.highlightsTitle ?? "Recent highlights"}
+          {about.highlightsTitle}
         </Typography>
 
         <Stack
@@ -440,7 +354,7 @@ export default function AboutMe(): React.ReactElement {
           spacing={4}
           sx={{ "& > *": { flex: 1 } }}
         >
-          {about.highlights.map((h, idx) => (
+          {about.highlights.map((h: Highlight, idx: number) => (
             <Paper key={idx} sx={{ p: 2.5, borderRadius: 3 }}>
               <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
                 {h.title}

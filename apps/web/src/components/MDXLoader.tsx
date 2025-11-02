@@ -10,7 +10,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 
 import ErrorBoundary from "./ErrorBoundary";
-import ui from "../content/uiText";
+import ui from "../content/parsers/HomeTomlParser";
+import { isLoader, hasDefault } from "./Utility";
 
 // An entry in `modules` can be either a lazy loader (the function returning a promise)
 // or an already-loaded module. For the already-loaded module, I created the LoadedModule type.
@@ -32,22 +33,6 @@ type MDXLoaderProps = {
   useErrorBoundary?: boolean;
   errorBoundaryFallback?: React.ReactNode;
 };
-
-// We use a type guard to distinguish between loader functions and loaded modules.
-function isLoader(
-  entry: ModuleEntry | undefined
-): entry is () => Promise<LoadedModule> {
-  return typeof entry === "function";
-}
-
-// Type guard to check if a module has a default export
-function hasDefault(mod: unknown): mod is LoadedModule {
-  // Cast to a more specific type to check for default export
-  const maybe = mod as { default?: unknown } | null | undefined;
-  // Check first that maybe is not null/undefined (by using the bool conversion !!),
-  // then that default exists and is a function
-  return !!maybe && typeof maybe.default === "function";
-}
 
 // Component: loads and renders MDX based on slug + language.
 export default function MDXLoader({

@@ -14,8 +14,8 @@ import {
 import { Link as RouterLink } from "react-router-dom";
 
 import logoImage from "/LogoEnhancedV2.png";
-import { getGlassStyle } from "./Style";
-import ui from "../content/uiText";
+import ui from "../content/parsers/HomeTomlParser";
+import { getGlassStyle } from "./Utility";
 
 export default function Header({
   themeKey,
@@ -79,7 +79,12 @@ export default function Header({
               spacing={0.5}
               sx={{ display: { xs: "none", md: "flex" } }}
             >
-              <Button component={RouterLink} to="/" color="inherit" sx={chipStyle}>
+              <Button
+                component={RouterLink}
+                to="/"
+                color="inherit"
+                sx={chipStyle}
+              >
                 {ui.header.home}
               </Button>
               <Button
@@ -90,15 +95,26 @@ export default function Header({
               >
                 {ui.header.projects}
               </Button>
-              <Button href="#about" color="inherit" sx={chipStyle}>{ui.header.about}</Button>
-              <Button href="#blogs" color="inherit" sx={chipStyle}>{ui.header.blogs}</Button>
+              <Button href="#about" color="inherit" sx={chipStyle}>
+                {ui.header.about}
+              </Button>
+              <Button href="#blogs" color="inherit" sx={chipStyle}>
+                {ui.header.blogs}
+              </Button>
             </Stack>
 
             {/*==========================================================================*/}
             {/* This stack contains the theme switch and GitHub link */}
             <Stack direction="row" alignItems="center" spacing={0.5} pr={1}>
               {/* This tooltip toggles the theme */}
-              <Tooltip title={themeKey === "dark" ? ui.header.lightTooltip : ui.header.darkTooltip} arrow>
+              <Tooltip
+                title={
+                  themeKey === "dark"
+                    ? ui.header.lightTooltip
+                    : ui.header.darkTooltip
+                }
+                arrow
+              >
                 <IconButton
                   onClick={onToggleTheme}
                   color="inherit"
