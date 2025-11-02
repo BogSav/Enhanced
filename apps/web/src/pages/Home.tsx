@@ -1,13 +1,4 @@
-import {
-  Box,
-  Button,
-  Chip,
-  Container,
-  Paper,
-  Stack,
-  Typography,
-  Grow,
-} from "@mui/material";
+import { Box, Button, Chip, Container, Paper, Stack, Typography, Grow } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { useMemo } from "react";
 
@@ -78,11 +69,11 @@ export default function Home(): React.ReactElement {
       </Container>
 
       <Section id="about" index={1}>
-        <AboutMe boxed={false} />
+        <AboutMe />
       </Section>
 
       {/* Render all the projects using the <ProjectCard /> component inside a consistent Section */}
-  <Section id="projects" title={ui.home.projectsTitle} index={2}>
+      <Section id="projects" title={ui.home.projectsTitle} index={2}>
         {/* Projects masonry using CSS columns (no extra deps) */}
         <Box
           sx={{
@@ -106,7 +97,7 @@ export default function Home(): React.ReactElement {
       </Section>
 
       {/* Blogs section */}
-  <Section id="blogs" title={ui.home.blogsTitle} index={3}>
+      <Section id="blogs" title={ui.home.blogsTitle} index={3}>
         <BlogSection />
       </Section>
 

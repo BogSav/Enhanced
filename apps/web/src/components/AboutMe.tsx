@@ -14,8 +14,7 @@ import {
   Grow,
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
-import { Code, Memory, ShowChart, Public, Bolt } from "@mui/icons-material";
-import ui from "../content/uiText";
+import { Code, Memory, Public } from "@mui/icons-material";
 import about from "../content/aboutData";
 
 /**
@@ -39,44 +38,75 @@ function useCountUp(target: number, durationMs = 1200, start = false) {
   return value;
 }
 
-/**
- * Hook simplu pentru a ști când componenta e în viewport (pornește animațiile).
- */
-function useInView<T extends Element>(margin = "0px 0px -20% 0px") {
-  const ref = React.useRef<T | null>(null);
-  const [inView, setInView] = React.useState(false);
-  React.useEffect(() => {
-    if (!ref.current) return;
-    const obs = new IntersectionObserver(
-      (entries) => entries.forEach((e) => e.isIntersecting && setInView(true)),
-      { root: null, rootMargin: margin, threshold: 0.2 }
-    );
-    obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, [margin]);
-  return { ref, inView } as const;
-}
+import { useInView } from "../hooks/useInView";
 
 type Skill = { label: string; level: number; hint?: string };
 
-export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.ReactElement {
+// Card individual pentru un item din stats (emoji + titlu + counter animat)
+function StatCard({
+  title,
+  value,
+  emoji,
+  start,
+  index,
+}: {
+  title: string;
+  value: number;
+  emoji?: string;
+  start: boolean;
+  index: number;
+}) {
+  const count = useCountUp(value, 900 + index * 120, start);
+  return (
+    <Paper
+      sx={{
+        p: 2.5,
+        borderRadius: 3,
+        height: "80%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: { xs: "center", md: "center" },
+        textAlign: { xs: "center", md: "center" },
+        justifyContent: "center",
+        minHeight: { xs: "4.5rem", md: "auto" },
+      }}
+    >
+      <Typography variant="body1" align="center" sx={{ p: 1 }}>
+        {emoji ? (
+          <Box
+            component="span"
+            aria-hidden
+            sx={{ fontSize: 18, lineHeight: 1 }}
+          >
+            {emoji}
+          </Box>
+        ) : null}
+        {title}
+      </Typography>
+      <Typography variant="h4" sx={{ fontWeight: 700, lineHeight: 1 }}>
+        {count}
+      </Typography>
+    </Paper>
+  );
+}
+
+export default function AboutMe(): React.ReactElement {
   const theme = useTheme();
   const { ref, inView } = useInView<HTMLDivElement>();
 
   // ======== Content from TOML ========
-  const title = ui.about.title;
-  const subtitle = ui.about.subtitle;
-  const bio = ui.about.bio;
+  const title = about.title ?? "About me";
+  const subtitle = about.subtitle ?? "";
+  const bio = about.bio ?? "";
 
   // Use Vite's base URL so the path works in dev and when deployed under a subpath
   const avatarSrc = `${import.meta.env.BASE_URL}ProfilePic.jpg`;
 
   const skills: Skill[] = about.skills as Skill[];
 
-  // “Stats” – inspirat din profil (poți adapta din i18n: about.stats.*)
-  const statYears = useCountUp(about.stats.years, 1000, inView);
-  const statProjects = useCountUp(about.stats.projects, 1200, inView);
-  const statTalks = useCountUp(about.stats.talks, 1000, inView);
+  // Stats list (from TOML): title/value/emoji and any count
+  type Stat = { title: string; value: number; emoji?: string };
+  const stats = about.stats as Stat[];
 
   // Un mic “radar” SVG minimalist (fără deps) — se animă pe intrare
   const radarValues = about.radar.values; // corresponds to radar labels
@@ -89,7 +119,7 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
       {/* Header: avatar + titlu + tagline */}
       <Stack
         direction={{ xs: "column", md: "row" }}
-        spacing={{ xs: 2, md: 3 }}
+        spacing={{ xs: 2, md: 6 }}
         alignItems="center"
         justifyContent="center"
       >
@@ -99,8 +129,8 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
             alt="Profile"
             sx={(t) => ({
               // responsive rem-based sizes (rem is relative to root font-size)
-              width: { xs: "5.5rem", md: "7rem" },
-              height: { xs: "5.5rem", md: "7rem" },
+              width: { xs: "5.5rem", md: "10rem" },
+              height: { xs: "5.5rem", md: "10rem" },
               // use rem for border thickness and theme divider color
               border: `0.2rem solid ${t.palette.divider}`,
               boxShadow: 3,
@@ -109,15 +139,20 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
           />
         </Grow>
 
-        <Box sx={{
-          width: { xs: "100%", md: "auto" },
-          mt: { xs: 1, md: 0 },
-          textAlign: { xs: "center", md: "left" },
-        }}>
+        <Box
+          sx={{
+            width: { xs: "100%", md: "auto" },
+            mt: { xs: 1, md: 0 },
+            textAlign: { xs: "center", md: "left" },
+          }}
+        >
           <Fade in={inView} timeout={800}>
             <Typography
               variant="h3"
-              sx={{ fontWeight: 800, fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2rem" } }}
+              sx={{
+                fontWeight: 800,
+                fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2rem" },
+              }}
             >
               {title}
             </Typography>
@@ -126,7 +161,10 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
             <Typography
               variant="h6"
               color="text.secondary"
-              sx={{ mt: { xs: 0.5, md: 1 }, fontSize: { xs: "0.9rem", md: "1rem" } }}
+              sx={{
+                mt: { xs: 0.5, md: 1 },
+                fontSize: { xs: "0.9rem", md: "1rem" },
+              }}
             >
               {subtitle}
             </Typography>
@@ -139,11 +177,49 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
               mt: 2,
               justifyContent: { xs: "center", md: "flex-start" },
               flexWrap: "wrap",
+              gap: 1.5,
             }}
           >
-            <Chip icon={<Code />} label={ui.about.code} />
-            <Chip icon={<Memory />} label={ui.about.quantum} variant="outlined" />
-            <Chip icon={<Public />} label={ui.about.open} variant="outlined" />
+            {about.chips && about.chips.length > 0 ? (
+              about.chips.map((c, idx) => {
+                const icon = (() => {
+                  switch ((c.icon || "").toLowerCase()) {
+                    case "code":
+                      return <Code />;
+                    case "memory":
+                      return <Memory />;
+                    case "public":
+                      return <Public />;
+                    default:
+                      return undefined;
+                  }
+                })();
+                const variant =
+                  c.variant === "outlined" ? "outlined" : "filled";
+                return (
+                  <Chip
+                    key={`${c.label}-${idx}`}
+                    icon={icon}
+                    label={c.label}
+                    variant={variant as any}
+                  />
+                );
+              })
+            ) : (
+              <>
+                <Chip icon={<Code />} label="Systems & Graphics" />
+                <Chip
+                  icon={<Memory />}
+                  label="Quantum-curious"
+                  variant="outlined"
+                />
+                <Chip
+                  icon={<Public />}
+                  label="Open-source"
+                  variant="outlined"
+                />
+              </>
+            )}
           </Stack>
         </Box>
       </Stack>
@@ -168,105 +244,52 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
         {/* Stats */}
         <Stack flex={1} spacing={2}>
           <Typography variant="h5" sx={{ fontWeight: 800 }}>
-            {ui.about.statsTitle}
+            {about.statsTitle ?? "Snapshot"}
           </Typography>
 
           <Box
             sx={{
               display: "grid",
               gridTemplateColumns: {
-                xs: "1fr",
-                sm: "repeat(2, 1fr)",
-                md: "repeat(3, 1fr)",
+                xs: "repeat(auto-fit, minmax(160px, 1fr))",
+                md: "repeat(3, minmax(200px, 1fr))",
               },
-              gap: { xs: 2, md: 2.5 },
+              gap: { xs: 2, md: 3 },
               alignItems: "stretch",
             }}
           >
-            <Paper
-              sx={{
-                p: 2.5,
-                borderRadius: 3,
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: { xs: "center", md: "flex-start" },
-                textAlign: { xs: "center", md: "left" },
-                justifyContent: "center",
-                minHeight: { xs: "6.5rem", md: "auto" },
-              }}
-            >
-              <Stack direction="row" spacing={1} alignItems="center" sx={{ justifyContent: { xs: "center", md: "flex-start" } }}>
-                <Bolt fontSize="small" />
-                <Typography variant="overline">{ui.about.yearsLabel}</Typography>
-              </Stack>
-              <Typography variant="h3" sx={{ fontWeight: 800, lineHeight: 1 }}>
-                {statYears}
-              </Typography>
-            </Paper>
-
-            <Paper
-              sx={{
-                p: 2.5,
-                borderRadius: 3,
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: { xs: "center", md: "flex-start" },
-                textAlign: { xs: "center", md: "left" },
-                justifyContent: "center",
-                minHeight: { xs: "6.5rem", md: "auto" },
-              }}
-            >
-              <Stack direction="row" spacing={1} alignItems="center" sx={{ justifyContent: { xs: "center", md: "flex-start" } }}>
-                <ShowChart fontSize="small" />
-                <Typography variant="overline">{ui.about.projectsLabel}</Typography>
-              </Stack>
-              <Typography variant="h3" sx={{ fontWeight: 800, lineHeight: 1 }}>
-                {statProjects}
-              </Typography>
-            </Paper>
-
-            <Paper
-              sx={{
-                p: 2.5,
-                borderRadius: 3,
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: { xs: "center", md: "flex-start" },
-                textAlign: { xs: "center", md: "left" },
-                justifyContent: "center",
-                minHeight: { xs: "6.5rem", md: "auto" },
-              }}
-            >
-              <Stack direction="row" spacing={1} alignItems="center" sx={{ justifyContent: { xs: "center", md: "flex-start" } }}>
-                <Public fontSize="small" />
-                <Typography variant="overline">{ui.about.talksLabel}</Typography>
-              </Stack>
-              <Typography variant="h3" sx={{ fontWeight: 800, lineHeight: 1 }}>
-                {statTalks}
-              </Typography>
-            </Paper>
+            {stats.map((s, idx) => (
+              <StatCard
+                key={`${s.title}-${idx}`}
+                title={s.title}
+                emoji={s.emoji}
+                value={s.value}
+                start={inView}
+                index={idx}
+              />
+            ))}
           </Box>
 
           {/* Skill bars */}
           <Box sx={{ mt: 2 }}>
             <Typography variant="subtitle1" sx={{ mb: 1.5, fontWeight: 700 }}>
-              {ui.about.skillsTitle}
+              {about.skillsTitle ?? "Core skills"}
             </Typography>
 
             <Stack spacing={1.2}>
               {skills.map((s, idx) => (
                 <Tooltip key={idx} title={s.hint ?? ""}>
                   <Box>
-                    <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.5 }}>
+                    <Stack
+                      direction="row"
+                      justifyContent="space-between"
+                      sx={{ mb: 0.5 }}
+                    >
                       <Typography variant="body2" sx={{ fontWeight: 600 }}>
                         {s.label}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        {Math.round((inView ? s.level : 0))}
-                        %
+                        {Math.round(inView ? s.level : 0)}%
                       </Typography>
                     </Stack>
                     <LinearProgress
@@ -276,7 +299,8 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
                         height: "0.5rem",
                         borderRadius: 999,
                         [`& .MuiLinearProgress-bar`]: {
-                          transition: "transform 1200ms cubic-bezier(.2,.8,.2,1)",
+                          transition:
+                            "transform 1200ms cubic-bezier(.2,.8,.2,1)",
                         },
                       }}
                     />
@@ -300,10 +324,10 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
           }}
         >
           <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
-            {ui.about.radarTitle}
+            {about.radarTitle ?? "Tech focus"}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {ui.about.radarHint}
+            {about.radarHint ?? "Higher = deeper involvement right now"}
           </Typography>
 
           <Box
@@ -316,7 +340,13 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
               aspectRatio: "1 / 1",
             }}
           >
-            <svg width="100%" height="100%" viewBox="0 0 260 260" role="img" aria-label="tech radar">
+            <svg
+              width="100%"
+              height="100%"
+              viewBox="0 0 260 260"
+              role="img"
+              aria-label="tech radar"
+            >
               {/* grid rings */}
               {[40, 70, 100].map((r) => (
                 <circle
@@ -330,14 +360,29 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
                 />
               ))}
               {/* axes */}
-              <line x1="130" y1="10" x2="130" y2="250" stroke={theme.palette.primary.dark} strokeDasharray="4 6" />
-              <line x1="10" y1="130" x2="250" y2="130" stroke={theme.palette.primary.dark} strokeDasharray="4 6" />
+              <line
+                x1="130"
+                y1="10"
+                x2="130"
+                y2="250"
+                stroke={theme.palette.primary.dark}
+                strokeDasharray="4 6"
+              />
+              <line
+                x1="10"
+                y1="130"
+                x2="250"
+                y2="130"
+                stroke={theme.palette.primary.dark}
+                strokeDasharray="4 6"
+              />
 
               {/* polygon (animated by recompute) */}
               {(() => {
                 const labels = about.radar.labels;
                 const pts = radarAnimated.map((v, i) => {
-                  const angle = (-90 + i * (360 / radarAnimated.length)) * (Math.PI / 180);
+                  const angle =
+                    (-90 + i * (360 / radarAnimated.length)) * (Math.PI / 180);
                   const r = 110 * v;
                   return [130 + r * Math.cos(angle), 130 + r * Math.sin(angle)];
                 });
@@ -352,7 +397,12 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
                     />
                     {pts.map(([x, y], i) => (
                       <g key={i}>
-                        <circle cx={x} cy={y} r={4} fill={theme.palette.primary.main} />
+                        <circle
+                          cx={x}
+                          cy={y}
+                          r={4}
+                          fill={theme.palette.primary.main}
+                        />
                       </g>
                     ))}
                     {/* labels around */}
@@ -378,63 +428,36 @@ export default function AboutMe({ boxed = true }: { boxed?: boolean }): React.Re
         </Paper>
       </Stack>
 
-      
-        {/* Highlights */}
-        <Divider sx={{ my: { xs: 3, md: 5 } }} />
-        <Box>
-          <Typography variant="h5" sx={{ fontWeight: 800, mb: 2 }}>
-            {ui.about.highlightsTitle}
-          </Typography>
+      {/* Highlights */}
+      <Divider sx={{ my: { xs: 3, md: 5 } }} />
+      <Box>
+        <Typography variant="h5" sx={{ fontWeight: 800, mb: 2 }}>
+          {about.highlightsTitle ?? "Recent highlights"}
+        </Typography>
 
-          <Stack
-            direction={{ xs: "column", md: "row" }}
-            spacing={2}
-            sx={{ "& > *": { flex: 1 } }}
-          >
-            {about.highlights.map((h, idx) => (
-              <Paper key={idx} sx={{ p: 2.5, borderRadius: 3 }}>
-                <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                  {h.title}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {h.desc}
-                </Typography>
-              </Paper>
-            ))}
-          </Stack>
-        </Box>
+        <Stack
+          direction={{ xs: "column", md: "row" }}
+          spacing={4}
+          sx={{ "& > *": { flex: 1 } }}
+        >
+          {about.highlights.map((h, idx) => (
+            <Paper key={idx} sx={{ p: 2.5, borderRadius: 3 }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                {h.title}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {h.desc}
+              </Typography>
+            </Paper>
+          ))}
+        </Stack>
+      </Box>
     </>
   );
 
   return (
-  <Box id="about" ref={ref} sx={{ scrollMarginTop: { xs: "5rem", md: "6.25rem" } }}>
-      <Box sx={{ py: { xs: 4, md: 4 } }}>
-        {boxed ? (
-          <Paper
-            elevation={0}
-            sx={{
-              p: { xs: 3, md: 6 },
-              borderRadius: 4,
-              overflow: "hidden",
-              position: "relative",
-              background: (t) =>
-                t.palette.mode === "dark"
-                  ? `linear-gradient(180deg, ${alpha(t.palette.primary.main, 0.10)}, transparent 40%), radial-gradient(62.5rem 31.25rem at 100% 0%, ${alpha(
-                      t.palette.secondary.main,
-                      0.10
-                    )}, transparent)`
-                  : `linear-gradient(180deg, ${alpha(t.palette.primary.main, 0.10)}, transparent 40%), radial-gradient(62.5rem 31.25rem at 100% 0%, ${alpha(
-                      t.palette.secondary.main,
-                      0.08
-                    )}, transparent)`,
-            }}
-          >
-            {inner}
-          </Paper>
-        ) : (
-          <Box>{inner}</Box>
-        )}
-      </Box>
+    <Box ref={ref} sx={{ scrollMarginTop: { xs: "5rem", md: "6.25rem" } }}>
+      <Box sx={{ py: 1 }}>{inner}</Box>
     </Box>
   );
 }

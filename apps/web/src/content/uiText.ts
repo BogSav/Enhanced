@@ -28,31 +28,6 @@ export type UI = {
     subtitle: string;
     cta: string;
   };
-  about: {
-    title: string;
-    subtitle: string;
-    bio: string;
-    code: string;
-    quantum: string;
-    open: string;
-    statsTitle: string;
-    years: number;
-    projects: number;
-    talks: number;
-    yearsLabel: string;
-    projectsLabel: string;
-    talksLabel: string;
-    skillsTitle: string;
-    radarTitle: string;
-    radarHint: string;
-    highlightsTitle: string;
-    highlight1Title: string;
-    highlight1Desc: string;
-    highlight2Title: string;
-    highlight2Desc: string;
-    highlight3Title: string;
-    highlight3Desc: string;
-  };
   notFound: {
     code: string;
     message: string;
