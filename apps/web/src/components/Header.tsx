@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import logoImage from "/LogoEnhancedV2.png";
+import logoImage from "/logos/LogoV2.png";
 import ui from "../content/parsers/UiTomlParser";
 
 import { getGlassStyle } from "./ComponentUtilities";

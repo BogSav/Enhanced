@@ -44,11 +44,11 @@ export default function AboutMeSection(): React.ReactElement {
   const radarValues: number[] = about.radar.values; // corresponds to radar labels
   const radarAnimated = radarValues.map((v) => (inView ? v : 0));
 
-  const avatarSrc = `${import.meta.env.BASE_URL}ProfilePic.jpg`;
+  const avatarSrc = `${import.meta.env.BASE_URL}profileImages/ProfilePic.jpg`;
   const avatarSrcSet = [
-    `${import.meta.env.BASE_URL}ProfilePic-88.jpg 88w`,
-    `${import.meta.env.BASE_URL}ProfilePic-176.jpg 176w`,
-    `${import.meta.env.BASE_URL}ProfilePic-320.jpg 320w`,
+    `${import.meta.env.BASE_URL}profileImages/ProfilePic-88.jpg 88w`,
+    `${import.meta.env.BASE_URL}profileImages/ProfilePic-176.jpg 176w`,
+    `${import.meta.env.BASE_URL}profileImages/ProfilePic-320.jpg 320w`,
   ].join(", ");
 
   // extract the inner content so we can render it either inside the local Paper (boxed)
