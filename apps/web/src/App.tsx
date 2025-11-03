@@ -7,11 +7,12 @@ import {
   setToLocalStorage,
 } from "./components/ComponentUtilities";
 import Footer from "./components/Footer";
-import ScrollToTop from "./components/ScrollUtils";
 import Header from "./components/Header";
+import ScrollToTop from "./components/ScrollUtils";
 import { getTheme } from "./components/Style";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
+
 
 export type ThemeKey = "light" | "dark";
 

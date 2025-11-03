@@ -14,7 +14,7 @@ import {
 import { alpha } from "@mui/material/styles";
 
 import ui from "../content/parsers/UiTomlParser";
-import { useScroll } from "./ScrollUtils";
+import { useScroll } from "../hooks/useScroll";
 
 export default function HeroSection(): React.ReactElement {
   const { scrollHomeToElement } = useScroll();
@@ -84,14 +84,18 @@ export default function HeroSection(): React.ReactElement {
             <Button
               size="large"
               variant="contained"
-              onClick={() => scrollHomeToElement("projects")}
+              onClick={() => {
+                scrollHomeToElement("projects");
+              }}
             >
               {ui.home.ctaExplore}
             </Button>
             <Button
               size="large"
               variant="outlined"
-              onClick={() => scrollHomeToElement("contact")}
+              onClick={() => {
+                scrollHomeToElement("contact");
+              }}
             >
               {ui.home.ctaContact}
             </Button>

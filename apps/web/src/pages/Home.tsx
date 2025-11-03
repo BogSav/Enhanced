@@ -14,7 +14,10 @@ export default function Home(): React.ReactElement {
   const [projects, setProjects] = useState<ProjectMetadata[]>([]);
 
   useEffect(() => {
-    getProjectMetadata().then(setProjects);
+    // call and intentionally ignore the returned promise using `void` so ESLint
+    // doesn't report an unhandled/floating promise. Errors are expected to be
+    // handled inside `getProjectMetadata` or can be added here if desired.
+    void getProjectMetadata().then(setProjects);
   }, []);
 
   return (

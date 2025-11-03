@@ -11,10 +11,10 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useScroll } from "./ScrollUtils";
 
 import logoImage from "/logos/LogoV2.png";
 import ui from "../content/parsers/UiTomlParser";
+import { useScroll } from "../hooks/useScroll";
 
 import { getGlassStyle } from "./ComponentUtilities";
 
