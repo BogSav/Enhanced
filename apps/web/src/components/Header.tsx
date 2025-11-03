@@ -11,7 +11,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useScroll } from "./ScrollUtils";
 
 import logoImage from "/logos/LogoV2.png";
 import ui from "../content/parsers/UiTomlParser";
@@ -30,34 +30,8 @@ export default function Header({
   // Get the glass style based on the current theme for the header background
   const glassStyle = getGlassStyle(themeKey);
 
-  // Router helpers so header buttons can navigate to sections from any route
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const scrollToId = (id?: string): void => {
-    if (!id) {
-      return;
-    }
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  };
-
-  const go = (hash?: string): void => {
-    // If already on home, just scroll
-    if (location.pathname === "/") {
-      scrollToId(hash);
-      return;
-    }
-    // navigate to home with hash then try to scroll after a short delay
-    // navigate may return a Promise in some router implementations; explicitly ignore it
-    void navigate(hash ? `/#${hash}` : `/`);
-    // allow the route to render
-    setTimeout(() => {
-      scrollToId(hash);
-    }, 120);
-  };
+  // Reuse centralized scroll helpers (scrollToId and go) from ScrollToTop
+  const { scrollHomeToElement } = useScroll();
 
   // Reusable style for the navigation buttons - this is a descriptor compatible with MUI's sx prop
   const chipStyle = {
@@ -108,7 +82,7 @@ export default function Header({
             >
               <Button
                 onClick={() => {
-                  go(undefined);
+                  scrollHomeToElement(undefined);
                 }}
                 color="inherit"
                 sx={chipStyle}
@@ -117,7 +91,7 @@ export default function Header({
               </Button>
               <Button
                 onClick={() => {
-                  go("about");
+                  scrollHomeToElement("about");
                 }}
                 color="inherit"
                 sx={chipStyle}
@@ -126,7 +100,7 @@ export default function Header({
               </Button>
               <Button
                 onClick={() => {
-                  go("projects");
+                  scrollHomeToElement("projects");
                 }}
                 color="inherit"
                 sx={chipStyle}
@@ -135,7 +109,7 @@ export default function Header({
               </Button>
               <Button
                 onClick={() => {
-                  go("blogs");
+                  scrollHomeToElement("blogs");
                 }}
                 color="inherit"
                 sx={chipStyle}

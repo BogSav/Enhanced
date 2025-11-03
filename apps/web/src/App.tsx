@@ -7,6 +7,7 @@ import {
   setToLocalStorage,
 } from "./components/ComponentUtilities";
 import Footer from "./components/Footer";
+import ScrollToTop from "./components/ScrollUtils";
 import Header from "./components/Header";
 import { getTheme } from "./components/Style";
 import Home from "./pages/Home";
@@ -50,6 +51,9 @@ export default function App(): React.ReactElement {
           onToggleTheme={toggleTheme}
           onLogoClick={() => navigate("/")}
         />
+
+        {/* Global scroll-to-top on route changes so newly opened pages start at the top */}
+        <ScrollToTop />
 
         {/* Second, we include the main content area. The main content will be rendered based on the URL path though the react router */}
         <Container sx={{ flexGrow: 1, py: { xs: 4, md: 6 } }}>

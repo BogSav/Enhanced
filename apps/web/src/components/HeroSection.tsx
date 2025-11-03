@@ -14,8 +14,11 @@ import {
 import { alpha } from "@mui/material/styles";
 
 import ui from "../content/parsers/UiTomlParser";
+import { useScroll } from "./ScrollUtils";
 
 export default function HeroSection(): React.ReactElement {
+  const { scrollHomeToElement } = useScroll();
+
   return (
     <Container maxWidth="lg" sx={{ pt: { xs: 0, md: 2 } }}>
       <Grow
@@ -77,10 +80,19 @@ export default function HeroSection(): React.ReactElement {
 
           {/* Action buttons - projects and contact */}
           <Stack direction="row" spacing={2} sx={{ pt: 3 }}>
-            <Button size="large" variant="contained" href="#projects">
+            {/* Use centralized scroll logic so buttons work from any route */}
+            <Button
+              size="large"
+              variant="contained"
+              onClick={() => scrollHomeToElement("projects")}
+            >
               {ui.home.ctaExplore}
             </Button>
-            <Button size="large" variant="outlined" href="#contact">
+            <Button
+              size="large"
+              variant="outlined"
+              onClick={() => scrollHomeToElement("contact")}
+            >
               {ui.home.ctaContact}
             </Button>
           </Stack>

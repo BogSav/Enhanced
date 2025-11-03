@@ -5,7 +5,7 @@ import ui from "../content/parsers/UiTomlParser";
 
 export default function ContactSection(): React.ReactElement {
   return (
-    <Section index={4}>
+    <Section index={4} id="contact">
       <Box sx={{ textAlign: "center" }}>
         <Typography
           variant="h5"
