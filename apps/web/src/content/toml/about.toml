@@ -10,7 +10,7 @@ bio = "I'm Bogdan Sava — a Computer Science graduate and currently a second-ye
 statsTitle = "Snapshot"
 skillsTitle = "Core skills"
 skillsSubtitle = "Proficiency levels (out of 100) in my domains of expertise"
-radarTitle = "Programming languages & Tech focus"
+radarTitle = "Programming languages & paradigms"
 radarHint = "Higher = deeper involvement right now"
 highlightsTitle = "Recent highlights"
 
@@ -46,41 +46,41 @@ emoji = "📈"
 
 # List of core skills displayed with progress bars
 [[skills]]
-label = "C/C++ - Toolchains, Multithreading, Performance"
-level = 90
-hint = "CMake, clang, MSVC"
-
-[[skills]]
 label = "GPU & Graphics - RayTracing, DX12, OpenGL"
-level = 70
+level = 75
 hint = "DX12, RayTracing, OpenGL"
 
 [[skills]]
 label = "Hardware & Systems - Architectures, Kernel, Embedded"
-level = 20
+level = 60
 hint = "Rust, low-level systems"
 
 [[skills]]
-label = "WEB - TypeScript/React"
-level = 55
+label = "C/C++ - Toolchains, Data Structures, Algorithms"
+level = 95
+hint = "CMake, clang, MSVC"
+
+[[skills]]
+label = "WEB - React, TS, Microservices, Kubernetes"
+level = 47
 hint = "MUI, Vite, SSR/CSR patterns"
 
 [[skills]]
-label = "Quantum (QC/QML)"
-level = 70
+label = "Quantum - Quantum Hardware, Quantum Algorithms"
+level = 62
 hint = "Hybrid architectures, Quantum algorithms"
 
 [[skills]]
-label = "AI & ML - Transformers, SEAL, TensorFlow"
-level = 60
-hint = "Transformers, SEAL, TensorFlow"
+label = "AI & ML - Transformers, SEAL Models, TensorFlow"
+level = 23
+hint = "Transformers, SEAL Models, TensorFlow"
 
 
 # Data for the radar chart - labels and corresponding values
 # simply stored as arrays for easy parsing
 [radar]
-labels = ["C++/Tooling", "Python", "TypeScript/JS", "Quantum", "Rust"]
-values = [0.95, 0.80, 0.5, 0.6, 0.2]
+labels = ["C++/Tooling", "Python", "Multithreading\nConcurency", "Quantum\nComputing", "TypeScript\nJavaScript"]
+values = [0.90, 0.60, 0.77, 0.60, 0.45]
 
 
 # Recent highlights - dispalyed at the buttom of the About Me section

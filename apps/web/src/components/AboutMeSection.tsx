@@ -21,7 +21,6 @@ import { StatCard, LinkedinLink } from "./CommonComponents";
 import { getIconComponent } from "./IconHelpers";
 import Section from "./Section";
 
-
 import type {
   Skill,
   Stat,
@@ -350,20 +349,34 @@ export default function AboutMeSection(): React.ReactElement {
                       </g>
                     ))}
                     {/* labels around */}
-                    {pts.map(([x, y], i) => (
-                      <text
-                        key={`l${String(i)}`}
-                        x={x}
-                        y={y}
-                        dx={x < 130 ? -8 : 8}
-                        dy={y < 130 ? -8 : 12}
-                        fontSize="10"
-                        textAnchor={x < 130 ? "end" : "start"}
-                        fill={theme.palette.text.secondary}
-                      >
-                        {labels[i]}
-                      </text>
-                    ))}
+                    {pts.map(([x, y], i) => {
+                      const label = (labels && labels[i]) || "";
+                      const lines = label.split("\n");
+                      const anchorX = x < 130 ? x - 8 : x + 8;
+                      const textAnchor = x < 130 ? "end" : "start";
+                      const firstDy = y < 130 ? -8 : 12;
+
+                      return (
+                        <text
+                          key={`l${String(i)}`}
+                          x={x}
+                          y={y}
+                          fontSize="10"
+                          textAnchor={textAnchor}
+                          fill={theme.palette.text.secondary}
+                        >
+                          {lines.map((ln, li) => (
+                            <tspan
+                              key={li}
+                              x={anchorX}
+                              dy={li === 0 ? String(firstDy) : "12"}
+                            >
+                              {ln}
+                            </tspan>
+                          ))}
+                        </text>
+                      );
+                    })}
                   </>
                 );
               })()}
