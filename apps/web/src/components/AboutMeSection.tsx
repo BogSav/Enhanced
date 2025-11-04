@@ -350,8 +350,7 @@ export default function AboutMeSection(): React.ReactElement {
                     ))}
                     {/* labels around */}
                     {pts.map(([x, y], i) => {
-                      const label = (labels && labels[i]) || "";
-                      const lines = label.split("\n");
+                      const lines = labels[i].split("\n");
                       const anchorX = x < 130 ? x - 8 : x + 8;
                       const textAnchor = x < 130 ? "end" : "start";
                       const firstDy = y < 130 ? -8 : 12;
